@@ -2,7 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.PositionDutyCycle;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -14,7 +14,13 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 import frc.robot.RobotMap;
@@ -54,7 +60,6 @@ public class SwerveDrive extends SubsystemBase {
     private final Rotation2d m_ParkAngleLF = new Rotation2d(45.0);
     private final Rotation2d m_ParkAngleRF = new Rotation2d(-45.0);
 
-
     // create CANCoder sensor objects
     private CANcoder m_LFCanCoder;
     private CANcoder m_RFCanCoder;
@@ -67,10 +72,10 @@ public class SwerveDrive extends SubsystemBase {
     private TalonFX m_RFSteerMotor;
     private TalonFX m_LRSteerMotor;
     private TalonFX m_RRSteerMotor;
-    private PositionDutyCycle m_LFSteerControl;
-    private PositionDutyCycle m_RFSteerControl;
-    private PositionDutyCycle m_LRSteerControl;
-    private PositionDutyCycle m_RRSteerControl;
+    private PositionVoltage m_LFSteerControl;
+    private PositionVoltage m_RFSteerControl;
+    private PositionVoltage m_LRSteerControl;
+    private PositionVoltage m_RRSteerControl;
 
     // create drive motor objects
     // create speed controllers for drive motors
@@ -83,14 +88,12 @@ public class SwerveDrive extends SubsystemBase {
     private VelocityVoltage m_LRDriveControl;
     private VelocityVoltage m_RRDriveControl;
 
-
-    
     // Swerve module states - contains speed(m/s) and angle for each swerve module
     private SwerveModuleState[] m_states;
 
+
     /** Place code here to initialize subsystem */
     public SwerveDrive() {
-
 
         // setup the drive Kinematics
         driveKinematics = new SwerveDriveKinematics(
@@ -185,6 +188,12 @@ public class SwerveDrive extends SubsystemBase {
         m_LRSteerMotor.getConfigurator().apply(steerConfig);
         m_RRSteerMotor.getConfigurator().apply(steerConfig);
 
+        // create steer motor feedback controllers
+        m_LFSteerControl = new PositionVoltage(0.0);
+        m_RFSteerControl = new PositionVoltage(0.0);
+        m_LRSteerControl = new PositionVoltage(0.0);
+        m_RRSteerControl = new PositionVoltage(0.0);
+        
         // set up steer motor controllers
         // use SLot0 for PID values
         // set initial targert position to 0.0
@@ -241,6 +250,12 @@ public class SwerveDrive extends SubsystemBase {
         m_LRDriveMotor.getConfigurator().apply(driveConfig);
         m_RRDriveMotor.getConfigurator().apply(driveConfig);
 
+        // create drive motor feedback controllers
+        m_LFDriveControl = new VelocityVoltage(0.0);
+        m_RFDriveControl = new VelocityVoltage(0.0);
+        m_LRDriveControl = new VelocityVoltage(0.0);
+        m_RRDriveControl = new VelocityVoltage(0.0);
+
         // set up drive motor controllers
         // use SLot0 for PID values
         // set initial targert speed to 0.0
@@ -261,7 +276,7 @@ public class SwerveDrive extends SubsystemBase {
         ResetSteerEncoders();
 
         // create subsystem shuffle board page
-        //initializeShuffleboard();
+        initializeShuffleboard();
 
         // initially motors are off
         RobotDrive(0.0, 0.0, 0.0, false);
@@ -284,6 +299,9 @@ public class SwerveDrive extends SubsystemBase {
     @Override
     public void periodic() {
 
+        // update shuffle board values
+        updateShuffleboard(); 
+
     }
 
     /** Drive robot in field-oriented coordinates
@@ -294,7 +312,7 @@ public class SwerveDrive extends SubsystemBase {
 
     public void FieldDrive(ChassisSpeeds speed, boolean Park) {
         // convert chassis speeds from field to robot oriented, getting angle from gyro
-        ChassisSpeeds newSpeed = ChassisSpeeds.fromFieldRelativeSpeeds(speed, Rotation2d.fromDegrees(RobotContainer.gyro.getYaw()));
+        ChassisSpeeds newSpeed = ChassisSpeeds.fromFieldRelativeSpeeds(speed, Rotation2d.fromDegrees(RobotContainer.gyro.getYawAngle()));
     
         // speeds now in robot coordinates - call robot drive
         RobotDrive (newSpeed, Park);
@@ -339,7 +357,7 @@ public class SwerveDrive extends SubsystemBase {
         // a) consider its angle to be 180deg more than its sensor currently shows; and
         // b) set direction flag to reverse
         if (m_LFDriveMotor.getClosedLoopReference().getValueAsDouble() < 0.0)
-        { adder1 = 180.0; LFDriveDir = -1.0; }
+            { adder1 = 180.0; LFDriveDir = -1.0; }
 
         // get current angle of swerve (in deg)
         double LFCurrentAngleDeg = m_LFSteerMotor.getPosition().getValueAsDouble()*360.0;
@@ -349,30 +367,258 @@ public class SwerveDrive extends SubsystemBase {
 
         // to minimize turning, it may be easier to reverse drive, and turn by smaller angle
         if (LFAngleDiff<-90.0)
-        { LFDriveDir *= -1.0; LFAngleDiff+=180.0; }
+            { LFDriveDir *= -1.0; LFAngleDiff+=180.0; }
         else if (LFAngleDiff>90)
-        { LFDriveDir *= -1.0; LFAngleDiff-=180.0; }
+            { LFDriveDir *= -1.0; LFAngleDiff-=180.0; }
 
-        // set angle of swerve drive
-        //m_LFSteerMotor.set(ControlMode.Position, (LFCurrentAngleDeg + LFAngleDiff)*DEG_TO_ENCODERPULSE);
+        // set angle of swerve drive (convert deg back to rotations = 1/360.0)
+        m_LFSteerMotor.setControl(m_LFSteerControl.withPosition((LFCurrentAngleDeg + LFAngleDiff)*0.00277777));
         
+        
+        // ---------- Angle Determination for RF Swerve
+
+        double adder2=0.0;
+        if (m_RFDriveMotor.getClosedLoopReference().getValueAsDouble()<0.0)
+            { adder2 = 180.0; RFDriveDir = -1.0; }
+        double RFCurrentAngleDeg = m_RFSteerMotor.getPosition().getValueAsDouble()*360.0;
+        double RFAngleDiff = Utils.AngleDifference(RFCurrentAngleDeg%360.0, adder2+m_states[1].angle.getDegrees());
+        if (RFAngleDiff<-90.0)
+            { RFDriveDir *= -1.0; RFAngleDiff+=180.0; }
+        else if (RFAngleDiff>90)
+            { RFDriveDir *= -1.0; RFAngleDiff-=180.0; }
+        m_RFSteerMotor.setControl(m_RFSteerControl.withPosition((RFCurrentAngleDeg + RFAngleDiff)*0.00277777));
+        
+
+        // ---------- Angle Determination for LR Swerve
+
+        double adder3=0.0;
+        if (m_LRDriveMotor.getClosedLoopReference().getValueAsDouble()<0.0)
+            { adder3 = 180.0; LRDriveDir = -1.0; }
+        double LRCurrentAngleDeg = m_LRSteerMotor.getPosition().getValueAsDouble()*360.0;
+        double LRAngleDiff = Utils.AngleDifference(LRCurrentAngleDeg%360.0, adder3+m_states[2].angle.getDegrees());
+        if (LRAngleDiff<-90.0)
+            { LRDriveDir *= -1.0; LRAngleDiff+=180.0; }
+        else if (LRAngleDiff>90)
+            { LRDriveDir *= -1.0; LRAngleDiff-=180.0; }
+        m_LRSteerMotor.setControl(m_LRSteerControl.withPosition((LRCurrentAngleDeg + LRAngleDiff)*0.00277777));
+        
+
+        // ---------- Angle Determination for RR Swerve
+
+        double adder4=0.0;
+        if (m_RRDriveMotor.getClosedLoopReference().getValueAsDouble()<0.0)
+            { adder4 = 180.0; RRDriveDir = -1.0; }
+        double RRCurrentAngleDeg = m_RRSteerMotor.getPosition().getValueAsDouble()*360.0;
+        double RRAngleDiff = Utils.AngleDifference(RRCurrentAngleDeg%360.0, adder4+m_states[3].angle.getDegrees());
+        if (RRAngleDiff<-90.0)
+            { RRDriveDir *= -1.0; RRAngleDiff+=180.0; }
+        else if (RRAngleDiff>90)
+            { RRDriveDir *= -1.0; RRAngleDiff-=180.0; }
+        m_RRSteerMotor.setControl(m_RRSteerControl.withPosition((RRCurrentAngleDeg + RRAngleDiff)*0.00277777));
+        
+
         // ---------- Set Drive Motor Speeds
 
+        
         // go ahead and set motor closed loop target speeds
-        //PositionVoltage m_LFSteerControl = new PositionVoltage(0.0);
-        //m_LFSteerMotor.setControl(m_LFSteerControl.withPosition(0.0);
-
-        //m_LFDriveMotor.setControl
-        //m_LFDriveMotor.set(ControlMode.Velocity, m_states[0].speedMetersPerSecond*LFDriveDir*METERS_TO_ENCODERPULSE*0.1);
-
+        m_LFDriveMotor.setControl(m_LFDriveControl.withVelocity(m_states[0].speedMetersPerSecond*LFDriveDir*MPS_TO_RPS));
+        m_RFDriveMotor.setControl(m_RFDriveControl.withVelocity(m_states[1].speedMetersPerSecond*RFDriveDir*MPS_TO_RPS));
+        m_LRDriveMotor.setControl(m_LRDriveControl.withVelocity(m_states[2].speedMetersPerSecond*LRDriveDir*MPS_TO_RPS));
+        m_RRDriveMotor.setControl(m_RRDriveControl.withVelocity(m_states[3].speedMetersPerSecond*RRDriveDir*MPS_TO_RPS));
 
     }
 
 
 
+    // returns positions of all swerve modules
+    public SwerveModulePosition[] GetSwerveDistances() {
+ 
+        // create array of module positions to return
+        SwerveModulePosition[] states = new SwerveModulePosition[4];
+            
+        // populate distance(m) and angle for LF swerve (note: rps_to_mps same as r_to_m)
+        states[0] = new SwerveModulePosition();
+        states[0].distanceMeters = m_LFDriveMotor.getPosition().getValueAsDouble() * RPS_TO_MPS;
+        states[0].angle = Rotation2d.fromDegrees(m_LFSteerMotor.getPosition().getValueAsDouble()*360.0);
+
+        // populate distance(m) and angle for RF swerve
+        states[1] = new SwerveModulePosition();
+        states[1].distanceMeters = m_RFDriveMotor.getPosition().getValueAsDouble() * RPS_TO_MPS;
+        states[1].angle = Rotation2d.fromDegrees(m_RFSteerMotor.getPosition().getValueAsDouble()*360.0);
+
+        // populate distance(m) and angle for LR swerve
+        states[2] = new SwerveModulePosition();
+        states[2].distanceMeters = m_LRDriveMotor.getPosition().getValueAsDouble() * RPS_TO_MPS;
+        states[2].angle = Rotation2d.fromDegrees(m_LRSteerMotor.getPosition().getValueAsDouble()*360.0);
+
+        // populate distance(m) and angle for RR swerve
+        states[3] = new SwerveModulePosition();
+        states[3].distanceMeters = m_RRDriveMotor.getPosition().getValueAsDouble() * RPS_TO_MPS;
+        states[3].angle = Rotation2d.fromDegrees(m_RRSteerMotor.getPosition().getValueAsDouble()*360.0);
+
+        return states;
+    }
+
+
+    // returns current states of all swerve modules
+    public SwerveModuleState[] GetSwerveStates() {
+        
+        // create array of module positions to return
+        SwerveModuleState[] states = new SwerveModuleState[4];
+
+        // populate speed(m/s) and angle for LF swerve (note: rps_to_mps same as r_to_m)
+        states[0] = new SwerveModuleState();
+        states[0].speedMetersPerSecond = m_LFDriveMotor.getVelocity().getValueAsDouble() * RPS_TO_MPS;
+        states[0].angle = Rotation2d.fromDegrees(m_LFSteerMotor.getPosition().getValueAsDouble()*360.0);
+
+        // populate speed(m/s) and angle for RF swerve
+        states[1] = new SwerveModuleState();
+        states[1].speedMetersPerSecond = m_RFDriveMotor.getVelocity().getValueAsDouble() * RPS_TO_MPS;
+        states[1].angle = Rotation2d.fromDegrees(m_RFSteerMotor.getPosition().getValueAsDouble()*360.0);
+
+        // populate speed(m/s) and angle for LR swerve
+        states[2] = new SwerveModuleState();
+        states[2].speedMetersPerSecond = m_LRDriveMotor.getVelocity().getValueAsDouble() * RPS_TO_MPS;
+        states[2].angle = Rotation2d.fromDegrees(m_LRSteerMotor.getPosition().getValueAsDouble()*360.0);
+
+        // populate speed(m/s) and angle for RR swerve
+        states[3] = new SwerveModuleState();
+        states[3].speedMetersPerSecond = m_RRDriveMotor.getVelocity().getValueAsDouble() * RPS_TO_MPS;
+        states[3].angle = Rotation2d.fromDegrees(m_RRSteerMotor.getPosition().getValueAsDouble()*360.0);
+
+        return states;
+
+    }
+
+
     /** Returns kinematics of drive system */
     public SwerveDriveKinematics getKinematics() {
         return driveKinematics;
+    }
+
+
+
+    // -------------------- Subsystem Shuffleboard Methods --------------------
+
+    
+    private GenericEntry m_LFCanCoderPos;
+    private GenericEntry m_RFCanCoderPos;
+    private GenericEntry m_LRCanCoderPos;
+    private GenericEntry m_RRCanCoderPos;
+    private GenericEntry m_LFSteerMotorPos;
+    private GenericEntry m_RFSteerMotorPos;
+    private GenericEntry m_LRSteerMotorPos;
+    private GenericEntry m_RRSteerMotorPos;
+    private GenericEntry m_LFSteerMotorTarget;
+    private GenericEntry m_RFSteerMotorTarget;
+    private GenericEntry m_LRSteerMotorTarget;
+    private GenericEntry m_RRSteerMotorTarget;
+    private GenericEntry m_LFDriveMotorPos;
+    private GenericEntry m_RFDriveMotorPos;
+    private GenericEntry m_LRDriveMotorPos;
+    private GenericEntry m_RRDriveMotorPos;
+    private GenericEntry m_LFDriveMotorTargetSpeed;
+    private GenericEntry m_RFDriveMotorTargetSpeed;
+    private GenericEntry m_LRDriveMotorTargetSpeed;
+    private GenericEntry m_RRDriveMotorTargetSpeed;
+    private GenericEntry m_LFDriveMotorSpeed;
+    private GenericEntry m_RFDriveMotorSpeed;
+    private GenericEntry m_LRDriveMotorSpeed;
+    private GenericEntry m_RRDriveMotorSpeed;
+    
+    
+    /** Initialize subsystem shuffleboard page and controls */
+    private void initializeShuffleboard() {
+        // Create odometry page in shuffleboard
+        ShuffleboardTab Tab = Shuffleboard.getTab("SwerveDrive");
+
+
+        // create controls to left-front swerve data
+        ShuffleboardLayout l1 = Tab.getLayout("Left-Front", BuiltInLayouts.kList);
+        l1.withPosition(0, 0);
+        l1.withSize(1, 5);
+        m_LFCanCoderPos = l1.add("CanCoder(deg)", 0.0).getEntry();
+        m_LFSteerMotorPos = l1.add("Steer Pos'n(deg)", 0.0).getEntry();
+        m_LFSteerMotorTarget = l1.add("Steer Target(deg)", 0.0).getEntry();
+        m_LFDriveMotorPos = l1.add("Drive Pos(m)", 0.0).getEntry();
+        m_LFDriveMotorSpeed = l1.add("Drive Speed(mps)", 0.0).getEntry();
+        m_LFDriveMotorTargetSpeed = l1.add("Drive Target(mps)", 0.0).getEntry();
+
+        // create controls to right-front swerve data
+        ShuffleboardLayout l2 = Tab.getLayout("Right-Front", BuiltInLayouts.kList);
+        l2.withPosition(1, 0);
+        l2.withSize(1, 5);
+        m_RFCanCoderPos = l2.add("CanCoder Deg", 0.0).getEntry();
+        m_RFSteerMotorPos = l2.add("Steer Posn", 0.0).getEntry();
+        m_RFSteerMotorTarget = l2.add("Steer Target", 0.0).getEntry();
+        m_RFDriveMotorPos = l2.add("Drive Pos'n", 0.0).getEntry();
+        m_RFDriveMotorSpeed = l2.add("Drive Speed", 0.0).getEntry();
+        m_RFDriveMotorTargetSpeed = l2.add("Drive Target Spd", 0.0).getEntry();
+
+        // create controls to left-rear swerve data
+        ShuffleboardLayout l3 = Tab.getLayout("Left-Rear", BuiltInLayouts.kList);
+        l3.withPosition(2, 0);
+        l3.withSize(1, 5);
+        m_LRCanCoderPos = l3.add("CanCoder Deg", 0.0).getEntry();
+        m_LRSteerMotorPos = l3.add("Steer Posn", 0.0).getEntry();
+        m_LRSteerMotorTarget = l3.add("Steer Target", 0.0).getEntry();
+        m_LRDriveMotorPos = l3.add("Drive Pos'n", 0.0).getEntry();
+        m_LRDriveMotorSpeed = l3.add("Drive Speed", 0.0).getEntry();
+        m_LRDriveMotorTargetSpeed = l3.add("Drive Target Spd", 0.0).getEntry();
+
+        // create controls to right-rear swerve data
+        ShuffleboardLayout l4 = Tab.getLayout("Right-Rear", BuiltInLayouts.kList);
+        l4.withPosition(3, 0);
+        l4.withSize(1, 5);
+        m_RRCanCoderPos = l4.add("CanCoder Deg", 0.0).getEntry();
+        m_RRSteerMotorPos = l4.add("Steer Posn", 0.0).getEntry();
+        m_RRSteerMotorTarget = l4.add("Steer Target", 0.0).getEntry();
+        m_RRDriveMotorPos = l4.add("Drive Pos'n", 0.0).getEntry();
+        m_RRDriveMotorSpeed = l4.add("Drive Speed", 0.0).getEntry();
+        m_RRDriveMotorTargetSpeed = l4.add("Drive Target Spd", 0.0).getEntry();
+
+    }
+
+
+    /** Update subsystem shuffle board page with current Gyro values */
+    private void updateShuffleboard() {
+    
+        // update CANCoder position values (deg)
+        m_LFCanCoderPos.setDouble(m_LFCanCoder.getPosition().getValueAsDouble()*360.0);
+        m_RFCanCoderPos.setDouble(m_RFCanCoder.getPosition().getValueAsDouble()*360.0);
+        m_LRCanCoderPos.setDouble(m_LRCanCoder.getPosition().getValueAsDouble()*360.0);
+        m_RRCanCoderPos.setDouble(m_RRCanCoder.getPosition().getValueAsDouble()*360.0);
+    
+        // update steer motor position values (deg)
+        m_LFSteerMotorPos.setDouble(m_LFSteerMotor.getPosition().getValueAsDouble()*360.0);
+        m_RFSteerMotorPos.setDouble(m_RFSteerMotor.getPosition().getValueAsDouble()*360.0);
+        m_LRSteerMotorPos.setDouble(m_LRSteerMotor.getPosition().getValueAsDouble()*360.0);
+        m_RRSteerMotorPos.setDouble(m_RRSteerMotor.getPosition().getValueAsDouble()*360.0);
+
+        // update steer motor target values (deg)
+        m_LFSteerMotorTarget.setDouble(m_LFSteerMotor.getClosedLoopReference().getValueAsDouble()*360.0);
+        m_RFSteerMotorTarget.setDouble(m_RFSteerMotor.getClosedLoopReference().getValueAsDouble()*360.0);
+        m_LRSteerMotorTarget.setDouble(m_LRSteerMotor.getClosedLoopReference().getValueAsDouble()*360.0);
+        m_RRSteerMotorTarget.setDouble(m_RRSteerMotor.getClosedLoopReference().getValueAsDouble()*360.0);
+
+        // update drive motor speeds (m/s)
+        m_LFDriveMotorSpeed.setDouble(m_LFDriveMotor.getVelocity().getValueAsDouble()*RPS_TO_MPS);
+        m_RFDriveMotorSpeed.setDouble(m_RFDriveMotor.getVelocity().getValueAsDouble()*RPS_TO_MPS);
+        m_LRDriveMotorSpeed.setDouble(m_LRDriveMotor.getVelocity().getValueAsDouble()*RPS_TO_MPS);
+        m_RRDriveMotorSpeed.setDouble(m_RRDriveMotor.getVelocity().getValueAsDouble()*RPS_TO_MPS);
+
+        // update drive motor targets (m/s)
+        m_LFDriveMotorTargetSpeed.setDouble(m_LFDriveMotor.getClosedLoopReference().getValueAsDouble()*RPS_TO_MPS);
+        m_RFDriveMotorTargetSpeed.setDouble(m_RFDriveMotor.getClosedLoopReference().getValueAsDouble()*RPS_TO_MPS);
+        m_LRDriveMotorTargetSpeed.setDouble(m_LRDriveMotor.getClosedLoopReference().getValueAsDouble()*RPS_TO_MPS);
+        m_RRDriveMotorTargetSpeed.setDouble(m_RRDriveMotor.getClosedLoopReference().getValueAsDouble()*RPS_TO_MPS);
+
+        // update drive motor position values (m)
+        m_LFDriveMotorPos.setDouble(m_LFDriveMotor.getPosition().getValueAsDouble()*RPS_TO_MPS);
+        m_RFDriveMotorPos.setDouble(m_RFDriveMotor.getPosition().getValueAsDouble()*RPS_TO_MPS);
+        m_LRDriveMotorPos.setDouble(m_LRDriveMotor.getPosition().getValueAsDouble()*RPS_TO_MPS);
+        m_RRDriveMotorPos.setDouble(m_RRDriveMotor.getPosition().getValueAsDouble()*RPS_TO_MPS);
+
     }
 
 
