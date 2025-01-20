@@ -40,13 +40,13 @@ public NavX() {
 
   /** Gets the yaw of the robot
    * @return current yaw value (-180 to 180) */
-  public double getYaw() {
+  public double getYawAngle() {
     return gyro.getYaw(); 
   }
 
   /** Gets the pitch of the robot
    * @return current pitch value (-180 to 180) */
-  public double getPitch() {
+  public double getPitchAngle() {
     return gyro.getPitch();
   }
 
@@ -59,13 +59,13 @@ public NavX() {
 
   /** Accumulated yaw
    * @return accumulated angle in degrees */
-  public double continuousYaw() {
+  public double continuousYawAngle() {
     return gyro.getAngle();
   }
 
   /** Get Roll
    * @return -180 to 180 degrees */
-  public double getRoll() {
+  public double getRollAngle() {
     return gyro.getRoll();
   }
 
@@ -106,9 +106,9 @@ public NavX() {
   /** Update subsystem shuffle board page with current Gyro values */
   private void updateShuffleboard() {
     // write current robot Gyro
-    m_gyroPitch.setDouble(getPitch());
-    m_gyroYaw.setDouble(getYaw());
-    m_gyroRoll.setDouble(getRoll());
+    m_gyroPitch.setDouble(getPitchAngle());
+    m_gyroYaw.setDouble(getYawAngle());
+    m_gyroRoll.setDouble(getRollAngle());
     m_xAcceleration.setDouble(getXAcceleration());
     m_yAcceleration.setDouble(getYAcceleration());
   }

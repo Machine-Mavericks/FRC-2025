@@ -3,6 +3,7 @@ package frc.robot;
 import frc.robot.commandgroups.TemplateCommandGroup;
 import frc.robot.commands.TemplateCommand;
 import frc.robot.subsystems.NavX;
+import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.TemplateSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -11,16 +12,13 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 public class RobotContainer {
   
   // create driver and operator xBox controllers
-  CommandXboxController driverOp;
-  CommandXboxController toolOp;
+  public static CommandXboxController driverOp;
+  public static CommandXboxController toolOp;
 
   
   // make pointers to robot subsystems here
-
-  // NavX gyro
   public static NavX gyro;
-
-  // example
+  public static SwerveDrive drivesystem;
   public static TemplateSubsystem mySubsystem;
   // and so on
 
@@ -35,8 +33,8 @@ public class RobotContainer {
     
     // create instances of subsystems here
     gyro = new NavX();
+    drivesystem = new SwerveDrive();
     mySubsystem = new TemplateSubsystem();
-    
     // and so on
     
 
