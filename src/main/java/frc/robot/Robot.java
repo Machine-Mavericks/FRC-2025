@@ -80,7 +80,8 @@ public class Robot extends TimedRobot {
     // set default swerve drive command to manual drive mode
     RobotContainer.drivesystem.setDefaultCommand(new ManualDrive());
 
-    RobotContainer.gyro.resetGyro();
+    // temporary
+    RobotContainer.gyro.resetYawAngle();
 
   }
 

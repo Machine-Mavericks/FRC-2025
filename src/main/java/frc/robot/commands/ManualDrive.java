@@ -18,7 +18,7 @@ public class ManualDrive extends Command {
     // PID controller used to counteract rotational drift due to misalignment of wheels
     // note: FRC 2024 used P=0.01, I=0.0, D=0.0
     // FTC 2024 used P=0.07, I=0.0005, D=0.0
-    private PIDController m_headingPID = new PIDController(0.07, 0.0005, 0);
+    private PIDController m_headingPID = new PIDController(0.04, 0.0005, 0);
     private Double m_PIDTarget = null;    // Use Double class so it can be set to null
     private long m_pidDelay = -1;
 
@@ -26,7 +26,7 @@ public class ManualDrive extends Command {
     double basePowerFacter = 0.45;
     double boostPowerFacter = 0.55;
 
-    final double MAX_ACCEL = 2.0;  // max accel in m/s2
+    final double MAX_ACCEL = 100.0;  // max accel in m/s2
 
     double old_dX, old_dY;
 
@@ -57,9 +57,9 @@ public class ManualDrive extends Command {
     public void execute() {
 
         // get joystick input - for competition
-        double dX = -RobotContainer.driverOp.getLeftY();
-        double dY = -RobotContainer.driverOp.getLeftX();
-        double omega = -3.0 * RobotContainer.driverOp.getRightX();
+        double dX = RobotContainer.driverOp.getLeftY();
+        double dY = RobotContainer.driverOp.getLeftX();
+        double omega = 3.0 * RobotContainer.driverOp.getRightX();
         double speedTrigger = RobotContainer.driverOp.getRightTriggerAxis();
         boolean Park = RobotContainer.driverOp.leftBumper().getAsBoolean();
 

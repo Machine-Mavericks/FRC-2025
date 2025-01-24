@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 import frc.robot.RobotMap;
@@ -44,15 +45,15 @@ public class SwerveDrive extends SubsystemBase {
     final double WHEEL_DIA = 0.1;              
 
     // conversion factors - used to convert motor MPS to RPS and vice versa
-    final double RPS_TO_MPS = Math.PI * WHEEL_DIA / DRIVE_RATIO;
-    final double MPS_TO_RPS = 1.0 / RPS_TO_MPS;
+    final double WHEELRPS_TO_MPS = Math.PI * WHEEL_DIA;
+    final double MPS_TO_WHEELRPS = 1.0 / WHEELRPS_TO_MPS;
 
     // constants for FalconFx motors
-    final double MAXRPM = 6380.0;
+    final double MAXRPM = 6380.0*0.975;
     final double MAXRPS = MAXRPM / 60.0;
 
-    // maximum expected drive speed
-    public final double MAX_SPEED = MAXRPS * RPS_TO_MPS;
+    // maximum expected drive speed or robot (m/s)
+    public final double MAX_SPEED = MAXRPS * WHEELRPS_TO_MPS / DRIVE_RATIO;
 
      // The drivetrain's kinematics model
     private SwerveDriveKinematics driveKinematics;
@@ -136,10 +137,11 @@ public class SwerveDrive extends SubsystemBase {
         // units - in rotations
         // note:  if +ve value when wheels are aligned straight, then decrease offset by that value
         // encoders should then read zero when aligned straight.
-        LFEncoderConfig.MagnetSensor.MagnetOffset = 0.0;
-        RFEncoderConfig.MagnetSensor.MagnetOffset = 0.0;
-        LREncoderConfig.MagnetSensor.MagnetOffset = 0.0;
-        RREncoderConfig.MagnetSensor.MagnetOffset = 0.0;
+        // multiply by factor to convert deg back to rotations
+        LFEncoderConfig.MagnetSensor.MagnetOffset = 45.61 * 0.00277777;
+        RFEncoderConfig.MagnetSensor.MagnetOffset = -244.25 * 0.00277777;
+        LREncoderConfig.MagnetSensor.MagnetOffset = 156.88 * 0.00277777;
+        RREncoderConfig.MagnetSensor.MagnetOffset = -109.46 * 0.00277777;
 
         // apply configuration to cancoders
         m_LFCanCoder.getConfigurator().apply(LFEncoderConfig);
@@ -169,12 +171,12 @@ public class SwerveDrive extends SubsystemBase {
         // used CTRE webpage to estimate gains from Phoenix 5 gains used in 2023
         // set sensor to mechanism gear ratio
         TalonFXConfiguration steerConfig = new TalonFXConfiguration();
-        steerConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        steerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         steerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         steerConfig.MotorOutput.DutyCycleNeutralDeadband = 0.0001;
-        steerConfig.Slot0.kP = 0.0;
-        steerConfig.Slot0.kI = 0.0;
-        steerConfig.Slot0.kD = 0.0;
+        steerConfig.Slot0.kP = 70.0;  //volts/rot
+        steerConfig.Slot0.kI = 10.0;  //volts/rot-s
+        steerConfig.Slot0.kD = 0.0;   //volts/ros/s
         steerConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
         steerConfig.Feedback.SensorToMechanismRatio = STEER_RATIO;
         //steerConfig.CurrentLimits.SupplyCurrentLimitEnable =  // note default is true
@@ -229,14 +231,14 @@ public class SwerveDrive extends SubsystemBase {
         // used CTRE webpage to estimate gains from Phoenix 5 gains used in 2023
         // set sensor to mechanism gear ratio
         TalonFXConfiguration driveConfig = new TalonFXConfiguration();
-        driveConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        driveConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         driveConfig.MotorOutput.DutyCycleNeutralDeadband = 0.0001;
-        driveConfig.Slot0.kP = 0.0;
-        driveConfig.Slot0.kI = 0.0;
-        driveConfig.Slot0.kD = 0.0;
-        driveConfig.Slot0.kS = 0.0;
-        driveConfig.Slot0.kV = 0.0;
+        driveConfig.Slot0.kP = 2.4;     //2.0   //volts/rps
+        driveConfig.Slot0.kI = 0.0;    // volts/rps-s
+        driveConfig.Slot0.kD = 0.0;    // volts/rps/s
+        driveConfig.Slot0.kS = 0.08;   // volts
+        driveConfig.Slot0.kV = 0.916;  // volts/rps
         driveConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
         driveConfig.Feedback.SensorToMechanismRatio = DRIVE_RATIO;
         //steerConfig.CurrentLimits.SupplyCurrentLimitEnable =  // note default is true
@@ -421,10 +423,10 @@ public class SwerveDrive extends SubsystemBase {
 
         
         // go ahead and set motor closed loop target speeds
-        m_LFDriveMotor.setControl(m_LFDriveControl.withVelocity(m_states[0].speedMetersPerSecond*LFDriveDir*MPS_TO_RPS));
-        m_RFDriveMotor.setControl(m_RFDriveControl.withVelocity(m_states[1].speedMetersPerSecond*RFDriveDir*MPS_TO_RPS));
-        m_LRDriveMotor.setControl(m_LRDriveControl.withVelocity(m_states[2].speedMetersPerSecond*LRDriveDir*MPS_TO_RPS));
-        m_RRDriveMotor.setControl(m_RRDriveControl.withVelocity(m_states[3].speedMetersPerSecond*RRDriveDir*MPS_TO_RPS));
+        m_LFDriveMotor.setControl(m_LFDriveControl.withVelocity(m_states[0].speedMetersPerSecond*LFDriveDir*MPS_TO_WHEELRPS));
+        m_RFDriveMotor.setControl(m_RFDriveControl.withVelocity(m_states[1].speedMetersPerSecond*RFDriveDir*MPS_TO_WHEELRPS));
+        m_LRDriveMotor.setControl(m_LRDriveControl.withVelocity(m_states[2].speedMetersPerSecond*LRDriveDir*MPS_TO_WHEELRPS));
+        m_RRDriveMotor.setControl(m_RRDriveControl.withVelocity(m_states[3].speedMetersPerSecond*RRDriveDir*MPS_TO_WHEELRPS));
 
     }
 
@@ -438,22 +440,22 @@ public class SwerveDrive extends SubsystemBase {
             
         // populate distance(m) and angle for LF swerve (note: rps_to_mps same as r_to_m)
         states[0] = new SwerveModulePosition();
-        states[0].distanceMeters = m_LFDriveMotor.getPosition().getValueAsDouble() * RPS_TO_MPS;
+        states[0].distanceMeters = m_LFDriveMotor.getPosition().getValueAsDouble() * WHEELRPS_TO_MPS;
         states[0].angle = Rotation2d.fromDegrees(m_LFSteerMotor.getPosition().getValueAsDouble()*360.0);
 
         // populate distance(m) and angle for RF swerve
         states[1] = new SwerveModulePosition();
-        states[1].distanceMeters = m_RFDriveMotor.getPosition().getValueAsDouble() * RPS_TO_MPS;
+        states[1].distanceMeters = m_RFDriveMotor.getPosition().getValueAsDouble() * WHEELRPS_TO_MPS;
         states[1].angle = Rotation2d.fromDegrees(m_RFSteerMotor.getPosition().getValueAsDouble()*360.0);
 
         // populate distance(m) and angle for LR swerve
         states[2] = new SwerveModulePosition();
-        states[2].distanceMeters = m_LRDriveMotor.getPosition().getValueAsDouble() * RPS_TO_MPS;
+        states[2].distanceMeters = m_LRDriveMotor.getPosition().getValueAsDouble() * WHEELRPS_TO_MPS;
         states[2].angle = Rotation2d.fromDegrees(m_LRSteerMotor.getPosition().getValueAsDouble()*360.0);
 
         // populate distance(m) and angle for RR swerve
         states[3] = new SwerveModulePosition();
-        states[3].distanceMeters = m_RRDriveMotor.getPosition().getValueAsDouble() * RPS_TO_MPS;
+        states[3].distanceMeters = m_RRDriveMotor.getPosition().getValueAsDouble() * WHEELRPS_TO_MPS;
         states[3].angle = Rotation2d.fromDegrees(m_RRSteerMotor.getPosition().getValueAsDouble()*360.0);
 
         return states;
@@ -468,22 +470,22 @@ public class SwerveDrive extends SubsystemBase {
 
         // populate speed(m/s) and angle for LF swerve (note: rps_to_mps same as r_to_m)
         states[0] = new SwerveModuleState();
-        states[0].speedMetersPerSecond = m_LFDriveMotor.getVelocity().getValueAsDouble() * RPS_TO_MPS;
+        states[0].speedMetersPerSecond = m_LFDriveMotor.getVelocity().getValueAsDouble() * WHEELRPS_TO_MPS;
         states[0].angle = Rotation2d.fromDegrees(m_LFSteerMotor.getPosition().getValueAsDouble()*360.0);
 
         // populate speed(m/s) and angle for RF swerve
         states[1] = new SwerveModuleState();
-        states[1].speedMetersPerSecond = m_RFDriveMotor.getVelocity().getValueAsDouble() * RPS_TO_MPS;
+        states[1].speedMetersPerSecond = m_RFDriveMotor.getVelocity().getValueAsDouble() * WHEELRPS_TO_MPS;
         states[1].angle = Rotation2d.fromDegrees(m_RFSteerMotor.getPosition().getValueAsDouble()*360.0);
 
         // populate speed(m/s) and angle for LR swerve
         states[2] = new SwerveModuleState();
-        states[2].speedMetersPerSecond = m_LRDriveMotor.getVelocity().getValueAsDouble() * RPS_TO_MPS;
+        states[2].speedMetersPerSecond = m_LRDriveMotor.getVelocity().getValueAsDouble() * WHEELRPS_TO_MPS;
         states[2].angle = Rotation2d.fromDegrees(m_LRSteerMotor.getPosition().getValueAsDouble()*360.0);
 
         // populate speed(m/s) and angle for RR swerve
         states[3] = new SwerveModuleState();
-        states[3].speedMetersPerSecond = m_RRDriveMotor.getVelocity().getValueAsDouble() * RPS_TO_MPS;
+        states[3].speedMetersPerSecond = m_RRDriveMotor.getVelocity().getValueAsDouble() * WHEELRPS_TO_MPS;
         states[3].angle = Rotation2d.fromDegrees(m_RRSteerMotor.getPosition().getValueAsDouble()*360.0);
 
         return states;
@@ -532,13 +534,17 @@ public class SwerveDrive extends SubsystemBase {
         // Create odometry page in shuffleboard
         ShuffleboardTab Tab = Shuffleboard.getTab("SwerveDrive");
 
+        // create button/command to reset swerve steering
+        Tab.add("Reset Swerve", new InstantCommand(()->{ResetSteerEncoders();}))
+            .withPosition(4,0)
+            .withSize(2, 1);
 
         // create controls to left-front swerve data
         ShuffleboardLayout l1 = Tab.getLayout("Left-Front", BuiltInLayouts.kList);
         l1.withPosition(0, 0);
         l1.withSize(1, 5);
         m_LFCanCoderPos = l1.add("CanCoder(deg)", 0.0).getEntry();
-        m_LFSteerMotorPos = l1.add("Steer Pos'n(deg)", 0.0).getEntry();
+        m_LFSteerMotorPos = l1.add("Steer Pos(deg)", 0.0).getEntry();
         m_LFSteerMotorTarget = l1.add("Steer Target(deg)", 0.0).getEntry();
         m_LFDriveMotorPos = l1.add("Drive Pos(m)", 0.0).getEntry();
         m_LFDriveMotorSpeed = l1.add("Drive Speed(mps)", 0.0).getEntry();
@@ -548,34 +554,34 @@ public class SwerveDrive extends SubsystemBase {
         ShuffleboardLayout l2 = Tab.getLayout("Right-Front", BuiltInLayouts.kList);
         l2.withPosition(1, 0);
         l2.withSize(1, 5);
-        m_RFCanCoderPos = l2.add("CanCoder Deg", 0.0).getEntry();
-        m_RFSteerMotorPos = l2.add("Steer Posn", 0.0).getEntry();
-        m_RFSteerMotorTarget = l2.add("Steer Target", 0.0).getEntry();
-        m_RFDriveMotorPos = l2.add("Drive Pos'n", 0.0).getEntry();
-        m_RFDriveMotorSpeed = l2.add("Drive Speed", 0.0).getEntry();
-        m_RFDriveMotorTargetSpeed = l2.add("Drive Target Spd", 0.0).getEntry();
+        m_RFCanCoderPos = l2.add("CanCoder(deg)", 0.0).getEntry();
+        m_RFSteerMotorPos = l2.add("Steer Pos(deg)", 0.0).getEntry();
+        m_RFSteerMotorTarget = l2.add("Steer Target(deg)", 0.0).getEntry();
+        m_RFDriveMotorPos = l2.add("Drive Pos(m)", 0.0).getEntry();
+        m_RFDriveMotorSpeed = l2.add("Drive Speed(mps)", 0.0).getEntry();
+        m_RFDriveMotorTargetSpeed = l2.add("Drive Target(mps)", 0.0).getEntry();
 
         // create controls to left-rear swerve data
         ShuffleboardLayout l3 = Tab.getLayout("Left-Rear", BuiltInLayouts.kList);
         l3.withPosition(2, 0);
         l3.withSize(1, 5);
-        m_LRCanCoderPos = l3.add("CanCoder Deg", 0.0).getEntry();
-        m_LRSteerMotorPos = l3.add("Steer Posn", 0.0).getEntry();
-        m_LRSteerMotorTarget = l3.add("Steer Target", 0.0).getEntry();
-        m_LRDriveMotorPos = l3.add("Drive Pos'n", 0.0).getEntry();
-        m_LRDriveMotorSpeed = l3.add("Drive Speed", 0.0).getEntry();
-        m_LRDriveMotorTargetSpeed = l3.add("Drive Target Spd", 0.0).getEntry();
+        m_LRCanCoderPos = l3.add("CanCoder(deg)", 0.0).getEntry();
+        m_LRSteerMotorPos = l3.add("Steer Pos(deg)", 0.0).getEntry();
+        m_LRSteerMotorTarget = l3.add("Steer Target(deg)", 0.0).getEntry();
+        m_LRDriveMotorPos = l3.add("Drive Pos(m)", 0.0).getEntry();
+        m_LRDriveMotorSpeed = l3.add("Drive Speed(mps)", 0.0).getEntry();
+        m_LRDriveMotorTargetSpeed = l3.add("Drive Target(mps)", 0.0).getEntry();
 
         // create controls to right-rear swerve data
         ShuffleboardLayout l4 = Tab.getLayout("Right-Rear", BuiltInLayouts.kList);
         l4.withPosition(3, 0);
         l4.withSize(1, 5);
-        m_RRCanCoderPos = l4.add("CanCoder Deg", 0.0).getEntry();
-        m_RRSteerMotorPos = l4.add("Steer Posn", 0.0).getEntry();
-        m_RRSteerMotorTarget = l4.add("Steer Target", 0.0).getEntry();
-        m_RRDriveMotorPos = l4.add("Drive Pos'n", 0.0).getEntry();
-        m_RRDriveMotorSpeed = l4.add("Drive Speed", 0.0).getEntry();
-        m_RRDriveMotorTargetSpeed = l4.add("Drive Target Spd", 0.0).getEntry();
+        m_RRCanCoderPos = l4.add("CanCoder(deg)", 0.0).getEntry();
+        m_RRSteerMotorPos = l4.add("Steer Pos(deg)", 0.0).getEntry();
+        m_RRSteerMotorTarget = l4.add("Steer Target(deg)", 0.0).getEntry();
+        m_RRDriveMotorPos = l4.add("Drive Pos(m)", 0.0).getEntry();
+        m_RRDriveMotorSpeed = l4.add("Drive Speed(mps)", 0.0).getEntry();
+        m_RRDriveMotorTargetSpeed = l4.add("Drive Target(mps)", 0.0).getEntry();
 
     }
 
@@ -584,10 +590,10 @@ public class SwerveDrive extends SubsystemBase {
     private void updateShuffleboard() {
     
         // update CANCoder position values (deg)
-        m_LFCanCoderPos.setDouble(m_LFCanCoder.getPosition().getValueAsDouble()*360.0);
-        m_RFCanCoderPos.setDouble(m_RFCanCoder.getPosition().getValueAsDouble()*360.0);
-        m_LRCanCoderPos.setDouble(m_LRCanCoder.getPosition().getValueAsDouble()*360.0);
-        m_RRCanCoderPos.setDouble(m_RRCanCoder.getPosition().getValueAsDouble()*360.0);
+        m_LFCanCoderPos.setDouble(m_LFCanCoder.getAbsolutePosition().getValueAsDouble()*360.0);
+        m_RFCanCoderPos.setDouble(m_RFCanCoder.getAbsolutePosition().getValueAsDouble()*360.0);
+        m_LRCanCoderPos.setDouble(m_LRCanCoder.getAbsolutePosition().getValueAsDouble()*360.0);
+        m_RRCanCoderPos.setDouble(m_RRCanCoder.getAbsolutePosition().getValueAsDouble()*360.0);
     
         // update steer motor position values (deg)
         m_LFSteerMotorPos.setDouble(m_LFSteerMotor.getPosition().getValueAsDouble()*360.0);
@@ -602,22 +608,22 @@ public class SwerveDrive extends SubsystemBase {
         m_RRSteerMotorTarget.setDouble(m_RRSteerMotor.getClosedLoopReference().getValueAsDouble()*360.0);
 
         // update drive motor speeds (m/s)
-        m_LFDriveMotorSpeed.setDouble(m_LFDriveMotor.getVelocity().getValueAsDouble()*RPS_TO_MPS);
-        m_RFDriveMotorSpeed.setDouble(m_RFDriveMotor.getVelocity().getValueAsDouble()*RPS_TO_MPS);
-        m_LRDriveMotorSpeed.setDouble(m_LRDriveMotor.getVelocity().getValueAsDouble()*RPS_TO_MPS);
-        m_RRDriveMotorSpeed.setDouble(m_RRDriveMotor.getVelocity().getValueAsDouble()*RPS_TO_MPS);
+        m_LFDriveMotorSpeed.setDouble(m_LFDriveMotor.getVelocity().getValueAsDouble()*WHEELRPS_TO_MPS);
+        m_RFDriveMotorSpeed.setDouble(m_RFDriveMotor.getVelocity().getValueAsDouble()*WHEELRPS_TO_MPS);
+        m_LRDriveMotorSpeed.setDouble(m_LRDriveMotor.getVelocity().getValueAsDouble()*WHEELRPS_TO_MPS);
+        m_RRDriveMotorSpeed.setDouble(m_RRDriveMotor.getVelocity().getValueAsDouble()*WHEELRPS_TO_MPS);
 
         // update drive motor targets (m/s)
-        m_LFDriveMotorTargetSpeed.setDouble(m_LFDriveMotor.getClosedLoopReference().getValueAsDouble()*RPS_TO_MPS);
-        m_RFDriveMotorTargetSpeed.setDouble(m_RFDriveMotor.getClosedLoopReference().getValueAsDouble()*RPS_TO_MPS);
-        m_LRDriveMotorTargetSpeed.setDouble(m_LRDriveMotor.getClosedLoopReference().getValueAsDouble()*RPS_TO_MPS);
-        m_RRDriveMotorTargetSpeed.setDouble(m_RRDriveMotor.getClosedLoopReference().getValueAsDouble()*RPS_TO_MPS);
+        m_LFDriveMotorTargetSpeed.setDouble(m_LFDriveMotor.getClosedLoopReference().getValueAsDouble()*WHEELRPS_TO_MPS);
+        m_RFDriveMotorTargetSpeed.setDouble(m_RFDriveMotor.getClosedLoopReference().getValueAsDouble()*WHEELRPS_TO_MPS);
+        m_LRDriveMotorTargetSpeed.setDouble(m_LRDriveMotor.getClosedLoopReference().getValueAsDouble()*WHEELRPS_TO_MPS);
+        m_RRDriveMotorTargetSpeed.setDouble(m_RRDriveMotor.getClosedLoopReference().getValueAsDouble()*WHEELRPS_TO_MPS);
 
         // update drive motor position values (m)
-        m_LFDriveMotorPos.setDouble(m_LFDriveMotor.getPosition().getValueAsDouble()*RPS_TO_MPS);
-        m_RFDriveMotorPos.setDouble(m_RFDriveMotor.getPosition().getValueAsDouble()*RPS_TO_MPS);
-        m_LRDriveMotorPos.setDouble(m_LRDriveMotor.getPosition().getValueAsDouble()*RPS_TO_MPS);
-        m_RRDriveMotorPos.setDouble(m_RRDriveMotor.getPosition().getValueAsDouble()*RPS_TO_MPS);
+        m_LFDriveMotorPos.setDouble(m_LFDriveMotor.getPosition().getValueAsDouble()*WHEELRPS_TO_MPS);
+        m_RFDriveMotorPos.setDouble(m_RFDriveMotor.getPosition().getValueAsDouble()*WHEELRPS_TO_MPS);
+        m_LRDriveMotorPos.setDouble(m_LRDriveMotor.getPosition().getValueAsDouble()*WHEELRPS_TO_MPS);
+        m_RRDriveMotorPos.setDouble(m_RRDriveMotor.getPosition().getValueAsDouble()*WHEELRPS_TO_MPS);
 
     }
 
