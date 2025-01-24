@@ -1,83 +1,102 @@
-package frc.robot.subsystems;
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
 
+package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import com.studica.frc.AHRS;
-import com.studica.frc.AHRS.NavXComType;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import com.ctre.phoenix6.hardware.Pigeon2;
+import frc.robot.RobotMap;
 
 
-public class NavX extends SubsystemBase {
-  
+public class Pigeon extends SubsystemBase {
+
+    //gyro offset adjust
+    private double OffsetAdjust;
+
     // make our gyro object
-    private AHRS gyro;
-
-    // gyro offset
-    private double YawAngleOffset;
-
+    private static Pigeon2 gyro;
 
     /** Creates a new Gyro. */
-    public NavX() {
-        // create gyro and initialize it
-        YawAngleOffset = 0.0;
-        gyro = new AHRS(NavXComType.kMXP_SPI);
-        gyro.reset();
-    
-        // initialize shuffleboard for reporting gyro data
+    public Pigeon() {
+        // initialize shuffleboard
         initializeShuffleboard();
+    
+        // make pigeon object
+        gyro = new Pigeon2(RobotMap.CANID.PIGEON);
+        gyro.reset();
+
+        // offset adjust
+        OffsetAdjust = 0.0;
     }
 
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
         updateShuffleboard();
-    } 
+    }
 
     /** Gets the yaw of the robot
     * @return current yaw value (-180 to 180) */
     public double getYawAngle() {
-        return (-gyro.getYaw())+YawAngleOffset;   // note: navx +ve is opposite of FRC defined axes
+    
+        // scaling factor for CTR Pigeon determine by test - Feb 5 2023
+        // in 2023, best scaling factor was 0.99895833
+        double value = gyro.getYaw().getValueAsDouble()*1.0 + OffsetAdjust;
+    
+        // convert continous number to -180 to +180deg to match NavX function call
+        if (value > 0)
+            return ((value+180.0) %360.0)-180.0;
+        else
+            return ((value-180.0) %360.0)+180.0;
     }
 
-    // resets gyro and offset value
-    public void resetYawAngle() {
-        setYawAngle(0.0);
+  
+    /** Resets yaw to zero -
+    * reset angle depends on team alliance as gyro will be pointed in field direction */
+    public void resetGyro() {
+    
+        OffsetAdjust = 0.0;
+        gyro.reset();
+    } 
+  
+    /** Resets yaw to a value */
+    public void setGyroAngle(double angle) {
+    
+        // reset our Gyro
+        OffsetAdjust -= getYawAngle() - angle;
     }
-
-    // sets gyro to provided angle (in deg)
-    public void setYawAngle(double angle) {
-        YawAngleOffset -= getYawAngle() - angle;
-    }
-
+  
 
     /** Gets the pitch of the robot
-    * @return current pitch value (-180 to 180) */
+    * @return current pitch value in deg */
     public double getPitchAngle() {
-        return gyro.getPitch();
+        return gyro.getPitch().getValueAsDouble();
     }
 
     /** Get Roll
-    * @return -180 to 180 degrees */
+    * @return roll in deg */
     public double getRollAngle() {
-        return gyro.getRoll();
+        return gyro.getRoll().getValueAsDouble();
     }
 
     /** X Acceleration
     * @return ratio of gravity */
     public double getXAcceleration() {
-        return gyro.getRawAccelX();
+        return gyro.getAccelerationX().getValueAsDouble();
     }
 
     /** Y Acceleration
     * @return ratio of gravity */
     public double getYAcceleration() {
-        return gyro.getRawAccelY();
+        return gyro.getAccelerationY().getValueAsDouble();
     }
 
-
+    
     /** Gyro Shuffleboard */
 
   
@@ -94,10 +113,10 @@ public class NavX extends SubsystemBase {
     /** Initialize subsystem shuffleboard page and controls */
     private void initializeShuffleboard() {
         // Create odometry page in shuffleboard
-        ShuffleboardTab Tab = Shuffleboard.getTab("NavX");
+        ShuffleboardTab Tab = Shuffleboard.getTab("Pigeon");
 
         // create controls to display robot position, angle, and gyro angle
-        ShuffleboardLayout l1 = Tab.getLayout("NavX", BuiltInLayouts.kList);
+        ShuffleboardLayout l1 = Tab.getLayout("Pigeon Values", BuiltInLayouts.kList);
         l1.withPosition(0, 0);
         l1.withSize(2, 4);
         m_gyroPitch = l1.add("Pitch (deg)", 0.0).getEntry();

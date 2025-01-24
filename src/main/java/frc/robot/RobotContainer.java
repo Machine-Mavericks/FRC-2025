@@ -2,10 +2,14 @@ package frc.robot;
 
 import frc.robot.commandgroups.TemplateCommandGroup;
 import frc.robot.commands.TemplateCommand;
+import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.NavX;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.TemplateSubsystem;
+import frc.robot.utils.AutoFunctions;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 
@@ -20,6 +24,7 @@ public class RobotContainer {
   public static NavX gyro;
   public static SwerveDrive drivesystem;
   public static TemplateSubsystem mySubsystem;
+  public static Limelight camera;
   // and so on
 
 
@@ -35,6 +40,7 @@ public class RobotContainer {
     gyro = new NavX();
     drivesystem = new SwerveDrive();
     mySubsystem = new TemplateSubsystem();
+    camera = new Limelight("CamName");
     // and so on
     
 
@@ -47,13 +53,21 @@ public class RobotContainer {
   private void configureBindings() {
     
     // attach commands to buttons
-    // for example:
+    
+    // reset gyro to appropriate angle when back pressed.
+    // NOTE: IF ODOMETRY TO BE USED, THEN THE BACK BUTTON SHOULD CALL ODOMETRY TO RESET ANGLE.
+    // ODOMETRY SUBSYSTEM, IN TURN, THEN RESETS GYRO.
+    // FOR NOW, WITHOUT ODOMETRY, BACK BUTTON CAN ONLY RESET GYRO DIRECTLY.
+    driverOp.back().onTrue(new InstantCommand(()->gyro.setYawAngle(AutoFunctions.redVsBlue(new Rotation2d()).getDegrees())));
 
+
+    // examples:
     // on press of driver controller A button, run example TemplateCommand
     driverOp.a().onTrue(new TemplateCommand());
     // on press of operator controller X button, run example TemplateGroupCommand
     toolOp.x().onTrue(new TemplateCommandGroup());
   
+
     
     // description of commands available:
     // .onTrue - runs command when button changes from not-pressed to pressed.
