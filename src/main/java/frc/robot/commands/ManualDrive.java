@@ -57,9 +57,10 @@ public class ManualDrive extends Command {
     public void execute() {
 
         // get joystick input - for competition
-        double dX = RobotContainer.driverOp.getLeftY();
-        double dY = RobotContainer.driverOp.getLeftX();
-        double omega = 3.0 * RobotContainer.driverOp.getRightX();
+        // Note: FRC joystick is oriented +ve to left and +ve down
+        double dX = -RobotContainer.driverOp.getLeftY();
+        double dY = -RobotContainer.driverOp.getLeftX();
+        double omega = -3.0 * RobotContainer.driverOp.getRightX();
         double speedTrigger = RobotContainer.driverOp.getRightTriggerAxis();
         boolean Park = RobotContainer.driverOp.leftBumper().getAsBoolean();
 
