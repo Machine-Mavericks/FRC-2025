@@ -10,6 +10,8 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -17,6 +19,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
@@ -294,7 +297,6 @@ public class SwerveDrive extends SubsystemBase {
         m_LRSteerMotor.setPosition(m_LRCanCoder.getAbsolutePosition().getValue());
         m_RRSteerMotor.setPosition(m_RRCanCoder.getAbsolutePosition().getValue());
     }
-
 
 
     /** Method called periodically by the scheduler */
@@ -626,6 +628,32 @@ public class SwerveDrive extends SubsystemBase {
         m_RRDriveMotorPos.setDouble(m_RRDriveMotor.getPosition().getValueAsDouble()*WHEELRPS_TO_MPS);
 
     }
+
+
+    // ---------- Subsystem Simulation Methods ----------
+    // Note: this section will be moved to odometry subsystem once it is made.
+
+    // robot simulated position
+    public Pose2d SimulatedPosition = new Pose2d();
+
+    /** Method called periodically by the scheduler */
+    @Override
+    public void simulationPeriodic() {
+
+        // get chassis speeds from  
+        ChassisSpeeds speed = driveKinematics.toChassisSpeeds(m_states);
+        
+        // update simulated robot position
+        double x = SimulatedPosition.getX();
+        double y = SimulatedPosition.getY();
+        double heading = SimulatedPosition.getRotation().getRadians();
+        x += 0.02*speed.vxMetersPerSecond;
+        y += 0.02*speed.vyMetersPerSecond;
+        heading += 0.02*speed.omegaRadiansPerSecond;
+        SimulatedPosition = new Pose2d (x, y, new Rotation2d(heading));
+    }
+
+
 
 
 }

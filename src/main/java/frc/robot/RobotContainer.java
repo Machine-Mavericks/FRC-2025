@@ -3,7 +3,7 @@ package frc.robot;
 import frc.robot.commandgroups.TemplateCommandGroup;
 import frc.robot.commands.TemplateCommand;
 import frc.robot.subsystems.Limelight;
-import frc.robot.subsystems.NavX;
+import frc.robot.subsystems.Pigeon;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.TemplateSubsystem;
 import frc.robot.utils.AutoFunctions;
@@ -19,9 +19,11 @@ public class RobotContainer {
   public static CommandXboxController driverOp;
   public static CommandXboxController toolOp;
 
+  // main shuffleboar page
+  public static MainShuffleBoardTab mainShufflePage;
   
   // make pointers to robot subsystems here
-  public static NavX gyro;
+  public static Pigeon gyro;
   public static SwerveDrive drivesystem;
   public static TemplateSubsystem mySubsystem;
   public static Limelight camera;
@@ -36,11 +38,14 @@ public class RobotContainer {
     driverOp = new CommandXboxController(RobotMap.GamePadPorts.DriverID);
     toolOp = new CommandXboxController(RobotMap.GamePadPorts.OperatorID);
     
+    // main shuffleboard page
+    mainShufflePage = new MainShuffleBoardTab();
+
     // create instances of subsystems here
-    gyro = new NavX();
+    gyro = new Pigeon();
     drivesystem = new SwerveDrive();
     mySubsystem = new TemplateSubsystem();
-    camera = new Limelight("CamName");
+    camera = new Limelight("camera", true);
     // and so on
     
 
@@ -58,7 +63,7 @@ public class RobotContainer {
     // NOTE: IF ODOMETRY TO BE USED, THEN THE BACK BUTTON SHOULD CALL ODOMETRY TO RESET ANGLE.
     // ODOMETRY SUBSYSTEM, IN TURN, THEN RESETS GYRO.
     // FOR NOW, WITHOUT ODOMETRY, BACK BUTTON CAN ONLY RESET GYRO DIRECTLY.
-    driverOp.back().onTrue(new InstantCommand(()->gyro.setYawAngle(AutoFunctions.redVsBlue(new Rotation2d()).getDegrees())));
+    driverOp.back().onTrue(new InstantCommand(()->gyro.setYawAngle(AutoFunctions.redVsBlue(new Rotation2d(0.0)).getDegrees())));
 
 
     // examples:

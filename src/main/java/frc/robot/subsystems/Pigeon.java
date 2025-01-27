@@ -56,16 +56,14 @@ public class Pigeon extends SubsystemBase {
     }
 
   
-    /** Resets yaw to zero -
-    * reset angle depends on team alliance as gyro will be pointed in field direction */
-    public void resetGyro() {
+    /** Resets yaw to zero  */
+    public void resetYawAngle() {
     
-        OffsetAdjust = 0.0;
-        gyro.reset();
+        setYawAngle(0.0);
     } 
   
     /** Resets yaw to a value */
-    public void setGyroAngle(double angle) {
+    public void setYawAngle(double angle) {
     
         // reset our Gyro
         OffsetAdjust -= getYawAngle() - angle;
@@ -124,6 +122,7 @@ public class Pigeon extends SubsystemBase {
         m_gyroRoll = l1.add("Roll (deg)", 0.0).getEntry();
         m_xAcceleration = l1.add("X Acceleration", 0.0).getEntry();
         m_yAcceleration = l1.add("Y Acceleration", 0.0).getEntry();
+
     }
 
     /** Update subsystem shuffle board page with current Gyro values */
