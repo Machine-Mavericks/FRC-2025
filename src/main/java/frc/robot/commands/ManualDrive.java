@@ -76,6 +76,7 @@ public class ManualDrive extends Command {
         dX = Math.abs(dX) > 0.05 ? dX : 0;
         dY = Math.abs(dY) > 0.05 ? dY : 0;
         omega = Math.abs(omega) > 0.15 ? omega : 0;
+        
 
         // --------- Correct robot angle for gyro angle wander --------
         if(omega == 0.0 && !RobotContainer.driverOp.back().getAsBoolean())
@@ -101,6 +102,13 @@ public class ManualDrive extends Command {
             m_pidDelay = 10;
         }
         // --------- End Correct robot angle for gyro angle wander --------
+
+
+        // Need to deadzone omega again. Anti-wander function above always results in
+        // very small non-zero robot rotation. This resutls in wheels always resetting to 
+        // robot rotate position when robot in rest position.
+        // With deadzoning, this allows wheel orientation to remain as it was.
+        omega = Math.abs(omega) > 0.02 ? omega : 0;
 
 
         powerFactor = basePowerFacter + (speedTrigger * boostPowerFacter);

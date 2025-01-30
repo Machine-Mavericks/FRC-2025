@@ -141,10 +141,10 @@ public class SwerveDrive extends SubsystemBase {
         // note:  if +ve value when wheels are aligned straight, then decrease offset by that value
         // encoders should then read zero when aligned straight.
         // multiply by factor to convert deg back to rotations
-        LFEncoderConfig.MagnetSensor.MagnetOffset = 45.61 * 0.00277777;
-        RFEncoderConfig.MagnetSensor.MagnetOffset = -244.25 * 0.00277777;
-        LREncoderConfig.MagnetSensor.MagnetOffset = 156.88 * 0.00277777;
-        RREncoderConfig.MagnetSensor.MagnetOffset = -109.46 * 0.00277777;
+        LFEncoderConfig.MagnetSensor.MagnetOffset = 47.8 * 0.00277777;
+        RFEncoderConfig.MagnetSensor.MagnetOffset = (-245.05+180.0) * 0.00277777;
+        LREncoderConfig.MagnetSensor.MagnetOffset = (156.43) * 0.00277777;
+        RREncoderConfig.MagnetSensor.MagnetOffset = (-109.6+180.0) * 0.00277777;
 
         // apply configuration to cancoders
         m_LFCanCoder.getConfigurator().apply(LFEncoderConfig);
@@ -174,7 +174,7 @@ public class SwerveDrive extends SubsystemBase {
         // used CTRE webpage to estimate gains from Phoenix 5 gains used in 2023
         // set sensor to mechanism gear ratio
         TalonFXConfiguration steerConfig = new TalonFXConfiguration();
-        steerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        steerConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         steerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         steerConfig.MotorOutput.DutyCycleNeutralDeadband = 0.0001;
         steerConfig.Slot0.kP = 70.0;  //volts/rot
@@ -228,13 +228,11 @@ public class SwerveDrive extends SubsystemBase {
         m_RRDriveMotor.setSafetyEnabled(true);
 
         // configure drive motors
-        // set for clockwise +ve rotation
         // set neutral mode to coast.  Can change to brake later for competition use
         // set deadband so drive motor does not chatter when at zero speed
         // used CTRE webpage to estimate gains from Phoenix 5 gains used in 2023
         // set sensor to mechanism gear ratio
         TalonFXConfiguration driveConfig = new TalonFXConfiguration();
-        driveConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         driveConfig.MotorOutput.DutyCycleNeutralDeadband = 0.0001;
         driveConfig.Slot0.kP = 2.4;     //2.0   //volts/rps
@@ -249,10 +247,14 @@ public class SwerveDrive extends SubsystemBase {
         //steerConfig.CurrentLimits.SupplyCurrentLowerTime =    // note default is 1.0s
         //steerConfig.CurrentLimits.SupplyCurrentLowerLimit =   // note default is 40A
 
-        // apply configuration to motors
+        // apply configuration to motors - set motor +ve direction depending on motor
+        driveConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         m_LFDriveMotor.getConfigurator().apply(driveConfig);
+        driveConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         m_RFDriveMotor.getConfigurator().apply(driveConfig);
+        driveConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         m_LRDriveMotor.getConfigurator().apply(driveConfig);
+        driveConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         m_RRDriveMotor.getConfigurator().apply(driveConfig);
 
         // create drive motor feedback controllers
@@ -272,6 +274,14 @@ public class SwerveDrive extends SubsystemBase {
         m_RFDriveControl.Velocity = 0.0;
         m_LRDriveControl.Velocity = 0.0;
         m_RRDriveControl.Velocity = 0.0;
+
+
+        m_LFDriveMotor.setControl(m_LFDriveControl.withVelocity(0.0));
+        m_RFDriveMotor.setControl(m_RFDriveControl.withVelocity(0.0));
+        m_LRDriveMotor.setControl(m_LRDriveControl.withVelocity(0.0));
+        m_RRDriveMotor.setControl(m_RRDriveControl.withVelocity(0.0));
+
+
 
 
         // ---------- Other ----------
@@ -345,31 +355,27 @@ public class SwerveDrive extends SubsystemBase {
         // if desired speed of a swerve(s) exceed maximum possible, then reduce all speeds while maintaining ratio
         SwerveDriveKinematics.desaturateWheelSpeeds(m_states, MAX_SPEED);
 
+
         // assume drive motors driving in forward direction until determined otherwise
         double LFDriveDir = 1.0;
         double RFDriveDir = 1.0;
         double LRDriveDir = 1.0;
         double RRDriveDir = 1.0;
         
-        
+
         // ---------- Angle Determination for LF Swerve
-        
-        // adder used to determine angle depending on direction of swerve drive
-        double adder1=0.0;
 
-        // get LF motor's current drive direction. If currently in reverse:
-        // a) consider its angle to be 180deg more than its sensor currently shows; and
-        // b) set direction flag to reverse
-        if (m_LFDriveMotor.getClosedLoopReference().getValueAsDouble() < 0.0)
-            { adder1 = 180.0; LFDriveDir = -1.0; }
-
-        // get current angle of swerve (in deg)
+        // get steering motor position - convert from rotations to deg
         double LFCurrentAngleDeg = m_LFSteerMotor.getPosition().getValueAsDouble()*360.0;
 
-        // determine smallest angle to turn swerve to get to desired angle
-        double LFAngleDiff = Utils.AngleDifference(LFCurrentAngleDeg%360.0, adder1+m_states[0].angle.getDegrees());
+        // determine target angle in degrees
+        double LFTargetAngleDeg = m_states[0].angle.getDegrees();
 
-        // to minimize turning, it may be easier to reverse drive, and turn by smaller angle
+        // determine smallest angle to turn swerve to get to desired angle
+        double LFAngleDiff = Utils.AngleDifference(LFCurrentAngleDeg, LFTargetAngleDeg);
+        
+        // To minimize turning, if we need to turn more than 90deg,
+        // it may be easier to reverse drive and turn by smaller angle
         if (LFAngleDiff<-90.0)
             { LFDriveDir *= -1.0; LFAngleDiff+=180.0; }
         else if (LFAngleDiff>90)
@@ -378,47 +384,114 @@ public class SwerveDrive extends SubsystemBase {
         // set angle of swerve drive (convert deg back to rotations = 1/360.0)
         m_LFSteerMotor.setControl(m_LFSteerControl.withPosition((LFCurrentAngleDeg + LFAngleDiff)*0.00277777));
         
-        
+      
         // ---------- Angle Determination for RF Swerve
 
-        double adder2=0.0;
-        if (m_RFDriveMotor.getClosedLoopReference().getValueAsDouble()<0.0)
-            { adder2 = 180.0; RFDriveDir = -1.0; }
+        
         double RFCurrentAngleDeg = m_RFSteerMotor.getPosition().getValueAsDouble()*360.0;
-        double RFAngleDiff = Utils.AngleDifference(RFCurrentAngleDeg%360.0, adder2+m_states[1].angle.getDegrees());
+        double RFTargetAngleDeg = m_states[1].angle.getDegrees();
+        double RFAngleDiff = Utils.AngleDifference(RFCurrentAngleDeg, RFTargetAngleDeg);
         if (RFAngleDiff<-90.0)
             { RFDriveDir *= -1.0; RFAngleDiff+=180.0; }
         else if (RFAngleDiff>90)
             { RFDriveDir *= -1.0; RFAngleDiff-=180.0; }
         m_RFSteerMotor.setControl(m_RFSteerControl.withPosition((RFCurrentAngleDeg + RFAngleDiff)*0.00277777));
-        
+
 
         // ---------- Angle Determination for LR Swerve
 
-        double adder3=0.0;
-        if (m_LRDriveMotor.getClosedLoopReference().getValueAsDouble()<0.0)
-            { adder3 = 180.0; LRDriveDir = -1.0; }
+        
         double LRCurrentAngleDeg = m_LRSteerMotor.getPosition().getValueAsDouble()*360.0;
-        double LRAngleDiff = Utils.AngleDifference(LRCurrentAngleDeg%360.0, adder3+m_states[2].angle.getDegrees());
+        double LRTargetAngleDeg = m_states[2].angle.getDegrees();
+        double LRAngleDiff = Utils.AngleDifference(LRCurrentAngleDeg, LRTargetAngleDeg);
         if (LRAngleDiff<-90.0)
             { LRDriveDir *= -1.0; LRAngleDiff+=180.0; }
         else if (LRAngleDiff>90)
             { LRDriveDir *= -1.0; LRAngleDiff-=180.0; }
         m_LRSteerMotor.setControl(m_LRSteerControl.withPosition((LRCurrentAngleDeg + LRAngleDiff)*0.00277777));
-        
 
+        
         // ---------- Angle Determination for RR Swerve
 
-        double adder4=0.0;
-        if (m_RRDriveMotor.getClosedLoopReference().getValueAsDouble()<0.0)
-            { adder4 = 180.0; RRDriveDir = -1.0; }
         double RRCurrentAngleDeg = m_RRSteerMotor.getPosition().getValueAsDouble()*360.0;
-        double RRAngleDiff = Utils.AngleDifference(RRCurrentAngleDeg%360.0, adder4+m_states[3].angle.getDegrees());
+        double RRTargetAngleDeg = m_states[3].angle.getDegrees();
+        double RRAngleDiff = Utils.AngleDifference(RRCurrentAngleDeg, RRTargetAngleDeg);
         if (RRAngleDiff<-90.0)
             { RRDriveDir *= -1.0; RRAngleDiff+=180.0; }
         else if (RRAngleDiff>90)
             { RRDriveDir *= -1.0; RRAngleDiff-=180.0; }
         m_RRSteerMotor.setControl(m_RRSteerControl.withPosition((RRCurrentAngleDeg + RRAngleDiff)*0.00277777));
+        
+
+
+        
+        // ---------- Angle Determination for LF Swerve
+        
+        // adder used to determine angle depending on direction of swerve drive
+        //double adder1=0.0;
+
+        // get LF motor's current drive direction. If currently in reverse:
+        // a) consider its angle to be 180deg more than its sensor currently shows; and
+        // b) set direction flag to reverse
+        //if (m_LFDriveMotor.getClosedLoopReference().getValueAsDouble() < 0.0)
+        //    { adder1 = 180.0; LFDriveDir = -1.0; }
+
+        // get current angle of swerve (in deg)
+        //double LFCurrentAngleDeg = m_LFSteerMotor.getPosition().getValueAsDouble()*360.0;
+
+        // determine smallest angle to turn swerve to get to desired angle
+        //double LFAngleDiff = Utils.AngleDifference(LFCurrentAngleDeg%360.0, adder1+m_states[0].angle.getDegrees());
+
+        // to minimize turning, it may be easier to reverse drive, and turn by smaller angle
+        //if (LFAngleDiff<-90.0)
+        //    { LFDriveDir *= -1.0; LFAngleDiff+=180.0; }
+        //else if (LFAngleDiff>90)
+        //    { LFDriveDir *= -1.0; LFAngleDiff-=180.0; }
+
+        // set angle of swerve drive (convert deg back to rotations = 1/360.0)
+        //m_LFSteerMotor.setControl(m_LFSteerControl.withPosition((LFCurrentAngleDeg + LFAngleDiff)*0.00277777));
+        
+        
+        // ---------- Angle Determination for RF Swerve
+
+        //double adder2=0.0;
+        //if (m_RFDriveMotor.getClosedLoopReference().getValueAsDouble()<0.0)
+        //    { adder2 = 180.0; RFDriveDir = -1.0; }
+        //double RFCurrentAngleDeg = m_RFSteerMotor.getPosition().getValueAsDouble()*360.0;
+        //double RFAngleDiff = Utils.AngleDifference(RFCurrentAngleDeg%360.0, adder2+m_states[1].angle.getDegrees());
+        //if (RFAngleDiff<-90.0)
+        //    { RFDriveDir *= -1.0; RFAngleDiff+=180.0; }
+        //else if (RFAngleDiff>90)
+        //    { RFDriveDir *= -1.0; RFAngleDiff-=180.0; }
+        //m_RFSteerMotor.setControl(m_RFSteerControl.withPosition((RFCurrentAngleDeg + RFAngleDiff)*0.00277777));
+        
+
+        // ---------- Angle Determination for LR Swerve
+
+        //double adder3=0.0;
+        //if (m_LRDriveMotor.getClosedLoopReference().getValueAsDouble()<0.0)
+        //    { adder3 = 180.0; LRDriveDir = -1.0; }
+        //double LRCurrentAngleDeg = m_LRSteerMotor.getPosition().getValueAsDouble()*360.0;
+        //double LRAngleDiff = Utils.AngleDifference(LRCurrentAngleDeg%360.0, adder3+m_states[2].angle.getDegrees());
+        //if (LRAngleDiff<-90.0)
+        //    { LRDriveDir *= -1.0; LRAngleDiff+=180.0; }
+        //else if (LRAngleDiff>90)
+        //    { LRDriveDir *= -1.0; LRAngleDiff-=180.0; }
+        //m_LRSteerMotor.setControl(m_LRSteerControl.withPosition((LRCurrentAngleDeg + LRAngleDiff)*0.00277777));
+        
+
+        // ---------- Angle Determination for RR Swerve
+
+        //double adder4=0.0;
+        //if (m_RRDriveMotor.getClosedLoopReference().getValueAsDouble()<0.0)
+        //    { adder4 = 180.0; RRDriveDir = -1.0; }
+        //double RRCurrentAngleDeg = m_RRSteerMotor.getPosition().getValueAsDouble()*360.0;
+        //double RRAngleDiff = Utils.AngleDifference(RRCurrentAngleDeg%360.0, adder4+m_states[3].angle.getDegrees());
+        //if (RRAngleDiff<-90.0)
+        //    { RRDriveDir *= -1.0; RRAngleDiff+=180.0; }
+        //else if (RRAngleDiff>90)
+        //    { RRDriveDir *= -1.0; RRAngleDiff-=180.0; }
+        //m_RRSteerMotor.setControl(m_RRSteerControl.withPosition((RRCurrentAngleDeg + RRAngleDiff)*0.00277777));
         
 
         // ---------- Set Drive Motor Speeds
