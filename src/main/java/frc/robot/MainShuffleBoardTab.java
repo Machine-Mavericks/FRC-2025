@@ -82,12 +82,12 @@ public class MainShuffleBoardTab extends SubsystemBase {
         m_CANBusload.setDouble(canbus.getStatus().BusUtilization*100.0);
 
         // update robot position in field widget
-        m_field.setRobotPose(RobotContainer.drivesystem.SimulatedPosition);
+        m_field.setRobotPose(RobotContainer.odometry.getPose2d());
 
         // update odometry
-        m_robotX.setDouble(RobotContainer.drivesystem.SimulatedPosition.getX());
-        m_robotY.setDouble(RobotContainer.drivesystem.SimulatedPosition.getY());
-        double angle = RobotContainer.drivesystem.SimulatedPosition.getRotation().getDegrees();
+        m_robotX.setDouble(RobotContainer.odometry.getPose2d().getX());
+        m_robotY.setDouble(RobotContainer.odometry.getPose2d().getY());
+        double angle = RobotContainer.odometry.getPose2d().getRotation().getDegrees();
         if (angle > 0)
         angle = (angle+180.0)%360.0 - 180.0;
         else

@@ -1,9 +1,7 @@
 package frc.robot.commands;
 
 import java.util.List;
-
-import com.ctre.phoenix6.Utils;
-
+import frc.robot.utils.Utils;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -13,6 +11,7 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.Trajectory.State;
 import edu.wpi.first.math.trajectory.constraint.MecanumDriveKinematicsConstraint;
+import edu.wpi.first.math.trajectory.constraint.SwerveDriveKinematicsConstraint;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
@@ -109,9 +108,10 @@ public class FollowPath extends Command {
         config.setStartVelocity(startSpeed);
         config.setEndVelocity(endSpeed);
         config.setKinematics(RobotContainer.drivesystem.getKinematics());
-        config.addConstraint(new MecanumDriveKinematicsConstraint(RobotContainer.drivesystem.getKinematics(),
+        config.addConstraint(new SwerveDriveKinematicsConstraint(RobotContainer.drivesystem.getKinematics(),
                 RobotContainer.drivesystem.MAX_SPEED));
 
+                
         // save positions for use during command initialization
         this.pathStartAngle = pathStartAngle;
         this.pathEndPose = pathEndPose;
@@ -162,7 +162,7 @@ public class FollowPath extends Command {
         }
 
         // set trajectory in odometry for display on dashboard
-        RobotContainer.odometry.DisplayTrajectory(trajectory);
+        RobotContainer.mainShufflePage.setFieldTrajectory(trajectory);
 
         // reset PID controllers - to be ready to run path
         xController.reset();
@@ -238,8 +238,12 @@ public class FollowPath extends Command {
                 y_ierror = 0.0;
             double dY = 8.0 * y_error + y_ierror;
 
+
+            
             // robot rotation controller
             double omega = -thetaController.calculate(Utils.AngleDifferenceRads(currentPos.getRotation().getRadians(), targetRobotAngle));
+
+            
 
             // Dashboard values - used for testing purposes. Keep for now if needed in future
             //        RobotContainer.DBTelemetry.addData("Path Error X ",
@@ -278,7 +282,7 @@ public class FollowPath extends Command {
     public void end(boolean interrupted) {
 
         // this command is done. Remove trajectory in odometry from display on dashboard
-        RobotContainer.odometry.DisplayTrajectory(null);
+        RobotContainer.mainShufflePage.deleteFieldTrajectory();
 
         // if end speed is 0m/s, then stop drive to ensure robot drive is not left 'creeping'
         // use 0.01 in case of any floating point rounding error that would make

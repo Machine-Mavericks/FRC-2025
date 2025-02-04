@@ -37,7 +37,7 @@ public class MoveToPose extends Command {
     public void initialize() {
 
         // current robot pose
-        Pose2d currentPose = RobotContainer.Odometry.getCurrentPos();
+        Pose2d currentPose = RobotContainer.odometry.getPose2d();
 
         // straight-line travel heading
         Rotation2d heading = new Rotation2d(dest.getX()-currentPose.getX(),
@@ -66,7 +66,7 @@ public class MoveToPose extends Command {
     @Override
     public boolean isFinished() {
 
-        return cmd.isFinished;
+        return cmd.isFinished();
 
     }
 
