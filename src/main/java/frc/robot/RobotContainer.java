@@ -6,6 +6,7 @@ import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.NavX;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.TemplateSubsystem;
+import frc.robot.subsystems.Odometry;
 import frc.robot.utils.AutoFunctions;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,6 +24,7 @@ public class RobotContainer {
   // make pointers to robot subsystems here
   public static NavX gyro;
   public static SwerveDrive drivesystem;
+  public static Odometry odometry;
   public static TemplateSubsystem mySubsystem;
   public static Limelight camera;
   // and so on
@@ -39,6 +41,7 @@ public class RobotContainer {
     // create instances of subsystems here
     gyro = new NavX();
     drivesystem = new SwerveDrive();
+    odometry = new Odometry();
     mySubsystem = new TemplateSubsystem();
     camera = new Limelight("CamName");
     // and so on
