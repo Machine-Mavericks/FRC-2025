@@ -9,6 +9,7 @@ import frc.robot.subsystems.TemplateSubsystem;
 import frc.robot.subsystems.Odometry;
 import frc.robot.utils.AutoFunctions;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -29,6 +30,7 @@ public class RobotContainer {
   public static Odometry odometry;
   public static TemplateSubsystem mySubsystem;
   public static Limelight camera;
+  public static Encoder deadWheel;
   // and so on
 
 
@@ -49,6 +51,7 @@ public class RobotContainer {
     odometry = new Odometry();
     mySubsystem = new TemplateSubsystem();
     camera = new Limelight("camera", true);
+    deadWheel = new Encoder(0, 1);
     // and so on
     
 
