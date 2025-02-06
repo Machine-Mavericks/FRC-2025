@@ -2,6 +2,7 @@ package frc.robot;
 
 import frc.robot.commandgroups.TemplateCommandGroup;
 import frc.robot.commands.TemplateCommand;
+import frc.robot.subsystems.DeadWheel;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Pigeon;
 import frc.robot.subsystems.SwerveDrive;
@@ -30,7 +31,7 @@ public class RobotContainer {
   public static Odometry odometry;
   public static TemplateSubsystem mySubsystem;
   public static Limelight camera;
-  public static Encoder deadWheel;
+  public static DeadWheel encoder;
   // and so on
 
 
@@ -51,7 +52,7 @@ public class RobotContainer {
     odometry = new Odometry();
     mySubsystem = new TemplateSubsystem();
     camera = new Limelight("camera", true);
-    deadWheel = new Encoder(0, 1);
+    encoder = new DeadWheel();
     // and so on
     
 
