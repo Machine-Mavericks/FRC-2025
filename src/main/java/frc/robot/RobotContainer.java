@@ -72,6 +72,7 @@ public class RobotContainer {
     // FOR NOW, WITHOUT ODOMETRY, BACK BUTTON CAN ONLY RESET GYRO DIRECTLY.
     driverOp.back().onTrue(new InstantCommand(()->gyro.setYawAngle(AutoFunctions.redVsBlue(new Rotation2d(0.0)).getDegrees())));
 
+    driverOp.start().onTrue(new InstantCommand(()->DeadWheel.ResetEncoder()));
 
     // examples:
     // on press of driver controller A button, run example TemplateCommand
