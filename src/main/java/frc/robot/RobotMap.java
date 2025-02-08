@@ -28,6 +28,8 @@ public class RobotMap {
         public static final int RR_DRIVE_MOTOR = 9;
         // CAN ID for CTR Pigeon Gyro
         public static final int PIGEON = 14;
+        public static final int L_ELEVATOR = 13;
+        public static final int R_ELEVATOR = 15;
 
         // CAN ID for ARM
         //public static final int ARM_MOTOR = 13;
@@ -50,6 +52,10 @@ public class RobotMap {
         // Analog range sensor - used for floor cone pickup
         //public static final int AIN_0_FLOORSENSOR = 0;
         
+    }
+    public static class DIO {
+        public static final int maxLimitSwitch = 0;
+        public static final int minLimitSwitch = 1;
     }
 
     public static class PWMPorts {
