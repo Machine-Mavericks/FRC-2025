@@ -2,8 +2,11 @@ package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
 
@@ -18,15 +21,19 @@ public class CoralGrabber extends SubsystemBase {
 
     private SparkMax m_IntakeMotor1;
     private SparkMax m_IntakeMotor2;
+    SparkMaxConfig coralConfig = new SparkMaxConfig();
 
+    // needs gear ratio factored in  
     private static double  Intake_Speed = 1;
 
 
-    public CoralGrabber() {
 
+    public CoralGrabber() {
+        
         m_IntakeMotor1 = new SparkMax (RobotMap.CANID.IN1_INTAKE_Motor,MotorType.kBrushless);
         m_IntakeMotor2 = new SparkMax (RobotMap.CANID.IN2_INTAKE_Motor,MotorType.kBrushless);
-
+        coralConfig.limitSwitch.reverseLimitSwitchEnabled(true);
+        coralConfig.limitSwitch.forwardLimitSwitchEnabled(true);
     }
 
     /** Method called periodically by the scheduler
