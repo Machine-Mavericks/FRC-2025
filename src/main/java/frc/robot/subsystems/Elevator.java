@@ -32,28 +32,28 @@ public class Elevator extends SubsystemBase {
      */
     @Override
     public void periodic() {
-      if (maxLimitSwitch.get()){ // elevator reaches max height
-        heightMax = true;
-      }
-      if (minLimitSwitch.get()){ // elevator reaches max height
-        heightMin = true;
-      }
+        if (maxLimitSwitch.get()) { // elevator reaches max height
+            heightMax = true;
+        }
+        if (minLimitSwitch.get()) { // elevator reaches max height
+            heightMin = true;
+        }
     }
 
     public void ElevatorUp() {
-        while (!heightMax){
-        elevatorMotorL.set(0.5);
-        elevatorMotorR.set(0.5);
+        while (!heightMax) {
+            elevatorMotorL.set(0.5);
+            elevatorMotorR.set(0.5);
         }
-       ElevatorStop();
+        ElevatorStop();
     }
 
     public void ElevatorDown() {
-        while (!heightMin){
-        elevatorMotorL.set(-0.5);
-        elevatorMotorR.set(-0.5);
+        while (!heightMin) {
+            elevatorMotorL.set(-0.5);
+            elevatorMotorR.set(-0.5);
         }
-       ElevatorStop();
+        ElevatorStop();
     }
 
     public void ElevatorStop() {
