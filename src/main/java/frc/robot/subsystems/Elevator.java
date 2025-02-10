@@ -6,6 +6,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 import frc.robot.RobotMap;
 
 /** Subsystem */
@@ -31,11 +32,15 @@ public class Elevator extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        
+      if (maxLimitSwitch.get()){ // elevator reaches max height
+        heightMax = true;
+      }
+      if (minLimitSwitch.get()){ // elevator reaches max height
+        heightMin = true;
+      }
     }
 
     public void ElevatorUp() {
-        heightMin = false;
         while (!heightMax){
         elevatorMotorL.set(0.5);
         elevatorMotorR.set(0.5);
@@ -44,7 +49,6 @@ public class Elevator extends SubsystemBase {
     }
 
     public void ElevatorDown() {
-        heightMax = false;
         while (!heightMin){
         elevatorMotorL.set(-0.5);
         elevatorMotorR.set(-0.5);
