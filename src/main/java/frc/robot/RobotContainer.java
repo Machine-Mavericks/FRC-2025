@@ -2,6 +2,7 @@ package frc.robot;
 
 import frc.robot.commandgroups.TemplateCommandGroup;
 import frc.robot.commands.TemplateCommand;
+import frc.robot.subsystems.DeadWheel;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Pigeon;
 import frc.robot.subsystems.SwerveDrive;
@@ -9,6 +10,7 @@ import frc.robot.subsystems.TemplateSubsystem;
 import frc.robot.subsystems.Odometry;
 import frc.robot.utils.AutoFunctions;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -29,6 +31,7 @@ public class RobotContainer {
   public static Odometry odometry;
   public static TemplateSubsystem mySubsystem;
   public static Limelight camera;
+  public static DeadWheel encoder;
   // and so on
 
 
@@ -49,6 +52,7 @@ public class RobotContainer {
     odometry = new Odometry();
     mySubsystem = new TemplateSubsystem();
     camera = new Limelight("camera", true);
+    encoder = new DeadWheel();
     // and so on
     
 
@@ -68,6 +72,7 @@ public class RobotContainer {
     // FOR NOW, WITHOUT ODOMETRY, BACK BUTTON CAN ONLY RESET GYRO DIRECTLY.
     driverOp.back().onTrue(new InstantCommand(()->gyro.setYawAngle(AutoFunctions.redVsBlue(new Rotation2d(0.0)).getDegrees())));
 
+    driverOp.start().onTrue(new InstantCommand(()->DeadWheel.ResetEncoder()));
 
     // examples:
     // on press of driver controller A button, run example TemplateCommand
