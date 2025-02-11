@@ -3,7 +3,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotContainer;
+import frc.robot.RobotMap;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
@@ -12,15 +12,15 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 /** Subsystem */
 public class DeadWheel extends SubsystemBase {
-    static Encoder encoderLeft = new Encoder(0,1);
-    static Encoder encoderRight = new Encoder(0, 1);
-    static Encoder encoderFront = new Encoder(0, 1);
+    
+    // deadwheel encoders
+    static Encoder encoderLeft = new Encoder(RobotMap.DIO.LEFTENCODER_A,RobotMap.DIO.LEFTENCODER_B);
+    static Encoder encoderRight = new Encoder(RobotMap.DIO.RIGHTENCODER_A, RobotMap.DIO.RIGHTENCODER_B);
+    static Encoder encoderFront = new Encoder(RobotMap.DIO.FRONTENCODER_A, RobotMap.DIO.FRONTENCODER_B);
+    
     static double distanceCM;
     static double LATERAL_DISTANCE = 1, FORWARD_OFFSET = 1;
     
-
-    // Local objects and variables here
-    // These are for things that only belong to, and used by, the subsystem
 
     /** Place code here to initialize subsystem */
     public DeadWheel() {

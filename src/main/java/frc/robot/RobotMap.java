@@ -42,16 +42,14 @@ public class RobotMap {
     /**
      * Inner class to hold RoboRIO I/O connection constants
      */
-  public static class RIO {
-        // Grabber - Input Digital Switch (true if item is grabbed)
-        //public static final int DIO_0_GRABBERSW = 0;
-
-        // Ultrasonic sensor - used for distance to shelf pickup
-        //public static final int DIO_3_ULTRASONIC_A = 3;
-        //public static final int DIO_4_ULTRASONIC_B = 4;
-
-        // Analog range sensor - used for floor cone pickup
-        //public static final int AIN_0_FLOORSENSOR = 0;
+  public static class DIO {
+        // Deadwheel odometry pods
+        public static final int LEFTENCODER_A = 0;
+        public static final int LEFTENCODER_B = 1;
+        public static final int RIGHTENCODER_A = 2;
+        public static final int RIGHTENCODER_B = 3;
+        public static final int FRONTENCODER_A = 4;
+        public static final int FRONTENCODER_B = 5;
         
     }
 

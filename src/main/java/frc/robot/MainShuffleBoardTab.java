@@ -5,6 +5,7 @@ import java.util.Map;
 import com.ctre.phoenix6.CANBus;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
@@ -179,13 +180,16 @@ public class MainShuffleBoardTab extends SubsystemBase {
     // draws supplied trajectory on field widget on shuffleboard
     public void setFieldTrajectory(Trajectory trajectory)
     {
-        m_field.getObject("Field").setTrajectory(trajectory);
+        if (trajectory!=null)
+            m_field.getObject("Field").setTrajectory(trajectory);
+        else
+            m_field.getObject("Field").setTrajectory(new Trajectory());
     }
 
     // remote currently shown field trajectory
     public void deleteFieldTrajectory()
     {
-        // remove by sending empty array pof poses to field object
+        // remove by sending empty array of poses to field object
         Pose2d poses[] = {};
         m_field.getObject("Field").setPoses(poses);
     }
