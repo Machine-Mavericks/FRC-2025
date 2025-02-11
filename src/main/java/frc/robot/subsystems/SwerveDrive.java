@@ -10,8 +10,6 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -19,7 +17,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
@@ -39,21 +36,21 @@ public class SwerveDrive extends SubsystemBase {
     private final double TRACK_LENGTH = 0.29;  // Length between the front and back wheel - in m.
     
     // steering gear ratio for SPS MK4 L1 Swerve
-    static final double STEER_RATIO = 12.8;
+    private final double STEER_RATIO = 12.8;
 
     // drive gear ratio for SPS MK4 L1 Swerve
-    static final double DRIVE_RATIO = 8.14;
+    private final double DRIVE_RATIO = 8.14;
 
     // drive wheel diameter in m
-    final double WHEEL_DIA = 0.1;              
+    private double WHEEL_DIA = 0.1;              
 
     // conversion factors - used to convert motor MPS to RPS and vice versa
-    final double WHEELRPS_TO_MPS = Math.PI * WHEEL_DIA;
-    final double MPS_TO_WHEELRPS = 1.0 / WHEELRPS_TO_MPS;
+    private final double WHEELRPS_TO_MPS = Math.PI * WHEEL_DIA;
+    private final double MPS_TO_WHEELRPS = 1.0 / WHEELRPS_TO_MPS;
 
     // constants for FalconFx motors
-    final double MAXRPM = 6380.0*0.975;
-    final double MAXRPS = MAXRPM / 60.0;
+    private final double MAXRPM = 6380.0*0.975;
+    private final double MAXRPS = MAXRPM / 60.0;
 
     // maximum expected drive speed or robot (m/s)
     public final double MAX_SPEED = MAXRPS * WHEELRPS_TO_MPS / DRIVE_RATIO;
@@ -92,7 +89,7 @@ public class SwerveDrive extends SubsystemBase {
     private VelocityVoltage m_LRDriveControl;
     private VelocityVoltage m_RRDriveControl;
 
-    // Swerve module states - contains speed(m/s) and angle for each swerve module
+    // Swerve module states - contains target speed(m/s) and angle for each swerve module
     private SwerveModuleState[] m_states;
 
 
@@ -140,6 +137,7 @@ public class SwerveDrive extends SubsystemBase {
         // units - in rotations
         // note:  if +ve value when wheels are aligned straight, then decrease offset by that value
         // encoders should then read zero when aligned straight.
+        // when aligning, wheel ring gears face inside robot
         // multiply by factor to convert deg back to rotations
         LFEncoderConfig.MagnetSensor.MagnetOffset = 47.8 * 0.00277777;
         RFEncoderConfig.MagnetSensor.MagnetOffset = (-245.05+180.0) * 0.00277777;
@@ -274,13 +272,12 @@ public class SwerveDrive extends SubsystemBase {
         m_RFDriveControl.Velocity = 0.0;
         m_LRDriveControl.Velocity = 0.0;
         m_RRDriveControl.Velocity = 0.0;
-
-
+        
+        
         m_LFDriveMotor.setControl(m_LFDriveControl.withVelocity(0.0));
         m_RFDriveMotor.setControl(m_RFDriveControl.withVelocity(0.0));
         m_LRDriveMotor.setControl(m_LRDriveControl.withVelocity(0.0));
         m_RRDriveMotor.setControl(m_RRDriveControl.withVelocity(0.0));
-
 
 
 
@@ -340,7 +337,7 @@ public class SwerveDrive extends SubsystemBase {
     
     public void RobotDrive(ChassisSpeeds speed, boolean Park) {
     
-        // try this to see if the swerve modules will leave the wheel angles alone when the speed is zero instead of setting the angle to zero
+        // get desired swerve states from chassis speeds using defined kinematics
         m_states = driveKinematics.toSwerveModuleStates(speed, m_CenterOfRotation); 
 
         // Park will override any of the drive inputs for chassis speeds
@@ -421,78 +418,7 @@ public class SwerveDrive extends SubsystemBase {
         else if (RRAngleDiff>90)
             { RRDriveDir *= -1.0; RRAngleDiff-=180.0; }
         m_RRSteerMotor.setControl(m_RRSteerControl.withPosition((RRCurrentAngleDeg + RRAngleDiff)*0.00277777));
-        
-
-
-        
-        // ---------- Angle Determination for LF Swerve
-        
-        // adder used to determine angle depending on direction of swerve drive
-        //double adder1=0.0;
-
-        // get LF motor's current drive direction. If currently in reverse:
-        // a) consider its angle to be 180deg more than its sensor currently shows; and
-        // b) set direction flag to reverse
-        //if (m_LFDriveMotor.getClosedLoopReference().getValueAsDouble() < 0.0)
-        //    { adder1 = 180.0; LFDriveDir = -1.0; }
-
-        // get current angle of swerve (in deg)
-        //double LFCurrentAngleDeg = m_LFSteerMotor.getPosition().getValueAsDouble()*360.0;
-
-        // determine smallest angle to turn swerve to get to desired angle
-        //double LFAngleDiff = Utils.AngleDifference(LFCurrentAngleDeg%360.0, adder1+m_states[0].angle.getDegrees());
-
-        // to minimize turning, it may be easier to reverse drive, and turn by smaller angle
-        //if (LFAngleDiff<-90.0)
-        //    { LFDriveDir *= -1.0; LFAngleDiff+=180.0; }
-        //else if (LFAngleDiff>90)
-        //    { LFDriveDir *= -1.0; LFAngleDiff-=180.0; }
-
-        // set angle of swerve drive (convert deg back to rotations = 1/360.0)
-        //m_LFSteerMotor.setControl(m_LFSteerControl.withPosition((LFCurrentAngleDeg + LFAngleDiff)*0.00277777));
-        
-        
-        // ---------- Angle Determination for RF Swerve
-
-        //double adder2=0.0;
-        //if (m_RFDriveMotor.getClosedLoopReference().getValueAsDouble()<0.0)
-        //    { adder2 = 180.0; RFDriveDir = -1.0; }
-        //double RFCurrentAngleDeg = m_RFSteerMotor.getPosition().getValueAsDouble()*360.0;
-        //double RFAngleDiff = Utils.AngleDifference(RFCurrentAngleDeg%360.0, adder2+m_states[1].angle.getDegrees());
-        //if (RFAngleDiff<-90.0)
-        //    { RFDriveDir *= -1.0; RFAngleDiff+=180.0; }
-        //else if (RFAngleDiff>90)
-        //    { RFDriveDir *= -1.0; RFAngleDiff-=180.0; }
-        //m_RFSteerMotor.setControl(m_RFSteerControl.withPosition((RFCurrentAngleDeg + RFAngleDiff)*0.00277777));
-        
-
-        // ---------- Angle Determination for LR Swerve
-
-        //double adder3=0.0;
-        //if (m_LRDriveMotor.getClosedLoopReference().getValueAsDouble()<0.0)
-        //    { adder3 = 180.0; LRDriveDir = -1.0; }
-        //double LRCurrentAngleDeg = m_LRSteerMotor.getPosition().getValueAsDouble()*360.0;
-        //double LRAngleDiff = Utils.AngleDifference(LRCurrentAngleDeg%360.0, adder3+m_states[2].angle.getDegrees());
-        //if (LRAngleDiff<-90.0)
-        //    { LRDriveDir *= -1.0; LRAngleDiff+=180.0; }
-        //else if (LRAngleDiff>90)
-        //    { LRDriveDir *= -1.0; LRAngleDiff-=180.0; }
-        //m_LRSteerMotor.setControl(m_LRSteerControl.withPosition((LRCurrentAngleDeg + LRAngleDiff)*0.00277777));
-        
-
-        // ---------- Angle Determination for RR Swerve
-
-        //double adder4=0.0;
-        //if (m_RRDriveMotor.getClosedLoopReference().getValueAsDouble()<0.0)
-        //    { adder4 = 180.0; RRDriveDir = -1.0; }
-        //double RRCurrentAngleDeg = m_RRSteerMotor.getPosition().getValueAsDouble()*360.0;
-        //double RRAngleDiff = Utils.AngleDifference(RRCurrentAngleDeg%360.0, adder4+m_states[3].angle.getDegrees());
-        //if (RRAngleDiff<-90.0)
-        //    { RRDriveDir *= -1.0; RRAngleDiff+=180.0; }
-        //else if (RRAngleDiff>90)
-        //    { RRDriveDir *= -1.0; RRAngleDiff-=180.0; }
-        //m_RRSteerMotor.setControl(m_RRSteerControl.withPosition((RRCurrentAngleDeg + RRAngleDiff)*0.00277777));
-        
+         
 
         // ---------- Set Drive Motor Speeds
 
@@ -502,7 +428,6 @@ public class SwerveDrive extends SubsystemBase {
         m_RFDriveMotor.setControl(m_RFDriveControl.withVelocity(m_states[1].speedMetersPerSecond*RFDriveDir*MPS_TO_WHEELRPS));
         m_LRDriveMotor.setControl(m_LRDriveControl.withVelocity(m_states[2].speedMetersPerSecond*LRDriveDir*MPS_TO_WHEELRPS));
         m_RRDriveMotor.setControl(m_RRDriveControl.withVelocity(m_states[3].speedMetersPerSecond*RRDriveDir*MPS_TO_WHEELRPS));
-
     }
 
 
@@ -565,6 +490,11 @@ public class SwerveDrive extends SubsystemBase {
 
         return states;
 
+    }
+
+    /* Returns commanded swerve target states - intended for use by drive simulation */
+    public SwerveModuleState[] getTargetModuleStates() {
+        return m_states;
     }
 
 
@@ -699,33 +629,7 @@ public class SwerveDrive extends SubsystemBase {
         m_RFDriveMotorPos.setDouble(m_RFDriveMotor.getPosition().getValueAsDouble()*WHEELRPS_TO_MPS);
         m_LRDriveMotorPos.setDouble(m_LRDriveMotor.getPosition().getValueAsDouble()*WHEELRPS_TO_MPS);
         m_RRDriveMotorPos.setDouble(m_RRDriveMotor.getPosition().getValueAsDouble()*WHEELRPS_TO_MPS);
-
     }
-
-
-    // ---------- Subsystem Simulation Methods ----------
-    // Note: this section will be moved to odometry subsystem once it is made.
-
-    // robot simulated position
-    public Pose2d SimulatedPosition = new Pose2d();
-
-    /** Method called periodically by the scheduler */
-    @Override
-    public void simulationPeriodic() {
-
-        // get chassis speeds from  
-        ChassisSpeeds speed = driveKinematics.toChassisSpeeds(m_states);
-        
-        // update simulated robot position
-        double x = SimulatedPosition.getX();
-        double y = SimulatedPosition.getY();
-        double heading = SimulatedPosition.getRotation().getRadians();
-        x += 0.02*speed.vxMetersPerSecond;
-        y += 0.02*speed.vyMetersPerSecond;
-        heading += 0.02*speed.omegaRadiansPerSecond;
-        SimulatedPosition = new Pose2d (x, y, new Rotation2d(heading));
-    }
-
 
 
 

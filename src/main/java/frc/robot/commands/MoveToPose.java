@@ -1,7 +1,6 @@
 package frc.robot.commands;
 
 import java.util.ArrayList;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -18,18 +17,19 @@ public class MoveToPose extends Command {
     // local copy of input parameters
     double maxSpeed, maxAccel;
     Pose2d dest;
+    
     // constructor
     public MoveToPose(double maxSpeed,
                       double maxAccel, 
                       Pose2d destination) {
+        
         // record input parameters
         this.maxSpeed= maxSpeed;
         this.maxAccel = maxAccel;
         this.dest = destination;
-        addRequirements(RobotContainer.drivesystem);
 
-        // add subsystem requirements (if any) - for example:
-        //addRequirements(RobotContainer.drivesystem);
+        // this command requires robot drive subsystem
+        addRequirements(RobotContainer.drivesystem);
     }
 
     // This method is called once when command is started
@@ -60,20 +60,19 @@ public class MoveToPose extends Command {
 
     // This method is called periodically while command is active
     @Override
-    public void execute() { cmd.execute();}
+    public void execute() { 
+        cmd.execute();
+    }
 
     // This method to return true only when command is to finish. Otherwise return false
     @Override
     public boolean isFinished() {
-
         return cmd.isFinished();
-
     }
 
     // This method is called once when command is finished.
     @Override
     public void end(boolean interrupted) {
-
         cmd.end(interrupted);
     }
 

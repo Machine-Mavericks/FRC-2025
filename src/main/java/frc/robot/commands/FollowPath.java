@@ -10,7 +10,6 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.Trajectory.State;
-import edu.wpi.first.math.trajectory.constraint.MecanumDriveKinematicsConstraint;
 import edu.wpi.first.math.trajectory.constraint.SwerveDriveKinematicsConstraint;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -131,7 +130,6 @@ public class FollowPath extends Command {
         yController.setIntegratorRange(-10.0, 10.0);
         thetaController.setIntegratorRange(-5.0, 5.0);
 
-
         // set up timer
         pathTime = new Timer();
     }
@@ -175,6 +173,7 @@ public class FollowPath extends Command {
 
         // reset path timer
         pathTime.reset();
+        pathTime.start();
 
         // set initial robot rotation target (in rads)
         startRobotAngle = currentPos.getRotation().getRadians();
@@ -186,13 +185,9 @@ public class FollowPath extends Command {
                 robotEndAngle.getDegrees())) / trajectory.getTotalTimeSeconds();
         else
             rotationRate = 0.0;
-    
-        
-        }
+    }
 
 
-
-    
 
     // This method is called periodically while command is active
     @Override
@@ -238,28 +233,8 @@ public class FollowPath extends Command {
                 y_ierror = 0.0;
             double dY = 8.0 * y_error + y_ierror;
 
-
-            
             // robot rotation controller
             double omega = -thetaController.calculate(Utils.AngleDifferenceRads(currentPos.getRotation().getRadians(), targetRobotAngle));
-
-            
-
-            // Dashboard values - used for testing purposes. Keep for now if needed in future
-            //        RobotContainer.DBTelemetry.addData("Path Error X ",
-            //                targetPathState.poseMeters.getX() - currentPos.getX());
-            //        RobotContainer.DBTelemetry.addData("Path Error Y ",
-            //                targetPathState.poseMeters.getY() - currentPos.getY());
-            //        RobotContainer.DBTelemetry.addData("Path Error Theta ",
-            //                Utils.AngleDifferenceRads(currentPos.getRotation().getRadians(),targetRobotAngle));
-            //
-            //        RobotContainer.DBTelemetry.addData("X Control Out ",
-            //                dX);
-            //        RobotContainer.DBTelemetry.addData("Y Control Out ",
-            //                dY);
-            //        RobotContainer.DBTelemetry.addData("Z Control Out ",
-            //                omega);
-            //        RobotContainer.DBTelemetry.update();
 
             // go ahead and drive robot
             RobotContainer.drivesystem.FieldDrive(dX, dY, omega, isScheduled());
