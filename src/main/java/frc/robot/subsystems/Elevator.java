@@ -3,7 +3,9 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.LimitSwitchConfig.Type;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
@@ -22,8 +24,19 @@ public class Elevator extends SubsystemBase {
         elevatorConfig.limitSwitch.forwardLimitSwitchEnabled(true);
         elevatorConfig.limitSwitch.forwardLimitSwitchType(Type.kNormallyClosed);
         elevatorConfig.limitSwitch.reverseLimitSwitchType(Type.kNormallyClosed);
+        elevatorConfig.idleMode(IdleMode.kBrake);
+        elevatorConfig.inverted(false);
+        elevatorConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+        elevatorConfig.closedLoop.p(0.0);
+        elevatorConfig.closedLoop.i(0.0);
+        elevatorConfig.closedLoop.d(0.0);
+        elevatorConfig.closedLoop.outputRange(-1.0, 1.0);
+        elevatorConfig.closedLoop.positionWrappingEnabled(false);
         elevatorMotorL.configure(elevatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        elevatorMotorR.configure(elevatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        SparkMaxConfig followConfig = new SparkMaxConfig();
+        followConfig.follow(elevatorMotorL, false);
+        elevatorMotorR.configure(followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
     }
 
     /**
