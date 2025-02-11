@@ -37,12 +37,6 @@ public class RobotMap {
    
         // CAN ID for CTR Pigeon Gyro
         public static final int PIGEON = 14;
-
-        // CAN ID for ARM
-        //public static final int ARM_MOTOR = 13;
-        //public static final int ARM_CANCODER = 14;
-        // CAN ID for Grabber
-        //public static final int GRABBER_MOTOR = 15;
     }
 
     /**
