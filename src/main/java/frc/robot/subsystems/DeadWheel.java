@@ -13,8 +13,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 /** Subsystem */
 public class DeadWheel extends SubsystemBase {
     static Encoder encoderLeft = new Encoder(0,1);
-    static Encoder encoderRight = new Encoder(0, 1);
-    static Encoder encoderFront = new Encoder(0, 1);
+    static Encoder encoderRight = new Encoder(2, 3);
+    static Encoder encoderFront = new Encoder(4, 5);
     static double distanceCM;
     static double LATERAL_DISTANCE = 1, FORWARD_OFFSET = 1;
     
