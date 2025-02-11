@@ -8,7 +8,9 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.LimitSwitchConfig.Type;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -39,8 +41,18 @@ public class Climb extends SubsystemBase {
         climbConfig.limitSwitch.forwardLimitSwitchEnabled(true);
         climbConfig.limitSwitch.forwardLimitSwitchType(Type.kNormallyClosed);
         climbConfig.limitSwitch.reverseLimitSwitchType(Type.kNormallyClosed);
+        climbConfig.idleMode(IdleMode.kBrake);
+        climbConfig.inverted(false);
+        climbConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+        climbConfig.closedLoop.p(0.0);
+        climbConfig.closedLoop.i(0.0);
+        climbConfig.closedLoop.d(0.0);
+        climbConfig.closedLoop.outputRange(-1.0,1.0);
+        climbConfig.closedLoop.positionWrappingEnabled(false);
         m_ClimbMotor1Max.configure(climbConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        m_ClimbMotor2Max.configure(climbConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        SparkMaxConfig followConfig = new SparkMaxConfig();
+        followConfig.follow(m_ClimbMotor1Max, false);
+        m_ClimbMotor2Max.configure(followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     }
 
