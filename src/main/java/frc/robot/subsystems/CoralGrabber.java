@@ -21,7 +21,7 @@ public class CoralGrabber extends SubsystemBase {
 
     private SparkMax m_IntakeMotor1;
     private SparkMax m_IntakeMotor2;
-    SparkMaxConfig coralConfig = new SparkMaxConfig();
+  
 
     // needs gear ratio factored in  
     private static double  Intake_Speed = 1;
@@ -32,8 +32,7 @@ public class CoralGrabber extends SubsystemBase {
         
         m_IntakeMotor1 = new SparkMax (RobotMap.CANID.IN1_INTAKE_Motor,MotorType.kBrushless);
         m_IntakeMotor2 = new SparkMax (RobotMap.CANID.IN2_INTAKE_Motor,MotorType.kBrushless);
-        coralConfig.limitSwitch.reverseLimitSwitchEnabled(true);
-        coralConfig.limitSwitch.forwardLimitSwitchEnabled(true);
+
     }
 
     /** Method called periodically by the scheduler

@@ -5,10 +5,15 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import java.io.ObjectInputFilter.Config;
 
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
+import com.revrobotics.spark.SparkBase;
 
 
 /** Subsystem */
@@ -21,7 +26,7 @@ public class Climb extends SubsystemBase {
 
     private SparkMax m_ClimbMotor1Max;
     private SparkMax m_ClimbMotor2Max;
-  
+    SparkMaxConfig climbConfig = new SparkMaxConfig();
     
     // gear ratio is 80-1 and only needs to travel 90 degrees
     private static double  ClimbSpeed = 1;
@@ -30,7 +35,12 @@ public class Climb extends SubsystemBase {
         // still needs limit switches
         m_ClimbMotor1Max = new SparkMax (RobotMap.CANID.Cl1_Climb_Motor,MotorType.kBrushless);
         m_ClimbMotor2Max = new SparkMax (RobotMap.CANID.CL2_Climb_Motor,MotorType.kBrushless);
-
+        climbConfig.limitSwitch.reverseLimitSwitchEnabled(true);
+        climbConfig.limitSwitch.forwardLimitSwitchEnabled(true);
+        climbConfig.limitSwitch.forwardLimitSwitchType(Type.kNormallyClosed);
+        climbConfig.limitSwitch.reverseLimitSwitchType(Type.kNormallyClosed);
+        m_ClimbMotor1Max.configure(climbConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        m_ClimbMotor2Max.configure(climbConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     }
 
