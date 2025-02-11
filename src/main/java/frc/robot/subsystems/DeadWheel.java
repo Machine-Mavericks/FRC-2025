@@ -77,7 +77,7 @@ public class DeadWheel extends SubsystemBase {
         return distanceCM;
     }
     public static double convertToCm(Encoder encoder){
-        distanceCM = encoderLeft.getDistance()*2;
+        distanceCM = encoder.getDistance()*2;
         return distanceCM;
     }
    // in centimeters
