@@ -26,8 +26,11 @@ public class DeadWheel extends SubsystemBase {
     /** Place code here to initialize subsystem */
     public DeadWheel() {
         encoderLeft.setDistancePerPulse(4.0/256.0);
+        encoderLeft.setReverseDirection(true);
         encoderFront.setDistancePerPulse(4.0/256.0);
+        encoderFront.setReverseDirection(true);
         encoderRear.setDistancePerPulse(4.0/256.0);
+        encoderRear.setReverseDirection(false);
         initializeShuffleboard();
     }
 
@@ -41,7 +44,7 @@ public class DeadWheel extends SubsystemBase {
 
 
     private static GenericEntry m_left;
-    private static GenericEntry m_right;
+    private static GenericEntry m_rear;
     private static GenericEntry m_front;
   
     private void initializeShuffleboard() {
@@ -51,14 +54,14 @@ public class DeadWheel extends SubsystemBase {
         l1.withPosition(0, 0);
         l1.withSize(2, 4);
         m_left = l1.add("Left ", 0.0).getEntry();
-        m_right = l1.add("Rear ", 0.0).getEntry();
+        m_rear = l1.add("Rear ", 0.0).getEntry();
         m_front = l1.add("Front ", 0.0).getEntry();
     }
 
     private void updateShuffleboard(){
         m_left.setDouble(encoderLeft.getDistance());
-        m_front.setDouble(encoderRear.getDistance());
-        m_right.setDouble(encoderFront.getDistance());
+        m_front.setDouble(encoderFront.getDistance());
+        m_rear.setDouble(encoderRear.getDistance());
     }
 
     public void ResetEncoder(){
