@@ -57,7 +57,7 @@ public class Odometry extends SubsystemBase {
         initializeShuffleboard();
 
         // reset deadwheel encoders
-        RobotContainer.encoder.ResetEncoder();
+       // RobotContainer.encoder.ResetEncoder();
         previousLeft = 0.0;
         previousFront = 0.0;
         previousRear = 0.0;
