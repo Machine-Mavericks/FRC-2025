@@ -1,4 +1,5 @@
 package frc.robot.subsystems;
+
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -20,6 +21,7 @@ public class Elevator extends SubsystemBase {
 
     /** Place code here to initialize subsystem */
     public Elevator() {
+        // initialize limit switches, left motor follows right
         elevatorConfig.limitSwitch.reverseLimitSwitchEnabled(true);
         elevatorConfig.limitSwitch.forwardLimitSwitchEnabled(true);
         elevatorConfig.limitSwitch.forwardLimitSwitchType(Type.kNormallyClosed);
@@ -48,21 +50,28 @@ public class Elevator extends SubsystemBase {
 
     }
 
-    public void ElevatorUp() {
-        elevatorMotorL.set(0.5);
-        elevatorMotorR.set(0.5);
-    }
-
-    public void ElevatorDown() {
-
-        elevatorMotorL.set(-0.5);
-        elevatorMotorR.set(-0.5);
+    public void troughCoral() {
 
     }
 
-    public void ElevatorStop() {
-        elevatorMotorL.set(0);
-        elevatorMotorR.set(0);
+    public void lowCoral() {
+
+    }
+
+    public void medCoral() {
+
+    }
+
+    public void highCoral() {
+
+    }
+
+    public void coralStation() {
+
+    }
+
+    public void startPos() {
+
     }
     // place special subsystem methods here
     // this is where rest of program can access functions to return
