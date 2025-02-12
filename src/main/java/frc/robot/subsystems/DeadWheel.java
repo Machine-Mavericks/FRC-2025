@@ -19,17 +19,17 @@ public class DeadWheel extends SubsystemBase {
     private Encoder encoderRear = new Encoder(RobotMap.DIO.REARENCODER_A, RobotMap.DIO.REARENCODER_B);
     
     private double distanceCM;
-    public static double FRONT_TO_BACK_DISTANCE = 1.0;
-    public static double LATERAL_OFFSET = 1.0;
+    public static double FRONT_TO_BACK_DISTANCE = 0.65;
+    public static double LATERAL_OFFSET = 0.3;
     
 
     /** Place code here to initialize subsystem */
     public DeadWheel() {
-        encoderLeft.setDistancePerPulse(4.0/256.0);
+        encoderLeft.setDistancePerPulse(2.54*4.0*Math.PI/4096.0);
         encoderLeft.setReverseDirection(true);
-        encoderFront.setDistancePerPulse(4.0/256.0);
+        encoderFront.setDistancePerPulse(2.54*4.0*Math.PI/4096.0);
         encoderFront.setReverseDirection(true);
-        encoderRear.setDistancePerPulse(4.0/256.0);
+        encoderRear.setDistancePerPulse(2.54*4.0*Math.PI/4096.0);
         encoderRear.setReverseDirection(false);
         initializeShuffleboard();
     }
@@ -71,22 +71,16 @@ public class DeadWheel extends SubsystemBase {
     }
 
     public double getLeftEncoderDistance(){
-        convertToCm(encoderLeft);
-        return distanceCM;
+        return encoderLeft.getDistance();
     }
     public double getFrontEncoderDistance(){
-        convertToCm(encoderFront);
-        return distanceCM;
+        return encoderFront.getDistance();
     }
     public double getRearEncoderDistance(){
-        convertToCm(encoderRear);
-        return distanceCM;
+        return encoderRear.getDistance();
     }
 
-    public double convertToCm(Encoder encoder){
-        distanceCM = encoder.getDistance()*2;
-        return distanceCM;
-    }
+   
    // in centimeters
     // place special subsystem methods here
     // this is where rest of program can access functions to return
