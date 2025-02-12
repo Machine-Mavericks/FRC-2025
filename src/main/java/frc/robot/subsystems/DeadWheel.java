@@ -39,18 +39,26 @@ public class DeadWheel extends SubsystemBase {
 
     }
 
-    private GenericEntry m_rate;
+
+    private static GenericEntry m_left;
+    private static GenericEntry m_right;
+    private static GenericEntry m_front;
+  
     private void initializeShuffleboard() {
         // Create page in shuffleboard
         ShuffleboardTab Tab = Shuffleboard.getTab("DeadWheel");
         ShuffleboardLayout l1 = Tab.getLayout("DeadWheel", BuiltInLayouts.kList);
         l1.withPosition(0, 0);
         l1.withSize(2, 4);
-        m_rate = l1.add("Rate ", 0.0).getEntry();
+        m_left = l1.add("Left ", 0.0).getEntry();
+        m_right = l1.add("Right ", 0.0).getEntry();
+        m_front = l1.add("Front ", 0.0).getEntry();
     }
 
     private void updateShuffleboard(){
-        m_rate.setDouble(encoderLeft.getRate());
+        m_left.setDouble(encoderLeft.getDistance());
+        m_front.setDouble(encoderRight.getDistance());
+        m_right.setDouble(encoderRight.getDistance());
     }
 
     public void ResetEncoder(){
@@ -71,6 +79,7 @@ public class DeadWheel extends SubsystemBase {
         convertToCm(encoderRear);
         return distanceCM;
     }
+
     public double convertToCm(Encoder encoder){
         distanceCM = encoder.getDistance()*2;
         return distanceCM;
