@@ -79,7 +79,7 @@ public class RobotContainer {
         } ));
         
         
-        driverOp.start().onTrue(new InstantCommand(()->DeadWheel.ResetEncoder()));
+        driverOp.start().onTrue(new InstantCommand(()->encoder.ResetEncoder()));
 
         // examples:
         // on press of driver controller A button, run example TemplateCommand

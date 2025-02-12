@@ -14,19 +14,20 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 public class DeadWheel extends SubsystemBase {
     
     // deadwheel encoders
-    static Encoder encoderLeft = new Encoder(RobotMap.DIO.LEFTENCODER_A,RobotMap.DIO.LEFTENCODER_B);
-    static Encoder encoderRight = new Encoder(RobotMap.DIO.RIGHTENCODER_A, RobotMap.DIO.RIGHTENCODER_B);
-    static Encoder encoderFront = new Encoder(RobotMap.DIO.FRONTENCODER_A, RobotMap.DIO.FRONTENCODER_B);
+    private Encoder encoderLeft = new Encoder(RobotMap.DIO.LEFTENCODER_A,RobotMap.DIO.LEFTENCODER_B);
+    private Encoder encoderFront = new Encoder(RobotMap.DIO.FRONTENCODER_A, RobotMap.DIO.FRONTENCODER_B);
+    private Encoder encoderRear = new Encoder(RobotMap.DIO.REARENCODER_A, RobotMap.DIO.REARENCODER_B);
     
-    static double distanceCM;
-    static double LATERAL_DISTANCE = 1, FORWARD_OFFSET = 1;
+    private double distanceCM;
+    public static double FRONT_TO_BACK_DISTANCE = 1.0;
+    public static double LATERAL_OFFSET = 1.0;
     
 
     /** Place code here to initialize subsystem */
     public DeadWheel() {
-       encoderLeft.setDistancePerPulse(4.0/256.0);
-       encoderRight.setDistancePerPulse(4.0/256.0);
-       encoderFront.setDistancePerPulse(4.0/256.0);
+        encoderLeft.setDistancePerPulse(4.0/256.0);
+        encoderFront.setDistancePerPulse(4.0/256.0);
+        encoderRear.setDistancePerPulse(4.0/256.0);
         initializeShuffleboard();
     }
 
@@ -38,7 +39,7 @@ public class DeadWheel extends SubsystemBase {
 
     }
 
-    private static GenericEntry m_rate;
+    private GenericEntry m_rate;
     private void initializeShuffleboard() {
         // Create page in shuffleboard
         ShuffleboardTab Tab = Shuffleboard.getTab("DeadWheel");
@@ -52,26 +53,26 @@ public class DeadWheel extends SubsystemBase {
         m_rate.setDouble(encoderLeft.getRate());
     }
 
-    public static void ResetEncoder(){
+    public void ResetEncoder(){
         encoderLeft.reset();
-        encoderRight.reset();
         encoderFront.reset();
+        encoderRear.reset();
     }
 
-    public static double getLeftEncoderDistance(){
+    public double getLeftEncoderDistance(){
         convertToCm(encoderLeft);
         return distanceCM;
     }
-    public static double getRightEncoderDistance(){
-        convertToCm(encoderRight);
-        return distanceCM;
-    }
-    public static double getFrontEncoderDistance(){
+    public double getFrontEncoderDistance(){
         convertToCm(encoderFront);
         return distanceCM;
     }
-    public static double convertToCm(Encoder encoder){
-        distanceCM = encoderLeft.getDistance()*2;
+    public double getRearEncoderDistance(){
+        convertToCm(encoderRear);
+        return distanceCM;
+    }
+    public double convertToCm(Encoder encoder){
+        distanceCM = encoder.getDistance()*2;
         return distanceCM;
     }
    // in centimeters
