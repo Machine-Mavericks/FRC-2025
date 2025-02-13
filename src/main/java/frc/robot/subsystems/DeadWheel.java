@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -25,11 +26,11 @@ public class DeadWheel extends SubsystemBase {
 
     /** Place code here to initialize subsystem */
     public DeadWheel() {
-        encoderLeft.setDistancePerPulse(2.54*4.0*Math.PI/4096.0);
+        encoderLeft.setDistancePerPulse(2.54*4.0*Math.PI/1024.0);
         encoderLeft.setReverseDirection(true);
-        encoderFront.setDistancePerPulse(2.54*4.0*Math.PI/4096.0);
+        encoderFront.setDistancePerPulse(2.54*4.0*Math.PI/1024.0);
         encoderFront.setReverseDirection(true);
-        encoderRear.setDistancePerPulse(2.54*4.0*Math.PI/4096.0);
+        encoderRear.setDistancePerPulse(2.54*4.0*Math.PI/1024.0);
         encoderRear.setReverseDirection(false);
         initializeShuffleboard();
     }
