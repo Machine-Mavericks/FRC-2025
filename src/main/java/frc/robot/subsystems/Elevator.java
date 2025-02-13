@@ -19,6 +19,7 @@ public class Elevator extends SubsystemBase {
     static double gearDiameterCM = 3.588 * 2.54;
     static double gearCircumference = gearDiameterCM * Math.PI;
     static double ticksPerRev = 42;
+    static double lastPosTicks;
     // Local objects and variables here
     // These are for things that only belong to, and used by, the subsystem
 
@@ -41,7 +42,7 @@ public class Elevator extends SubsystemBase {
         SparkMaxConfig followConfig = new SparkMaxConfig();
         followConfig.follow(elevatorMotorL, false);
         elevatorMotorR.configure(followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
+        lastPosTicks = 0.0;
     }
 
     /**
