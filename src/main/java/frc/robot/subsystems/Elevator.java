@@ -16,6 +16,9 @@ public class Elevator extends SubsystemBase {
     static SparkMax elevatorMotorL = new SparkMax(RobotMap.CANID.L_ELEVATOR, MotorType.kBrushless);
     static SparkMax elevatorMotorR = new SparkMax(RobotMap.CANID.R_ELEVATOR, MotorType.kBrushless);
     SparkMaxConfig elevatorConfig = new SparkMaxConfig();
+    static double gearDiameterCM = 3.588 * 2.54;
+    static double gearCircumference = gearDiameterCM * Math.PI;
+    static double ticksPerRev = 42;
     // Local objects and variables here
     // These are for things that only belong to, and used by, the subsystem
 
@@ -50,29 +53,16 @@ public class Elevator extends SubsystemBase {
 
     }
 
-    public void troughCoral() {
+    public void moveToPosition(Double position) {
 
     }
-
-    public void lowCoral() {
-
+    private double cmToTicks(double cm){
+        return cm/(gearCircumference/ticksPerRev);
+        //8.43 - 1 gear ratio
+        //3.588" diameter
+        // 42 ticks/revolution(from spec sheet)
     }
 
-    public void medCoral() {
-
-    }
-
-    public void highCoral() {
-
-    }
-
-    public void coralStation() {
-
-    }
-
-    public void startPos() {
-
-    }
     // place special subsystem methods here
     // this is where rest of program can access functions to return
     // values or control the subsystem
