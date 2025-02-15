@@ -84,10 +84,10 @@ public class RobotContainer {
         
         
         driverOp.start().onTrue(new InstantCommand(()->encoder.ResetEncoder()));
-        driverOp.a().onTrue(new InstantCommand(()->RobotContainer.elevator.elevatorRun(elevator.low)));
+        driverOp.a().onTrue(new InstantCommand(()->RobotContainer.elevator.moveToPosition(20)));
         // examples:
         // on press of driver controller A button, run example TemplateCommand
-        driverOp.a().whileTrue(new TemplateCommand());
+        driverOp.back().whileTrue(new TemplateCommand());
         // on press of operator controller X button, run example TemplateGroupCommand
         driverOp.x().whileTrue(new TemplateCommandGroup());
   

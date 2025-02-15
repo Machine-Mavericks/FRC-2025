@@ -33,14 +33,14 @@ public class Elevator extends SubsystemBase {
     /** Place code here to initialize subsystem */
     public Elevator() {
         // initialize limit switches, left motor follows right
-        elevatorConfig.limitSwitch.reverseLimitSwitchEnabled(true);
-        elevatorConfig.limitSwitch.forwardLimitSwitchEnabled(true);
+        elevatorConfig.limitSwitch.reverseLimitSwitchEnabled(false);
+        elevatorConfig.limitSwitch.forwardLimitSwitchEnabled(false);
         elevatorConfig.limitSwitch.forwardLimitSwitchType(Type.kNormallyClosed);
         elevatorConfig.limitSwitch.reverseLimitSwitchType(Type.kNormallyClosed);
         elevatorConfig.idleMode(IdleMode.kBrake);
         elevatorConfig.inverted(false);
         elevatorConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
-        elevatorConfig.closedLoop.p(104.0);
+        elevatorConfig.closedLoop.p(1.0);
         elevatorConfig.closedLoop.i(0.0);
         elevatorConfig.closedLoop.d(0.0);
         elevatorConfig.closedLoop.outputRange(-0.6, 0.6);
@@ -63,7 +63,7 @@ public class Elevator extends SubsystemBase {
     }
 
     public void moveToPosition(double position) {
-        cmToTicks(position);
+        elevatorMotorL.getClosedLoopController().setReference(position, ControlType.kPosition, ClosedLoopSlot.kSlot0);
        
     }
     
@@ -73,5 +73,7 @@ public class Elevator extends SubsystemBase {
         //3.588" diameter
         // 42 ticks/revolution(from spec sheet)
     }
+
+    
 
 }
