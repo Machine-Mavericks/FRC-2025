@@ -8,6 +8,9 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
 
@@ -55,9 +58,9 @@ public class Elevator extends SubsystemBase {
 
     }
 
-    public void moveToPosition(Double position) {
+    public void moveToPosition(double position) {
         cmToTicks(position);
-        
+       
     }
     private double cmToTicks(double cm){
         return cm/(gearCircumference/ticksPerRev);
@@ -65,9 +68,5 @@ public class Elevator extends SubsystemBase {
         //3.588" diameter
         // 42 ticks/revolution(from spec sheet)
     }
-
-    // place special subsystem methods here
-    // this is where rest of program can access functions to return
-    // values or control the subsystem
 
 }
