@@ -20,6 +20,7 @@ public class Elevator extends SubsystemBase {
     static double gearCircumference = gearDiameterCM * Math.PI;
     static double ticksPerRev = 42;
     static double lastPosTicks;
+    static double low = 81.0, med = 121.0, high = 183.0, station = 95.0; 
     // Local objects and variables here
     // These are for things that only belong to, and used by, the subsystem
 
@@ -55,7 +56,8 @@ public class Elevator extends SubsystemBase {
     }
 
     public void moveToPosition(Double position) {
-
+        cmToTicks(position);
+        
     }
     private double cmToTicks(double cm){
         return cm/(gearCircumference/ticksPerRev);
