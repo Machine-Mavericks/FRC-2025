@@ -32,8 +32,8 @@ public class RobotMap {
         public static final int IN2_INTAKE_Motor = 2;
         // CAN IDs for Climb
         //(Dont know ports at the monment this is just for the subsystem)
-        public static final int Cl1_Climb_Motor = 1;
-        public static final int CL2_Climb_Motor = 2;
+        public static final int Cl1_Climb_Motor = 16;
+        public static final int CL2_Climb_Motor = 17;
    
         // CAN ID for CTR Pigeon Gyro
         public static final int PIGEON = 14;

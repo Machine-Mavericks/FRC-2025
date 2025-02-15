@@ -25,7 +25,7 @@ public class Elevator extends SubsystemBase {
     static double gearCircumference = gearDiameterCM * Math.PI;
     static double ticksPerRev = 42;
     static double lastPosTicks;
-    public static double low = 81.0, med = 121.0, high = 183.0, trough = 95.0; 
+    public static double l2 = 81.0, l3 = 121.0, l4 = 183.0, l1 = 95.0, intake = 0.0; 
     private static double ELEVATOR_SPEED = 1; 
     // Local objects and variables here
     // These are for things that only belong to, and used by, the subsystem
