@@ -20,7 +20,7 @@ import frc.robot.RobotMap;
 public class Elevator extends SubsystemBase {
     static SparkMax elevatorMotorL = new SparkMax(RobotMap.CANID.L_ELEVATOR, MotorType.kBrushless);
     static SparkMax elevatorMotorR = new SparkMax(RobotMap.CANID.R_ELEVATOR, MotorType.kBrushless);
-    SparkMaxConfig elevatorConfig = new SparkMaxConfig();
+    SparkMaxConfig elevatorConfig;
     static double gearDiameterCM = 3.588 * 2.54;
     static double gearCircumference = gearDiameterCM * Math.PI;
     static double ticksPerRev = 42;
@@ -33,6 +33,7 @@ public class Elevator extends SubsystemBase {
     /** Place code here to initialize subsystem */
     public Elevator() {
         // initialize limit switches, left motor follows right
+        elevatorConfig = new SparkMaxConfig();
         elevatorConfig.limitSwitch.reverseLimitSwitchEnabled(false);
         elevatorConfig.limitSwitch.forwardLimitSwitchEnabled(false);
         elevatorConfig.limitSwitch.forwardLimitSwitchType(Type.kNormallyClosed);
@@ -40,11 +41,12 @@ public class Elevator extends SubsystemBase {
         elevatorConfig.idleMode(IdleMode.kBrake);
         elevatorConfig.inverted(false);
         elevatorConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
-        elevatorConfig.closedLoop.p(1.0);
+        elevatorConfig.closedLoop.p(0.5);
         elevatorConfig.closedLoop.i(0.0);
         elevatorConfig.closedLoop.d(0.0);
-        elevatorConfig.closedLoop.outputRange(-0.6, 0.6);
+        elevatorConfig.closedLoop.outputRange(-0.1, 0.1);
         elevatorConfig.closedLoop.positionWrappingEnabled(false);
+        elevatorConfig.encoder.positionConversionFactor(1);
         elevatorMotorL.configure(elevatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         SparkMaxConfig followConfig = new SparkMaxConfig();
         followConfig.follow(elevatorMotorL, false);
@@ -64,7 +66,7 @@ public class Elevator extends SubsystemBase {
 
     public void moveToPosition(double position) {
         elevatorMotorL.getClosedLoopController().setReference(position, ControlType.kPosition, ClosedLoopSlot.kSlot0);
-       
+       //elevatorMotorL.set(0.2);
     }
     
     private double cmToTicks(double cm){
