@@ -14,19 +14,23 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 public class DeadWheel extends SubsystemBase {
     
     // deadwheel encoders
-    static Encoder encoderLeft = new Encoder(RobotMap.DIO.LEFTENCODER_A,RobotMap.DIO.LEFTENCODER_B);
-    static Encoder encoderRight = new Encoder(RobotMap.DIO.RIGHTENCODER_A, RobotMap.DIO.RIGHTENCODER_B);
-    static Encoder encoderFront = new Encoder(RobotMap.DIO.FRONTENCODER_A, RobotMap.DIO.FRONTENCODER_B);
+    private Encoder encoderLeft = new Encoder(RobotMap.DIO.LEFTENCODER_A,RobotMap.DIO.LEFTENCODER_B);
+    private Encoder encoderFront = new Encoder(RobotMap.DIO.FRONTENCODER_A, RobotMap.DIO.FRONTENCODER_B);
+    private Encoder encoderRear = new Encoder(RobotMap.DIO.REARENCODER_A, RobotMap.DIO.REARENCODER_B);
     
-    static double distanceCM;
-    static double LATERAL_DISTANCE = 1, FORWARD_OFFSET = 1;
+    private double distanceCM;
+    public static double FRONT_TO_BACK_DISTANCE = 0.65;
+    public static double LATERAL_OFFSET = 0.3;
     
 
     /** Place code here to initialize subsystem */
     public DeadWheel() {
-       encoderLeft.setDistancePerPulse(4.0/256.0);
-       encoderRight.setDistancePerPulse(4.0/256.0);
-       encoderFront.setDistancePerPulse(4.0/256.0);
+        encoderLeft.setDistancePerPulse(2.54*4.0*Math.PI/4096.0);
+        encoderLeft.setReverseDirection(true);
+        encoderFront.setDistancePerPulse(2.54*4.0*Math.PI/4096.0);
+        encoderFront.setReverseDirection(true);
+        encoderRear.setDistancePerPulse(2.54*4.0*Math.PI/4096.0);
+        encoderRear.setReverseDirection(false);
         initializeShuffleboard();
     }
 
@@ -38,9 +42,11 @@ public class DeadWheel extends SubsystemBase {
 
     }
 
+
     private static GenericEntry m_left;
-    private static GenericEntry m_right;
+    private static GenericEntry m_rear;
     private static GenericEntry m_front;
+  
     private void initializeShuffleboard() {
         // Create page in shuffleboard
         ShuffleboardTab Tab = Shuffleboard.getTab("DeadWheel");
@@ -48,38 +54,33 @@ public class DeadWheel extends SubsystemBase {
         l1.withPosition(0, 0);
         l1.withSize(2, 4);
         m_left = l1.add("Left ", 0.0).getEntry();
-        m_right = l1.add("Right ", 0.0).getEntry();
+        m_rear = l1.add("Rear ", 0.0).getEntry();
         m_front = l1.add("Front ", 0.0).getEntry();
     }
 
     private void updateShuffleboard(){
         m_left.setDouble(encoderLeft.getDistance());
-        m_front.setDouble(encoderRight.getDistance());
-        m_right.setDouble(encoderRight.getDistance());
+        m_front.setDouble(encoderFront.getDistance());
+        m_rear.setDouble(encoderRear.getDistance());
     }
 
-    public static void ResetEncoder(){
+    public void ResetEncoder(){
         encoderLeft.reset();
-        encoderRight.reset();
         encoderFront.reset();
+        encoderRear.reset();
     }
 
-    public static double getLeftEncoderDistance(){
-        convertToCm(encoderLeft);
-        return distanceCM;
+    public double getLeftEncoderDistance(){
+        return encoderLeft.getDistance();
     }
-    public static double getRightEncoderDistance(){
-        convertToCm(encoderRight);
-        return distanceCM;
+    public double getFrontEncoderDistance(){
+        return encoderFront.getDistance();
     }
-    public static double getFrontEncoderDistance(){
-        convertToCm(encoderFront);
-        return distanceCM;
+    public double getRearEncoderDistance(){
+        return encoderRear.getDistance();
     }
-    public static double convertToCm(Encoder encoder){
-        distanceCM = encoder.getDistance()*2;
-        return distanceCM;
-    }
+
+   
    // in centimeters
     // place special subsystem methods here
     // this is where rest of program can access functions to return

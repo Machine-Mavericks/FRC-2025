@@ -25,7 +25,7 @@ public class Odometry extends SubsystemBase {
   
     // constant to convert degrees to radians
     public final static float DEGtoRAD = (float) (3.1415926 / 180);
-    static double previousLeft, previousRight, previousFront;
+    static double previousLeft, previousFront, previousRear;
     
     // swerve position estimator
     private SwerveDrivePoseEstimator m_Estimator;
@@ -33,12 +33,10 @@ public class Odometry extends SubsystemBase {
     double fieldX = 0.0;
     double fieldY = 0.0;
     double fieldAngle = 0.0;
-    double leftPos;
-    double rightPos;
-    double frontPos;
+   
     double leftChangePos;
-    double rightChangePos;
     double frontChangePos;
+    double rearChangePos;
 
     public Odometry() {
 
@@ -58,6 +56,12 @@ public class Odometry extends SubsystemBase {
         // create odometry shuffleboard page
         initializeShuffleboard();
 
+        // reset deadwheel encoders
+       // RobotContainer.encoder.ResetEncoder();
+        previousLeft = 0.0;
+        previousFront = 0.0;
+        previousRear = 0.0;
+
         // initialize simulation timer
         simTimer = new Timer();
         simTimer.reset();
@@ -74,37 +78,43 @@ public class Odometry extends SubsystemBase {
         updateOdometry();
         updateShuffleboard();
     
-        leftPos = DeadWheel.getLeftEncoderDistance();
-        rightPos = DeadWheel.getRightEncoderDistance();
-        frontPos = DeadWheel.getFrontEncoderDistance();
+        // get all the deadwheel encoder distances (in m)
+        double leftPos = RobotContainer.encoder.getLeftEncoderDistance()*0.01;
+        double frontPos = RobotContainer.encoder.getFrontEncoderDistance()*0.01;
+        double rearPos =RobotContainer.encoder.getRearEncoderDistance()*0.01;
 
+        // determine changes in distances.
         leftChangePos = leftPos - previousLeft;
-        rightChangePos = rightPos - previousRight;
         frontChangePos = frontPos - previousFront;
+        rearChangePos = rearPos - previousRear;
 
+        // keep encoder positions for next time
         previousLeft = leftPos;
-        previousRight = rightPos;
         previousFront = frontPos;
+        previousRear = rearPos;
 
         // creating the value of sin theta (aka the angle of the hipotinuse)
-        double theta = Math.asin((rightChangePos - leftChangePos) / DeadWheel.LATERAL_DISTANCE);
+        double theta = Math.asin((frontChangePos - rearChangePos) / DeadWheel.FRONT_TO_BACK_DISTANCE);
 
-        // equation that tells us how much the robot has moved forward
-        double ForwardChange = (leftChangePos + rightChangePos) / 2.0;
+        // equation that tells us how much the robot has moved sideways (=avg of front and back encoders)
+        double LateralChange = (frontChangePos + rearChangePos) / 2.0;
 
-        // equation that tells us how much the robot has moved laterally
-        double LateralChange = (frontChangePos - DeadWheel.FORWARD_OFFSET * Math.sin(theta));// Lateral means left to right
+        // equation that tells us how much the robot has moved forward 
+        double ForwardChange = (leftChangePos + DeadWheel.LATERAL_OFFSET * Math.sin(theta));
 
+
+        // need to convert lateral and forward movement from robot-orientation to field-orientation
+        // based on angle of gyro
         double IMUHeading = Math.toRadians(RobotContainer.gyro.getYawAngle());
 
         double fieldForwardChange = ForwardChange * Math.cos(IMUHeading) - LateralChange * Math.sin(IMUHeading);
 
         double fieldLateralChange = ForwardChange * Math.sin(IMUHeading) + LateralChange * Math.cos(IMUHeading);
 
-        fieldX += fieldForwardChange;// += means is equal to and add fieldForwardChange to itself
-
-        fieldY += fieldLateralChange;// += means is equal to and add fieldLateralChange to itself
-
+        // update field coordinates
+        // note: dead wheels only used to update x,y. Field angle left based on IMU angle only
+        fieldX += fieldForwardChange;
+        fieldY += fieldLateralChange;
         fieldAngle = IMUHeading;
     }
 
