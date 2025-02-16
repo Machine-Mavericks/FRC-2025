@@ -1,8 +1,10 @@
 package frc.robot;
 
 import frc.robot.commandgroups.TemplateCommandGroup;
+import frc.robot.commands.MoveToPose;
 import frc.robot.commands.TemplateCommand;
 import frc.robot.subsystems.DeadWheel;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Pigeon;
 import frc.robot.subsystems.SwerveDrive;
@@ -35,9 +37,10 @@ public class RobotContainer {
     public static TemplateSubsystem mySubsystem;
     public static Limelight camera;
     public static DeadWheel encoder;
+    public static Elevator elevator;
     // and so on
 
-
+    
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer(Robot robotptr) {
 
@@ -58,6 +61,7 @@ public class RobotContainer {
         mySubsystem = new TemplateSubsystem();
         camera = new Limelight("camera", true);
         encoder = new DeadWheel();
+        elevator = new Elevator();
         // and so on
     
 
@@ -80,10 +84,13 @@ public class RobotContainer {
         
         
         driverOp.start().onTrue(new InstantCommand(()->encoder.ResetEncoder()));
+        driverOp.a().onTrue(new InstantCommand(()->RobotContainer.elevator.moveToPosition(1)));
+        driverOp.b().onTrue(new InstantCommand(()->RobotContainer.elevator.moveToPosition(0)));
+
 
         // examples:
         // on press of driver controller A button, run example TemplateCommand
-        driverOp.a().whileTrue(new TemplateCommand());
+        driverOp.back().whileTrue(new TemplateCommand());
         // on press of operator controller X button, run example TemplateGroupCommand
         driverOp.x().whileTrue(new TemplateCommandGroup());
   

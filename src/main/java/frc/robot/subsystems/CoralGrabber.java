@@ -44,7 +44,7 @@ public class CoralGrabber extends SubsystemBase {
 
     public void intakeRun(double state){
         m_IntakeMotor1.set(Intake_Speed * state);
-        m_IntakeMotor2.set(Intake_Speed * state);
+        m_IntakeMotor2.set(-1.0* Intake_Speed * state);
     }
 
     // place special subsystem methods here
