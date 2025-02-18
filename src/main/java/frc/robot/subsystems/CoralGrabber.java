@@ -6,6 +6,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
@@ -23,9 +24,6 @@ public class CoralGrabber extends SubsystemBase {
     private SparkMax m_IntakeMotor2;
   
 
-    // needs gear ratio factored in  
-    private static double  Intake_Speed = 1;
-
 
 
     public CoralGrabber() {
@@ -42,10 +40,16 @@ public class CoralGrabber extends SubsystemBase {
 
     }
 
-    public void intakeRun(double state){
-        m_IntakeMotor1.set(Intake_Speed * state);
-        m_IntakeMotor2.set(-1.0* Intake_Speed * state);
+    public void intakeRun(double speed){
+        m_IntakeMotor1.set( speed);
+        m_IntakeMotor2.set(-1.0*speed);
+        Timer.delay(1.0);
+        m_IntakeMotor1.set(0);
+        m_IntakeMotor2.set(0);
     }
+    
+        
+
 
     // place special subsystem methods here
     // this is where rest of program can access functions to return

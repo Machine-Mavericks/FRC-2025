@@ -1,8 +1,11 @@
 package frc.robot;
 
+import frc.robot.commandgroups.OneCoralAutoAnywhere;
 import frc.robot.commandgroups.TemplateCommandGroup;
+import frc.robot.commandgroups.TwoCoralAutoAnywhere;
 import frc.robot.commands.MoveToPose;
 import frc.robot.commands.TemplateCommand;
+import frc.robot.subsystems.CoralGrabber;
 import frc.robot.subsystems.DeadWheel;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Limelight;
@@ -38,6 +41,7 @@ public class RobotContainer {
     public static Limelight camera;
     public static DeadWheel encoder;
     public static Elevator elevator;
+    public static CoralGrabber intake;
     // and so on
 
     
@@ -62,6 +66,7 @@ public class RobotContainer {
         camera = new Limelight("camera", true);
         encoder = new DeadWheel();
         elevator = new Elevator();
+        intake = new CoralGrabber();
         // and so on
     
 
@@ -92,7 +97,8 @@ public class RobotContainer {
         // on press of driver controller A button, run example TemplateCommand
         driverOp.back().whileTrue(new TemplateCommand());
         // on press of operator controller X button, run example TemplateGroupCommand
-        driverOp.x().whileTrue(new TemplateCommandGroup());
+        driverOp.x().whileTrue(new TwoCoralAutoAnywhere());
+        driverOp.leftBumper().whileTrue(new InstantCommand(()-> RobotContainer.intake.intakeRun(0.5)));
   
 
     
