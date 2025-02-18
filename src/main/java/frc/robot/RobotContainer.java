@@ -2,6 +2,7 @@ package frc.robot;
 
 import frc.robot.commandgroups.OneCoralAutoAnywhere;
 import frc.robot.commandgroups.TemplateCommandGroup;
+import frc.robot.commandgroups.ThreeCoralAutoAnywhere;
 import frc.robot.commandgroups.TwoCoralAutoAnywhere;
 import frc.robot.commands.MoveToPose;
 import frc.robot.commands.TemplateCommand;
@@ -97,7 +98,7 @@ public class RobotContainer {
         // on press of driver controller A button, run example TemplateCommand
         driverOp.back().whileTrue(new TemplateCommand());
         // on press of operator controller X button, run example TemplateGroupCommand
-        driverOp.x().whileTrue(new TwoCoralAutoAnywhere());
+        driverOp.x().whileTrue(new ThreeCoralAutoAnywhere());
         driverOp.leftBumper().whileTrue(new InstantCommand(()-> RobotContainer.intake.intakeRun(0.5)));
   
 

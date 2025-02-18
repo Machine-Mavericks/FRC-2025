@@ -13,10 +13,10 @@ import frc.robot.utils.AutoFunctions;
 // ParallelCommandGroup
 // ParallelRaceGroup
 // ParallelDeadlineGroup
-public class TwoCoralAutoAnywhere extends SequentialCommandGroup {
+public class ThreeCoralAutoAnywhere extends SequentialCommandGroup {
 
     // constructor
-    public TwoCoralAutoAnywhere() {
+    public ThreeCoralAutoAnywhere() {
 
         addCommands (
 
@@ -33,7 +33,7 @@ public class TwoCoralAutoAnywhere extends SequentialCommandGroup {
 
         // Drives to the humen station to pick up (fill in pos please)
         new MoveToPose(1, 
-                       1,
+                       0.5,
                        AutoFunctions.redVsBlue(new Pose2d (1.5,6.8, new Rotation2d(Math.toRadians(-51))))),
         
         
@@ -60,7 +60,25 @@ public class TwoCoralAutoAnywhere extends SequentialCommandGroup {
         AutoFunctions.redVsBlue(new Pose2d (1.5,6.8, new Rotation2d(Math.toRadians(-51))))),
 
         // at the same time as driving lower slides to zero 
-        new InstantCommand(()->RobotContainer.elevator.moveToPosition(0))
+        new InstantCommand(()->RobotContainer.elevator.moveToPosition(0)),
+
+        // run intake 
+        new InstantCommand(()->RobotContainer.intake.intakeRun(1)),
+
+        new MoveToPose(1, 
+        1,
+        AutoFunctions.redVsBlue(new Pose2d (3.4,5.6, new Rotation2d(Math.toRadians(-60))))),
+
+        // at the same time as driving raise slides to a position for high placment
+        new InstantCommand(()->RobotContainer.elevator.moveToPosition(1)),
+        
+        // run outake 
+        new InstantCommand(()->RobotContainer.intake.OutakeRun(1)),
+        // coral station
+        new MoveToPose(1, 
+        1,
+        AutoFunctions.redVsBlue(new Pose2d (1.5,6.8, new Rotation2d(Math.toRadians(-51)))))
+
         // end of auto
 
 

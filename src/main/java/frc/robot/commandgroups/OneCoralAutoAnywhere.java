@@ -29,7 +29,7 @@ public class OneCoralAutoAnywhere extends SequentialCommandGroup {
         new InstantCommand(()->RobotContainer.elevator.moveToPosition(1)),
 
         // coral grabber not completed yet but will work like elevator
-        new InstantCommand(()->RobotContainer.intake.intakeRun(1)), 
+        new InstantCommand(()->RobotContainer.intake.OutakeRun(1)), 
 
         // Drives to the humen station at end to be ready for teleop (fill in pos please)
         new MoveToPose(1, 
