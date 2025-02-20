@@ -4,6 +4,7 @@ import frc.robot.commandgroups.OneCoralAutoAnywhere;
 import frc.robot.commandgroups.TemplateCommandGroup;
 import frc.robot.commandgroups.ThreeCoralAutoAnywhere;
 import frc.robot.commandgroups.TwoCoralAutoAnywhere;
+import frc.robot.commands.MoveElevator;
 import frc.robot.commands.MoveToPose;
 import frc.robot.commands.TemplateCommand;
 import frc.robot.subsystems.CoralGrabber;
@@ -15,6 +16,7 @@ import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.TemplateSubsystem;
 import frc.robot.subsystems.Odometry;
 import frc.robot.utils.AutoFunctions;
+import frc.robot.utils.ElevatorPositions;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -90,16 +92,16 @@ public class RobotContainer {
         
         
         driverOp.start().onTrue(new InstantCommand(()->encoder.ResetEncoder()));
-        driverOp.a().onTrue(new InstantCommand(()->RobotContainer.elevator.moveToPosition(1)));
-        driverOp.b().onTrue(new InstantCommand(()->RobotContainer.elevator.moveToPosition(0)));
-
+        driverOp.b().whileTrue(new MoveElevator(ElevatorPositions.LEVEL_2));
+        driverOp.a().whileTrue(new MoveElevator(ElevatorPositions.LEVEL_1));
 
         // examples:
         // on press of driver controller A button, run example TemplateCommand
         driverOp.back().whileTrue(new TemplateCommand());
         // on press of operator controller X button, run example TemplateGroupCommand
-        driverOp.x().whileTrue(new ThreeCoralAutoAnywhere());
-        driverOp.leftBumper().whileTrue(new InstantCommand(()-> RobotContainer.intake.intakeRun(0.5)));
+        driverOp.x().whileTrue(new MoveElevator(ElevatorPositions.LEVEL_3));
+        driverOp.leftBumper().whileTrue(new MoveElevator(ElevatorPositions.INTAKE));
+        driverOp.rightBumper().whileTrue(new MoveElevator(ElevatorPositions.LEVEL_4));
   
 
     

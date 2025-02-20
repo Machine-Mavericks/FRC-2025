@@ -26,7 +26,7 @@ public class OneCoralAutoAnywhere extends SequentialCommandGroup {
                        AutoFunctions.redVsBlue(new Pose2d (5.5,5.5, new Rotation2d(Math.toRadians(-119))))),
 
         // run at same time as drive and fill in position for Level four placement 
-        new InstantCommand(()->RobotContainer.elevator.moveToPosition(1)),
+        new InstantCommand(()->RobotContainer.elevator.Level4()),
 
         // coral grabber not completed yet but will work like elevator
         new InstantCommand(()->RobotContainer.intake.OutakeRun(1)), 
@@ -37,7 +37,7 @@ public class OneCoralAutoAnywhere extends SequentialCommandGroup {
                        AutoFunctions.redVsBlue(new Pose2d (1.5,6.8, new Rotation2d(Math.toRadians(-51))))),
         
         // at the same time as driving lower slides back to zero 
-        new InstantCommand(()->RobotContainer.elevator.moveToPosition(0))
+        new InstantCommand(()->RobotContainer.elevator.returnToIntake())
 
         );
     }
