@@ -25,8 +25,13 @@
 //                        1,
 //                        AutoFunctions.redVsBlue(new Pose2d (5.5,5.5, new Rotation2d(Math.toRadians(-119))))),// add redVsBlue x, y, robot angle
 
+<<<<<<< HEAD
 //         // run at same time as drive and fill in position for Level four placement 
 //         new InstantCommand(()->RobotContainer.elevator.moveToPosition(1)),
+=======
+        // run at same time as drive and fill in position for Level four placement 
+        new InstantCommand(()->RobotContainer.elevator.Level4()),
+>>>>>>> ff6c10acc0c385b4aaadbdef5a1a00bd2f20e002
 
 //         // coral grabber not completed yet but will work like elevator
 //         new InstantCommand(()->RobotContainer.intake.OutakeRun(1)),
@@ -37,8 +42,13 @@
 //                        AutoFunctions.redVsBlue(new Pose2d (1.5,6.8, new Rotation2d(Math.toRadians(-51))))),
         
         
+<<<<<<< HEAD
 //         // at the same time as driving lower slides to a position for intake 
 //         new InstantCommand(()->RobotContainer.elevator.moveToPosition(0)),
+=======
+        // at the same time as driving lower slides to a position for intake 
+        new InstantCommand(()->RobotContainer.elevator.returnToIntake()),
+>>>>>>> ff6c10acc0c385b4aaadbdef5a1a00bd2f20e002
 
 //         // run intake 
 //         new InstantCommand(()->RobotContainer.intake.intakeRun(1)),
@@ -48,8 +58,13 @@
 //         1,
 //         AutoFunctions.redVsBlue(new Pose2d (3.4,5.6, new Rotation2d(Math.toRadians(-60))))),
 
+<<<<<<< HEAD
 //         // at the same time as driving raise slides to a position for high placment
 //         new InstantCommand(()->RobotContainer.elevator.moveToPosition(1)),
+=======
+        // at the same time as driving raise slides to a position for high placment
+        new InstantCommand(()->RobotContainer.elevator.Level4()),
+>>>>>>> ff6c10acc0c385b4aaadbdef5a1a00bd2f20e002
         
 //         // run outake 
 //         new InstantCommand(()->RobotContainer.intake.OutakeRun(1)),
@@ -59,8 +74,13 @@
 //         1,
 //         AutoFunctions.redVsBlue(new Pose2d (1.5,6.8, new Rotation2d(Math.toRadians(-51))))),
 
+<<<<<<< HEAD
 //         // at the same time as driving lower slides to zero 
 //         new InstantCommand(()->RobotContainer.elevator.moveToPosition(0)),
+=======
+        // at the same time as driving lower slides to zero 
+        new InstantCommand(()->RobotContainer.elevator.returnToIntake()),
+>>>>>>> ff6c10acc0c385b4aaadbdef5a1a00bd2f20e002
 
 //         // run intake 
 //         new InstantCommand(()->RobotContainer.intake.intakeRun(1)),
@@ -69,8 +89,10 @@
 //         1,
 //         AutoFunctions.redVsBlue(new Pose2d (3.4,5.6, new Rotation2d(Math.toRadians(-60))))),
 
-//         // at the same time as driving raise slides to a position for high placment
-//         new InstantCommand(()->RobotContainer.elevator.moveToPosition(1)),
+
+        // at the same time as driving raise slides to a position for high placment
+        new InstantCommand(()->RobotContainer.elevator.Level4()),
+
         
 //         // run outake 
 //         new InstantCommand(()->RobotContainer.intake.OutakeRun(1)),
