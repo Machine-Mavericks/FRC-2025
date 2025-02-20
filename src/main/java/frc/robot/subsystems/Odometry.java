@@ -44,7 +44,7 @@ public class Odometry extends SubsystemBase {
         // initialize swerve drive odometry
         m_Estimator = new SwerveDrivePoseEstimator(
             RobotContainer.drivesystem.getKinematics(),
-            new Rotation2d(0, 0),
+            new Rotation2d(0),
             RobotContainer.drivesystem.GetSwerveDistances(),
             new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
             VecBuilder.fill(0.02, 0.02, 0.02),
