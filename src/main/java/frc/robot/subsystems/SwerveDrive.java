@@ -139,10 +139,10 @@ public class SwerveDrive extends SubsystemBase {
         // encoders should then read zero when aligned straight.
         // when aligning, wheel ring gears face inside robot
         // multiply by factor to convert deg back to rotations
-        LFEncoderConfig.MagnetSensor.MagnetOffset = 47.8 * 0.00277777;
-        RFEncoderConfig.MagnetSensor.MagnetOffset = (-245.05+180.0) * 0.00277777;
-        LREncoderConfig.MagnetSensor.MagnetOffset = (156.43) * 0.00277777;
-        RREncoderConfig.MagnetSensor.MagnetOffset = (-109.6+180.0) * 0.00277777;
+        LFEncoderConfig.MagnetSensor.MagnetOffset = 0.0;//47.8 * 0.00277777;
+        RFEncoderConfig.MagnetSensor.MagnetOffset = 0.0;//(-245.05+180.0) * 0.00277777;
+        LREncoderConfig.MagnetSensor.MagnetOffset = 0.0;// (156.43) * 0.00277777;
+        RREncoderConfig.MagnetSensor.MagnetOffset = 0.0;//(-109.6+180.0) * 0.00277777;
 
         // apply configuration to cancoders
         m_LFCanCoder.getConfigurator().apply(LFEncoderConfig);
