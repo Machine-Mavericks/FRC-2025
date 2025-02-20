@@ -39,7 +39,7 @@ public class MainShuffleBoardTab extends SubsystemBase {
 
     // other controls on main page
     private GenericEntry m_timeLeft;
-
+   
     // timeslice timer
     private Timer dt_timer;
     private GenericEntry m_dt;
@@ -74,7 +74,8 @@ public class MainShuffleBoardTab extends SubsystemBase {
         // update remaining time in match (rounded to nearest second)
         //m_selectedPath = (Integer)m_autonomousPath.getSelected();
         m_timeLeft.setDouble(Math.round(Timer.getMatchTime()));
-
+        
+        
         // set calculation time interval in ms
         m_dt.setDouble(dt_timer.get()*1000.0);
         dt_timer.reset();
@@ -134,6 +135,7 @@ public class MainShuffleBoardTab extends SubsystemBase {
                         withSize(1, 1).
                         withProperties(Map.of("min", 0, "max", 15))
                         .getEntry();
+        
 
         
         
