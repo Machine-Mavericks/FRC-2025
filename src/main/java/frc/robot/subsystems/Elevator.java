@@ -10,9 +10,6 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
-
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -76,7 +73,7 @@ public class Elevator extends SubsystemBase {
 
     private void updateShuffleboard(){
         m_left.setDouble(elevatorMotorL.getEncoder().getPosition());
-        m_left.setDouble(elevatorMotorR.getEncoder().getPosition());
+        m_right.setDouble(elevatorMotorR.getEncoder().getPosition());
 
     }
     /**
