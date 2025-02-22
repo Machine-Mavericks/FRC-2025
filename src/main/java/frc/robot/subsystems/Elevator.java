@@ -25,9 +25,10 @@ public class Elevator extends SubsystemBase {
     SparkMaxConfig elevatorConfig;
     static double gearDiameterCM = 3.588 * 2.54;
     static double gearCircumference = gearDiameterCM * Math.PI;
-    static double ticksPerRev = 1;
-    public static double L2 = 81.0, L3 = 121.0, L4 = 183.0, L1 = 95.0, intake = 0.0; 
+    static double gearRatio = 8.43;
+    public static double L2 = 81.0, L3 = 121.0, L4 = 183.0, L1 = 95.0, intake = 0.0;
     static double ticksMoved;
+    static double feedForward = 0.0;
     // Local objects and variables here
     // These are for things that only belong to, and used by, the subsystem
 
@@ -35,11 +36,11 @@ public class Elevator extends SubsystemBase {
     public Elevator() {
         // initialize limit switches, left motor follows right
         elevatorConfig = new SparkMaxConfig();
-        elevatorConfig.limitSwitch.reverseLimitSwitchEnabled(false);
-        elevatorConfig.limitSwitch.forwardLimitSwitchEnabled(false);
+        elevatorConfig.limitSwitch.reverseLimitSwitchEnabled(false);//change to true
+        elevatorConfig.limitSwitch.forwardLimitSwitchEnabled(false);//change to true
         elevatorConfig.limitSwitch.forwardLimitSwitchType(Type.kNormallyClosed);
         elevatorConfig.limitSwitch.reverseLimitSwitchType(Type.kNormallyClosed);
-        elevatorConfig.idleMode(IdleMode.kCoast);
+        elevatorConfig.idleMode(IdleMode.kCoast);// change to break later
         elevatorConfig.inverted(true);
         elevatorConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
         elevatorConfig.closedLoop.p(0.5);
@@ -58,9 +59,8 @@ public class Elevator extends SubsystemBase {
 
     private static GenericEntry m_left;
     private static GenericEntry m_right;
-        
-    
-     private void initializeShuffleboard() {
+
+    private void initializeShuffleboard() {
         // Create page in shuffleboard
         ShuffleboardTab Tab = Shuffleboard.getTab("elevator");
         ShuffleboardLayout l1 = Tab.getLayout("Elevator", BuiltInLayouts.kList);
@@ -68,14 +68,15 @@ public class Elevator extends SubsystemBase {
         l1.withSize(2, 4);
         m_left = l1.add("Left ", 0.0).getEntry();
         m_right = l1.add("Right", 0.0).getEntry();
-        
+
     }
 
-    private void updateShuffleboard(){
+    private void updateShuffleboard() {
         m_left.setDouble(elevatorMotorL.getEncoder().getPosition());
         m_right.setDouble(elevatorMotorR.getEncoder().getPosition());
 
     }
+
     /**
      * Method called periodically by the scheduler
      * Place any code here you wish to have run periodically
@@ -86,31 +87,36 @@ public class Elevator extends SubsystemBase {
     }
 
     public void Level1() {
-        elevatorMotorL.getClosedLoopController().setReference(cmToTicks(L1), ControlType.kPosition, ClosedLoopSlot.kSlot0);
+        elevatorMotorL.getClosedLoopController().setReference(cmToRotations(L1), ControlType.kPosition,
+                ClosedLoopSlot.kSlot0, feedForward);
     }
+
     public void Level2() {
-        elevatorMotorL.getClosedLoopController().setReference(cmToTicks(L2), ControlType.kPosition, ClosedLoopSlot.kSlot0);
+        elevatorMotorL.getClosedLoopController().setReference(cmToRotations(L2), ControlType.kPosition,
+                ClosedLoopSlot.kSlot0, feedForward);
     }
+
     public void Level3() {
-        elevatorMotorL.getClosedLoopController().setReference(cmToTicks(L3), ControlType.kPosition, ClosedLoopSlot.kSlot0);
+        elevatorMotorL.getClosedLoopController().setReference(cmToRotations(L3), ControlType.kPosition,
+                ClosedLoopSlot.kSlot0, feedForward);
     }
+
     public void Level4() {
-        elevatorMotorL.getClosedLoopController().setReference(cmToTicks(L4), ControlType.kPosition, ClosedLoopSlot.kSlot0);
+        elevatorMotorL.getClosedLoopController().setReference(cmToRotations(L4), ControlType.kPosition,
+                ClosedLoopSlot.kSlot0, feedForward);
     }
-    
-    public void returnToIntake(){
+
+    public void returnToIntake() {
         ticksMoved = elevatorMotorL.getEncoder().getPosition();
-        elevatorMotorL.getClosedLoopController().setReference(0 - (ticksMoved), ControlType.kPosition, ClosedLoopSlot.kSlot0);
-    }
-    
-
-    private double cmToTicks(double cm){
-        return cm/(gearCircumference/ticksPerRev);
-        //8.43 - 1 gear ratio
-        //3.588" diameter
-        // 42 ticks/revolution(from spec sheet)
+        elevatorMotorL.getClosedLoopController().setReference(0 - (ticksMoved), ControlType.kPosition,
+                ClosedLoopSlot.kSlot0, feedForward);
     }
 
-    
+    private double cmToRotations(double cm) {
+        return (cm / gearCircumference) * gearRatio;
+        // 8.43 - 1 gear ratio
+        // 3.588" diameter
+
+    }
 
 }
