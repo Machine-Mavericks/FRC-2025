@@ -25,7 +25,7 @@ public class Elevator extends SubsystemBase {
     SparkMaxConfig elevatorConfig;
     static double gearDiameterCM = 3.588 * 2.54;
     static double gearCircumference = gearDiameterCM * Math.PI;
-    static double ticksPerRev = 1;
+    static double gearRatio = 8.43;
     public static double L2 = 81.0, L3 = 121.0, L4 = 183.0, L1 = 95.0, intake = 0.0; 
     static double ticksMoved;
     // Local objects and variables here
@@ -86,16 +86,16 @@ public class Elevator extends SubsystemBase {
     }
 
     public void Level1() {
-        elevatorMotorL.getClosedLoopController().setReference(cmToTicks(L1), ControlType.kPosition, ClosedLoopSlot.kSlot0);
+        elevatorMotorL.getClosedLoopController().setReference(cmToRotations(L1), ControlType.kPosition, ClosedLoopSlot.kSlot0);
     }
     public void Level2() {
-        elevatorMotorL.getClosedLoopController().setReference(cmToTicks(L2), ControlType.kPosition, ClosedLoopSlot.kSlot0);
+        elevatorMotorL.getClosedLoopController().setReference(cmToRotations(L2), ControlType.kPosition, ClosedLoopSlot.kSlot0);
     }
     public void Level3() {
-        elevatorMotorL.getClosedLoopController().setReference(cmToTicks(L3), ControlType.kPosition, ClosedLoopSlot.kSlot0);
+        elevatorMotorL.getClosedLoopController().setReference(cmToRotations(L3), ControlType.kPosition, ClosedLoopSlot.kSlot0);
     }
     public void Level4() {
-        elevatorMotorL.getClosedLoopController().setReference(cmToTicks(L4), ControlType.kPosition, ClosedLoopSlot.kSlot0);
+        elevatorMotorL.getClosedLoopController().setReference(cmToRotations(L4), ControlType.kPosition, ClosedLoopSlot.kSlot0);
     }
     
     public void returnToIntake(){
@@ -104,11 +104,11 @@ public class Elevator extends SubsystemBase {
     }
     
 
-    private double cmToTicks(double cm){
-        return cm/(gearCircumference/ticksPerRev);
+    private double cmToRotations(double cm){
+        return (cm/gearCircumference)*gearRatio;
         //8.43 - 1 gear ratio
         //3.588" diameter
-        // 42 ticks/revolution(from spec sheet)
+        
     }
 
     
