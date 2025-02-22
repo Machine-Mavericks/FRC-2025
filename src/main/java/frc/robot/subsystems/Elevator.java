@@ -28,6 +28,7 @@ public class Elevator extends SubsystemBase {
     static double gearRatio = 8.43;
     public static double L2 = 81.0, L3 = 121.0, L4 = 183.0, L1 = 95.0, intake = 0.0;
     static double ticksMoved;
+    static double feedForward = 0.0;
     // Local objects and variables here
     // These are for things that only belong to, and used by, the subsystem
 
@@ -87,28 +88,28 @@ public class Elevator extends SubsystemBase {
 
     public void Level1() {
         elevatorMotorL.getClosedLoopController().setReference(cmToRotations(L1), ControlType.kPosition,
-                ClosedLoopSlot.kSlot0);
+                ClosedLoopSlot.kSlot0, feedForward);
     }
 
     public void Level2() {
         elevatorMotorL.getClosedLoopController().setReference(cmToRotations(L2), ControlType.kPosition,
-                ClosedLoopSlot.kSlot0);
+                ClosedLoopSlot.kSlot0, feedForward);
     }
 
     public void Level3() {
         elevatorMotorL.getClosedLoopController().setReference(cmToRotations(L3), ControlType.kPosition,
-                ClosedLoopSlot.kSlot0);
+                ClosedLoopSlot.kSlot0, feedForward);
     }
 
     public void Level4() {
         elevatorMotorL.getClosedLoopController().setReference(cmToRotations(L4), ControlType.kPosition,
-                ClosedLoopSlot.kSlot0);
+                ClosedLoopSlot.kSlot0, feedForward);
     }
 
     public void returnToIntake() {
         ticksMoved = elevatorMotorL.getEncoder().getPosition();
         elevatorMotorL.getClosedLoopController().setReference(0 - (ticksMoved), ControlType.kPosition,
-                ClosedLoopSlot.kSlot0);
+                ClosedLoopSlot.kSlot0, feedForward);
     }
 
     private double cmToRotations(double cm) {
