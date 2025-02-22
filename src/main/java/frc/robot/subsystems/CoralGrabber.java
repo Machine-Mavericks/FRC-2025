@@ -41,17 +41,17 @@ public class CoralGrabber extends SubsystemBase {
     }
 
     public void intakeRun(double speed){
-        m_IntakeMotor1.set( speed);
-        m_IntakeMotor2.set(-1.0*speed);
-        Timer.delay(0.5);
+        m_IntakeMotor1.set(0-speed);
+        m_IntakeMotor2.set(speed);
+        Timer.delay(3);
         m_IntakeMotor1.set(0);
         m_IntakeMotor2.set(0);
     }
     
         
     public void OutakeRun(double speed){
-        m_IntakeMotor1.set( speed);
-        m_IntakeMotor2.set(-1.0*speed);
+        m_IntakeMotor1.set(0-speed);
+        m_IntakeMotor2.set(speed);
         Timer.delay(1);
         m_IntakeMotor1.set(0);
         m_IntakeMotor2.set(0);
