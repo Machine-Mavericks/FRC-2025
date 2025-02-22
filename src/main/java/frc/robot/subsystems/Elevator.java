@@ -25,7 +25,7 @@ public class Elevator extends SubsystemBase {
     SparkMaxConfig elevatorConfig;
     static double gearDiameterCM = 3.588 * 2.54;
     static double gearCircumference = gearDiameterCM * Math.PI;
-    static double ticksPerRev = 42;
+    static double ticksPerRev = 1;
     public static double L2 = 81.0, L3 = 121.0, L4 = 183.0, L1 = 95.0, intake = 0.0; 
     static double ticksMoved;
     // Local objects and variables here

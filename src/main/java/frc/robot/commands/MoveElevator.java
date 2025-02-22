@@ -49,16 +49,14 @@ public class MoveElevator extends Command {
     @Override
     public boolean isFinished() {
 
-        return false;
+        return true;
 
     }
 
     // This method is called once when command is finished.
     @Override
     public void end(boolean interrupted) {
-       if(interrupted){
-        RobotContainer.elevator.returnToIntake();
-       } 
+      
 
     }
 
