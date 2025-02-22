@@ -19,7 +19,7 @@ public class DeadWheel extends SubsystemBase {
     private Encoder encoderFront = new Encoder(RobotMap.DIO.FRONTENCODER_A, RobotMap.DIO.FRONTENCODER_B);
     private Encoder encoderRear = new Encoder(RobotMap.DIO.REARENCODER_A, RobotMap.DIO.REARENCODER_B);
     
-    private double distanceCM;
+
     public static double FRONT_TO_BACK_DISTANCE = 0.65;
     public static double LATERAL_OFFSET = 0.3;
     

@@ -39,8 +39,8 @@ public class Elevator extends SubsystemBase {
         elevatorConfig.limitSwitch.forwardLimitSwitchEnabled(false);
         elevatorConfig.limitSwitch.forwardLimitSwitchType(Type.kNormallyClosed);
         elevatorConfig.limitSwitch.reverseLimitSwitchType(Type.kNormallyClosed);
-        elevatorConfig.idleMode(IdleMode.kBrake);
-        elevatorConfig.inverted(false);
+        elevatorConfig.idleMode(IdleMode.kCoast);
+        elevatorConfig.inverted(true);
         elevatorConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
         elevatorConfig.closedLoop.p(0.5);
         elevatorConfig.closedLoop.i(0.0);
