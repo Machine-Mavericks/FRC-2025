@@ -29,7 +29,7 @@ public class Elevator extends SubsystemBase {
     static double gearDiameterCM = 3.588 * 2.54;
     static double gearCircumference = gearDiameterCM * Math.PI;
     static double gearRatio = 8.43, paddingOffset = 0;
-    public static double L2 = 25.5, L3 = 45.5, L4 = 183.0, L1 = 3.7, intake = 0.0;
+    public static double L2 = 22.5, L3 = 43.5, L4 = 69.0, L1 = 3.7, intake = 0.0;
     static double ticksMoved;
     static double feedForward = 0.45;
     // Local objects and variables here
@@ -101,6 +101,9 @@ public class Elevator extends SubsystemBase {
     @Override
     public void periodic() {
         updateShuffleboard();
+        if(elevatorMotorL.getReverseLimitSwitch().isPressed()){
+            ZeroEncoder();
+        }
     }
 
     public void Level1() {

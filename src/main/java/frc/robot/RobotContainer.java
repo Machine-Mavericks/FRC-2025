@@ -102,7 +102,7 @@ public class RobotContainer {
         // examples:
         // on press of driver controller A button, run example TemplateCommand
         driverOp.y().onTrue(new CoralIntake());
-       // driverOp.x().onTrue(new CoralOuttake());
+        driverOp.leftTrigger().onTrue(new CoralOuttake());
         // on press of operator controller X button, run example TemplateGroupCommand
         driverOp.x().onTrue(new MoveElevator(ElevatorPositions.LEVEL_3));
         driverOp.leftBumper().onTrue(new MoveElevator(ElevatorPositions.INTAKE));
