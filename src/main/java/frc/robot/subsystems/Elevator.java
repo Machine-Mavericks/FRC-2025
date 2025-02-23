@@ -28,10 +28,10 @@ public class Elevator extends SubsystemBase {
     SparkMaxConfig elevatorConfig;
     static double gearDiameterCM = 3.588 * 2.54;
     static double gearCircumference = gearDiameterCM * Math.PI;
-    static double gearRatio = 8.43;
-    public static double L2 = 81.0, L3 = 121.0, L4 = 183.0, L1 = 15.0, intake = 0.0;
+    static double gearRatio = 8.43, paddingOffset = 0;
+    public static double L2 = 25.5, L3 = 45.5, L4 = 183.0, L1 = 3.7, intake = 0.0;
     static double ticksMoved;
-    static double feedForward = 0.0;
+    static double feedForward = 0.45;
     // Local objects and variables here
     // These are for things that only belong to, and used by, the subsystem
 
@@ -43,13 +43,13 @@ public class Elevator extends SubsystemBase {
         elevatorConfig.limitSwitch.forwardLimitSwitchEnabled(true);//change to true
         elevatorConfig.limitSwitch.forwardLimitSwitchType(Type.kNormallyClosed);
         elevatorConfig.limitSwitch.reverseLimitSwitchType(Type.kNormallyClosed);
-        elevatorConfig.idleMode(IdleMode.kCoast);// change to break later
+        elevatorConfig.idleMode(IdleMode.kBrake);// change to break later
         elevatorConfig.inverted(true);
         elevatorConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
-        elevatorConfig.closedLoop.p(0.5);
+        elevatorConfig.closedLoop.p(0.3);
         elevatorConfig.closedLoop.i(0.0);
         elevatorConfig.closedLoop.d(0.0);
-        elevatorConfig.closedLoop.outputRange(-0.1, 0.1);
+        elevatorConfig.closedLoop.outputRange(-0.1, 0.3);
         elevatorConfig.closedLoop.positionWrappingEnabled(false);
         elevatorConfig.encoder.positionConversionFactor(1);
         elevatorMotorL.configure(elevatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -64,6 +64,7 @@ public class Elevator extends SubsystemBase {
     private static GenericEntry m_right;
     private static GenericEntry m_switchF;
     private static GenericEntry m_switchR;
+    private static GenericEntry m_current;
 
     private void initializeShuffleboard() {
         // Create page in shuffleboard
@@ -75,6 +76,7 @@ public class Elevator extends SubsystemBase {
         m_right = l1.add("Right", 0.0).getEntry();
         m_switchF = l1.add("switchF",false).getEntry();
         m_switchR = l1.add("switchR", false).getEntry();
+        m_current = l1.add("current", 0.0).getEntry();
 
     }
 
@@ -83,6 +85,7 @@ public class Elevator extends SubsystemBase {
         m_right.setDouble(rotationstoCm(elevatorMotorR.getEncoder().getPosition()));
         m_switchR.setBoolean(elevatorMotorL.getReverseLimitSwitch().isPressed());
         m_switchF.setBoolean(elevatorMotorL.getForwardLimitSwitch().isPressed());
+        m_current.setDouble(elevatorMotorL.getOutputCurrent());
 
     }
     public void ZeroEncoder(){
