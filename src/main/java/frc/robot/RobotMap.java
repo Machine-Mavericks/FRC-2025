@@ -49,7 +49,7 @@ public class RobotMap {
   public static class DIO {
         // Deadwheel odometry pods
 
-        public static final int LEFTENCODER_A = 0;
+        public static final int LEFTENCODER_A = 8;
         public static final int LEFTENCODER_B = 1;
         public static final int FRONTENCODER_A = 4;
         public static final int FRONTENCODER_B = 5;
@@ -57,6 +57,7 @@ public class RobotMap {
         public static final int minLimitSwitch = 7;
         public static final int REARENCODER_A = 2;
         public static final int REARENCODER_B = 3;
+        public static final int photoSensor = 0;
 
         
     }

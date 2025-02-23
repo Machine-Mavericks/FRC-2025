@@ -4,6 +4,8 @@ import frc.robot.commandgroups.OneCoralAutoAnywhere;
 import frc.robot.commandgroups.TemplateCommandGroup;
 import frc.robot.commandgroups.ThreeCoralAutoAnywhere;
 import frc.robot.commandgroups.TwoCoralAutoAnywhere;
+import frc.robot.commands.CoralIntake;
+import frc.robot.commands.CoralOuttake;
 import frc.robot.commands.MoveElevator;
 import frc.robot.commands.MoveToPose;
 import frc.robot.commands.TemplateCommand;
@@ -99,9 +101,10 @@ public class RobotContainer {
 
         // examples:
         // on press of driver controller A button, run example TemplateCommand
-        driverOp.back().whileTrue(new TemplateCommand());
+        driverOp.y().onTrue(new CoralIntake());
+        driverOp.x().onTrue(new CoralOuttake());
         // on press of operator controller X button, run example TemplateGroupCommand
-        driverOp.x().onTrue(new MoveElevator(ElevatorPositions.LEVEL_3));
+        //driverOp.x().onTrue(new MoveElevator(ElevatorPositions.LEVEL_3));
         driverOp.leftBumper().onTrue(new MoveElevator(ElevatorPositions.INTAKE));
         driverOp.rightBumper().onTrue(new MoveElevator(ElevatorPositions.LEVEL_4));
   

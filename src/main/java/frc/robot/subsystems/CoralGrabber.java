@@ -22,7 +22,7 @@ public class CoralGrabber extends SubsystemBase {
 
     private SparkMax m_IntakeMotor1;
     private SparkMax m_IntakeMotor2;
-  
+    private DigitalInput photoSensor;
 
 
 
@@ -30,7 +30,7 @@ public class CoralGrabber extends SubsystemBase {
         
         m_IntakeMotor1 = new SparkMax (RobotMap.CANID.IN1_INTAKE_Motor,MotorType.kBrushless);
         m_IntakeMotor2 = new SparkMax (RobotMap.CANID.IN2_INTAKE_Motor,MotorType.kBrushless);
-
+       photoSensor =  new DigitalInput(RobotMap.DIO.photoSensor);
     }
 
     /** Method called periodically by the scheduler
@@ -41,21 +41,25 @@ public class CoralGrabber extends SubsystemBase {
     }
 
     public void intakeRun(double speed){
+        
         m_IntakeMotor1.set(0-speed);
         m_IntakeMotor2.set(speed);
-        Timer.delay(3);
-        m_IntakeMotor1.set(0);
-        m_IntakeMotor2.set(0);
+        
+       
+    }
+   
+    public boolean getSensorState(){
+        return !photoSensor.get();
     }
     
         
     public void OutakeRun(double speed){
         m_IntakeMotor1.set(0-speed);
         m_IntakeMotor2.set(speed);
-        Timer.delay(1);
         m_IntakeMotor1.set(0);
         m_IntakeMotor2.set(0);
     }
+    
 
     // place special subsystem methods here
     // this is where rest of program can access functions to return

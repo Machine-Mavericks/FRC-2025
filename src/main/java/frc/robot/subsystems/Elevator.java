@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.lang.annotation.Target;
+
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -16,6 +18,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 import frc.robot.RobotMap;
 
 /** Subsystem */
@@ -26,7 +29,7 @@ public class Elevator extends SubsystemBase {
     static double gearDiameterCM = 3.588 * 2.54;
     static double gearCircumference = gearDiameterCM * Math.PI;
     static double gearRatio = 8.43;
-    public static double L2 = 81.0, L3 = 121.0, L4 = 183.0, L1 = 95.0, intake = 0.0;
+    public static double L2 = 81.0, L3 = 121.0, L4 = 183.0, L1 = 15.0, intake = 0.0;
     static double ticksMoved;
     static double feedForward = 0.0;
     // Local objects and variables here
@@ -36,8 +39,8 @@ public class Elevator extends SubsystemBase {
     public Elevator() {
         // initialize limit switches, left motor follows right
         elevatorConfig = new SparkMaxConfig();
-        elevatorConfig.limitSwitch.reverseLimitSwitchEnabled(false);//change to true
-        elevatorConfig.limitSwitch.forwardLimitSwitchEnabled(false);//change to true
+        elevatorConfig.limitSwitch.reverseLimitSwitchEnabled(true);//change to true
+        elevatorConfig.limitSwitch.forwardLimitSwitchEnabled(true);//change to true
         elevatorConfig.limitSwitch.forwardLimitSwitchType(Type.kNormallyClosed);
         elevatorConfig.limitSwitch.reverseLimitSwitchType(Type.kNormallyClosed);
         elevatorConfig.idleMode(IdleMode.kCoast);// change to break later
@@ -46,7 +49,7 @@ public class Elevator extends SubsystemBase {
         elevatorConfig.closedLoop.p(0.5);
         elevatorConfig.closedLoop.i(0.0);
         elevatorConfig.closedLoop.d(0.0);
-        elevatorConfig.closedLoop.outputRange(-0.5, 0.5);
+        elevatorConfig.closedLoop.outputRange(-0.1, 0.1);
         elevatorConfig.closedLoop.positionWrappingEnabled(false);
         elevatorConfig.encoder.positionConversionFactor(1);
         elevatorMotorL.configure(elevatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -59,6 +62,8 @@ public class Elevator extends SubsystemBase {
 
     private static GenericEntry m_left;
     private static GenericEntry m_right;
+    private static GenericEntry m_switchF;
+    private static GenericEntry m_switchR;
 
     private void initializeShuffleboard() {
         // Create page in shuffleboard
@@ -68,13 +73,22 @@ public class Elevator extends SubsystemBase {
         l1.withSize(2, 4);
         m_left = l1.add("Left ", 0.0).getEntry();
         m_right = l1.add("Right", 0.0).getEntry();
+        m_switchF = l1.add("switchF",false).getEntry();
+        m_switchR = l1.add("switchR", false).getEntry();
 
     }
 
     private void updateShuffleboard() {
-        m_left.setDouble(elevatorMotorL.getEncoder().getPosition());
-        m_right.setDouble(elevatorMotorR.getEncoder().getPosition());
+        m_left.setDouble(rotationstoCm(elevatorMotorL.getEncoder().getPosition()));
+        m_right.setDouble(rotationstoCm(elevatorMotorR.getEncoder().getPosition()));
+        m_switchR.setBoolean(elevatorMotorL.getReverseLimitSwitch().isPressed());
+        m_switchF.setBoolean(elevatorMotorL.getForwardLimitSwitch().isPressed());
 
+    }
+    public void ZeroEncoder(){
+        elevatorMotorL.getEncoder().setPosition(0);
+        elevatorMotorR.getEncoder().setPosition(0);
+        elevatorMotorL.getClosedLoopController().setReference(0,ControlType.kPosition);
     }
 
     /**
@@ -113,7 +127,13 @@ public class Elevator extends SubsystemBase {
     }
 
     private double cmToRotations(double cm) {
-        return (cm / gearCircumference) * gearRatio;
+        return cm * (gearRatio / gearCircumference);
+        // 8.43 - 1 gear ratio
+        // 3.588" diameter
+
+    }
+    private double rotationstoCm (double rotations) {
+        return rotations * (gearCircumference / gearRatio);
         // 8.43 - 1 gear ratio
         // 3.588" diameter
 

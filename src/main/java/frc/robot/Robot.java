@@ -76,6 +76,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    RobotContainer.elevator.ZeroEncoder();
 
     // set default swerve drive command to manual drive mode
     RobotContainer.drivesystem.setDefaultCommand(new ManualDrive());
