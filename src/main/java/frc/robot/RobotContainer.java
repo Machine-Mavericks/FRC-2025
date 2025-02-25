@@ -95,18 +95,18 @@ public class RobotContainer {
         
 
         driverOp.start().onTrue(new InstantCommand(()->encoder.ResetEncoder()));
-        driverOp.b().onTrue(new MoveElevator(ElevatorPositions.LEVEL_2));
-        driverOp.a().onTrue(new MoveElevator(ElevatorPositions.LEVEL_1));
+        driverOp.x().onTrue(new MoveElevator(ElevatorPositions.LEVEL_2));
+       // driverOp.a().onTrue(new MoveElevator(ElevatorPositions.LEVEL_1));
 
 
         // examples:
         // on press of driver controller A button, run example TemplateCommand
-        driverOp.y().onTrue(new CoralIntake());
-        driverOp.leftTrigger().onTrue(new CoralOuttake());
+        driverOp.leftBumper().onTrue(new CoralIntake());
+        driverOp.rightBumper().onTrue(new CoralOuttake());
         // on press of operator controller X button, run example TemplateGroupCommand
-        driverOp.x().onTrue(new MoveElevator(ElevatorPositions.LEVEL_3));
-        driverOp.leftBumper().onTrue(new MoveElevator(ElevatorPositions.INTAKE));
-        driverOp.rightBumper().onTrue(new MoveElevator(ElevatorPositions.LEVEL_4));
+        driverOp.b().onTrue(new MoveElevator(ElevatorPositions.LEVEL_3));
+        driverOp.a().onTrue(new MoveElevator(ElevatorPositions.INTAKE));
+        driverOp.y().onTrue(new MoveElevator(ElevatorPositions.LEVEL_4));
   
 
     
