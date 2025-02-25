@@ -52,8 +52,8 @@ public class NeoSwerveDrive extends SubsystemBase {
                                                // 4"=0.1016
     
     // conversion factors - used to convert motor MPS to RPS and vice versa
-    private final double WHEELRPS_TO_MPS2 = Math.PI * WHEEL_DIA;
-    private final double MPS_TO_WHEELRPS2 = 1.0 /  WHEELRPS_TO_MPS
+    private final double WHEELRPS_TO_MPS = Math.PI * WHEEL_DIA;
+    private final double MPS_TO_WHEELRPS = 1.0 /  WHEELRPS_TO_MPS;
     private final double WHEELRPM_TO_MPS = (1.0/60.0)*WHEELRPS_TO_MPS;
     private final double MPS_TO_WHEELRPM = 1.0 / WHEELRPM_TO_MPS;
 
@@ -101,6 +101,8 @@ public class NeoSwerveDrive extends SubsystemBase {
     private double m_RFDriveMotor_Ref;
     private double m_LRDriveMotor_Ref;
     private double m_RRDriveMotor_Ref;
+
+
 
     // Swerve module states - contains target speed(m/s) and angle for each swerve module
     private SwerveModuleState[] m_states;
@@ -201,6 +203,7 @@ public class NeoSwerveDrive extends SubsystemBase {
         driveConfig.closedLoop.velocityFF(0.0013);
         driveConfig.closedLoop.outputRange(-1.0, 1.0);
         driveConfig.encoder.velocityConversionFactor(1.0 / DRIVE_RATIO);
+        driveConfig.encoder.positionConversionFactor(1.0 / DRIVE_RATIO);
         //iMaxAccum??
         // deadband ??
 
@@ -355,7 +358,6 @@ public class NeoSwerveDrive extends SubsystemBase {
  
         
         // ---------- Set Drive Motor Speeds
-
         
         // go ahead and set motor closed loop target speeds
         m_LFDriveMotor_Ref = m_states[0].speedMetersPerSecond*LFDriveDir*MPS_TO_WHEELRPM;
@@ -366,6 +368,8 @@ public class NeoSwerveDrive extends SubsystemBase {
         m_LRDriveMotor.getClosedLoopController().setReference(m_LRDriveMotor_Ref,ControlType.kVelocity, ClosedLoopSlot.kSlot0);
         m_RRDriveMotor_Ref = m_states[3].speedMetersPerSecond*RRDriveDir*MPS_TO_WHEELRPM;
         m_RRDriveMotor.getClosedLoopController().setReference(m_RRDriveMotor_Ref,ControlType.kVelocity, ClosedLoopSlot.kSlot0);
+
+        
 
     }
 
@@ -427,6 +431,11 @@ public class NeoSwerveDrive extends SubsystemBase {
         states[3].angle = Rotation2d.fromDegrees(m_RRSteerMotor.getEncoder().getPosition()*360.0);
 
         return states;
+    }
+
+    /* Returns commanded swerve target states - intended for use by drive simulation */
+    public SwerveModuleState[] getTargetModuleStates() {
+        return m_states;
     }
 
     /** Returns kinematics of drive system */
@@ -548,10 +557,10 @@ public class NeoSwerveDrive extends SubsystemBase {
         m_RRDriveMotorSpeed.setDouble(m_RRDriveMotor.getEncoder().getVelocity()*WHEELRPM_TO_MPS);
 
         // update drive motor targets (m/s)
-        m_LFDriveMotorTargetSpeed.setDouble(m_LFDriveMotor_Ref*0.0166667*WHEELRPS_TO_MPS);
-        m_RFDriveMotorTargetSpeed.setDouble(m_RFDriveMotor_Ref*0.0166667*WHEELRPS_TO_MPS);
-        m_LRDriveMotorTargetSpeed.setDouble(m_LRDriveMotor_Ref*0.0166667*WHEELRPS_TO_MPS);
-        m_RRDriveMotorTargetSpeed.setDouble(m_RRDriveMotor_Ref*0.0166667*WHEELRPS_TO_MPS);
+        m_LFDriveMotorTargetSpeed.setDouble(m_LFDriveMotor_Ref*WHEELRPM_TO_MPS);
+        m_RFDriveMotorTargetSpeed.setDouble(m_RFDriveMotor_Ref*WHEELRPM_TO_MPS);
+        m_LRDriveMotorTargetSpeed.setDouble(m_LRDriveMotor_Ref*WHEELRPM_TO_MPS);
+        m_RRDriveMotorTargetSpeed.setDouble(m_RRDriveMotor_Ref*WHEELRPM_TO_MPS);
 
         // update drive motor position values (m)
         m_LFDriveMotorPos.setDouble(m_LFDriveMotor.getEncoder().getPosition()*WHEELRPS_TO_MPS);
@@ -559,8 +568,6 @@ public class NeoSwerveDrive extends SubsystemBase {
         m_LRDriveMotorPos.setDouble(m_LRDriveMotor.getEncoder().getPosition()*WHEELRPS_TO_MPS);
         m_RRDriveMotorPos.setDouble(m_RRDriveMotor.getEncoder().getPosition()*WHEELRPS_TO_MPS);
     }
-
-
 
 
 

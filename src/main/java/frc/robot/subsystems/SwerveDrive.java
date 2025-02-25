@@ -175,7 +175,7 @@ public class SwerveDrive extends SubsystemBase {
         steerConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         steerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         steerConfig.MotorOutput.DutyCycleNeutralDeadband = 0.0001;
-        steerConfig.Slot0.kP = 70.0;  //volts/rot
+        steerConfig.Slot0.kP = 60.0;  //volts/rot  =70.0 Feb 25/2025
         steerConfig.Slot0.kI = 10.0;  //volts/rot-s
         steerConfig.Slot0.kD = 0.0;   //volts/ros/s
         steerConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
@@ -233,7 +233,7 @@ public class SwerveDrive extends SubsystemBase {
         TalonFXConfiguration driveConfig = new TalonFXConfiguration();
         driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         driveConfig.MotorOutput.DutyCycleNeutralDeadband = 0.0001;
-        driveConfig.Slot0.kP = 2.4;     //2.0   //volts/rps
+        driveConfig.Slot0.kP = 2.4;    // volts/rps
         driveConfig.Slot0.kI = 0.0;    // volts/rps-s
         driveConfig.Slot0.kD = 0.0;    // volts/rps/s
         driveConfig.Slot0.kS = 0.08;   // volts
