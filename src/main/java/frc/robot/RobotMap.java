@@ -70,6 +70,19 @@ public class RobotMap {
         //public static final int CAMERA_SERVO_ID = 1;
     } 
 
+    /**
+     * Inner class to hold RoboRIO analog input constants
+     */
+    public static class AINPorts {
+        
+        // IDs for NEO Swerve steer position sensors
+        public static final int NEO_LF_STEER_SENSOR = 0;
+        public static final int NEO_RF_STEER_SENSOR = 1;
+        public static final int NEO_LR_STEER_SENSOR = 2;
+        public static final int NEO_RR_STEER_SENSOR = 3;
+
+    }
+
     // game controller port IDs
     public static class GamePadPorts {
         public static final int DriverID = 0;
