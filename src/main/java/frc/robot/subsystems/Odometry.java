@@ -3,7 +3,9 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -16,6 +18,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.Limelight.LimelightResults;
 
 /** Subsystem */
 public class Odometry extends SubsystemBase {
@@ -24,19 +27,22 @@ public class Odometry extends SubsystemBase {
     Timer simTimer;
   
     // constant to convert degrees to radians
-    public final static float DEGtoRAD = (float) (3.1415926 / 180);
+    public final static float DEGtoRAD = (float) (3.1415926 / 180.0);
     static double previousLeft, previousFront, previousRear;
     
     // swerve position estimator
     private SwerveDrivePoseEstimator m_Estimator;
 
-    double fieldX = 0.0;
-    double fieldY = 0.0;
-    double fieldAngle = 0.0;
+    // timer for pose estimator time-stamping
+    private Timer PoseTimeStamp;
    
-    double leftChangePos;
-    double frontChangePos;
-    double rearChangePos;
+    // latest apriltag detections
+    private LimelightResults TagResults;
+
+    // time since last apriltag
+    private Timer timeSinceLastTag;
+
+    Pose2d currentPoseBeforeAdjustment;
 
     public Odometry() {
 
@@ -47,7 +53,7 @@ public class Odometry extends SubsystemBase {
             new Rotation2d(0),
             RobotContainer.drivesystem.GetSwerveDistances(),
             new Pose2d(0.0, 0.0, new Rotation2d(0.0)),
-            VecBuilder.fill(0.02, 0.02, 0.02),
+            VecBuilder.fill(1.0, 1.0, 0.1),
             VecBuilder.fill(0.02, 0.02, 0.03));
 
         // reset initial position
@@ -56,8 +62,13 @@ public class Odometry extends SubsystemBase {
         // create odometry shuffleboard page
         initializeShuffleboard();
 
+        // reset/start timer
+        PoseTimeStamp = new Timer();
+        PoseTimeStamp.reset();
+        PoseTimeStamp.start();
+
         // reset deadwheel encoders
-       // RobotContainer.encoder.ResetEncoder();
+        // RobotContainer.encoder.ResetEncoder();
         previousLeft = 0.0;
         previousFront = 0.0;
         previousRear = 0.0;
@@ -66,6 +77,12 @@ public class Odometry extends SubsystemBase {
         simTimer = new Timer();
         simTimer.reset();
         simTimer.start();
+
+        timeSinceLastTag = new Timer();
+        timeSinceLastTag.reset();
+        timeSinceLastTag.start();
+
+
     }
 
     /**
@@ -75,18 +92,101 @@ public class Odometry extends SubsystemBase {
     @Override
     public void periodic() {
     
-        updateOdometry();
+        // get current pose before adjustments
+        currentPoseBeforeAdjustment = getPose2d();
+        
+        // pose update using drive wheel data
+        updateDriveWheelOdometry();
+        
+        // pose update using dead-wheel data
+        updateDeadWheelOdometry();
+
+        // pose update using apriltag data
+        updateAprilTagOdometry();
+
+
         updateShuffleboard();
+    
+        
+    }
+
+
+    // -------- get/update odometry methods
+
+    /** return robot's current position vector Pose2d */
+    public Pose2d getPose2d() {
+        return m_Estimator.getEstimatedPosition();
+    }
+    
+    // initialize robot odometry to zero
+    public void InitializeToZero() {
+        setPose(0.0, 0.0, 0.0, 0.0);
+    }
+
+    /** Use to set odometry to fixed position and angle */
+    public void setPose(Pose2d position) {
+        setPose(position, position.getRotation()); }
+    public void setPose(Pose2d position, Rotation2d gyroangle) {
+        //temp
+        DWfieldX = position.getX();
+        DWfieldY = position.getY();
+        DWfieldAngle = position.getRotation().getRadians();
+        
+        // set gyro
+        RobotContainer.gyro.setYawAngle(gyroangle.getDegrees());
+    
+        // set robot odometry
+        m_Estimator.resetPosition(gyroangle,
+            RobotContainer.drivesystem.GetSwerveDistances(),
+            position);
+    }
+  
+    public void setPose(double x, double y, double robotangle) {
+        setPose(x, y, robotangle, robotangle);
+    }
+    public void setPose(double x, double y, double robotangle, double gyroangle) {
+        setPose(new Pose2d(x,y, new Rotation2d(robotangle)), new Rotation2d(gyroangle)); }
+
+
+    // ---------- Drive-wheel odometry methods ----------
+    
+    
+    // helper function to updates drive wheel odometry - called by periodic()
+    private void updateDriveWheelOdometry() {
+        // get gyro angle (in degrees) and make rotation vector
+        Rotation2d gyroangle = new Rotation2d(RobotContainer.gyro.getYawAngle() * DEGtoRAD);
+
+        // get position of all sewrve modules from subsystem
+        SwerveModulePosition[] positions = RobotContainer.drivesystem.GetSwerveDistances();
+
+        // ensure we have the proper length array positions
+        if (positions.length >= 4) {
+
+            // update robots odometry
+            m_Estimator.updateWithTime(PoseTimeStamp.get(), gyroangle, positions);
+
+        }
+    }
+
+    
+    // ---------- Dead-wheel update odometry methods ----------
+
+    double DWfieldX = 0.0;
+    double DWfieldY = 0.0;
+    double DWfieldAngle = 0.0;
+
+    // helper function to update dead wheel odometry - called by periodic()
+    private void updateDeadWheelOdometry() {
     
         // get all the deadwheel encoder distances (in m)
         double leftPos = RobotContainer.encoder.getLeftEncoderDistance()*0.01;
         double frontPos = RobotContainer.encoder.getFrontEncoderDistance()*0.01;
-        double rearPos =RobotContainer.encoder.getRearEncoderDistance()*0.01;
+        double rearPos = RobotContainer.encoder.getRearEncoderDistance()*0.01;
 
         // determine changes in distances.
-        leftChangePos = leftPos - previousLeft;
-        frontChangePos = frontPos - previousFront;
-        rearChangePos = rearPos - previousRear;
+        double leftChangePos = leftPos - previousLeft;
+        double frontChangePos = frontPos - previousFront;
+        double rearChangePos = rearPos - previousRear;
 
         // keep encoder positions for next time
         previousLeft = leftPos;
@@ -111,97 +211,90 @@ public class Odometry extends SubsystemBase {
 
         double fieldLateralChange = ForwardChange * Math.sin(IMUHeading) + LateralChange * Math.cos(IMUHeading);
 
-        // update field coordinates
-        // note: dead wheels only used to update x,y. Field angle left based on IMU angle only
-        fieldX += fieldForwardChange;
-        fieldY += fieldLateralChange;
-        fieldAngle = IMUHeading;
+        
+        
+        
+        
+        Pose2d newPose = new Pose2d(currentPoseBeforeAdjustment.getX()+fieldForwardChange,
+                                    currentPoseBeforeAdjustment.getY()+fieldLateralChange,
+                                    new Rotation2d(IMUHeading));
+           
+        // temp
+        DWfieldX += fieldForwardChange;
+        DWfieldY += fieldLateralChange;
+        DWfieldAngle = IMUHeading;                            
+
+        // add new position estimate into pose estimator                            
+        m_Estimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.01, 0.01, 0.001));                     
+        m_Estimator.addVisionMeasurement(newPose, PoseTimeStamp.get());                              
+        
     }
 
 
-    // -------- update odometry methods
 
-    // initialize robot odometry to zero
-    public void InitializeToZero() {
-        setPose(0.0, 0.0, 0.0, 0.0);
-    }
+    // ---------- Apriltag odometry methods ----------
+    
+    
+    // helper function to updates drive wheel odometry - called by periodic()
+    private void updateAprilTagOdometry() {
+    
+        // get updates from camera
+        TagResults = RobotContainer.camera.GetJSONResults();
+    
+        // get time latency from camera
+        double latency = 0.001*RobotContainer.camera.getLatencyContribution();
+        
+        // if results is not empty and there is a list of apriltags
+        if (TagResults!=null && TagResults.targets_Fiducials!=null)
+        {
+            for (int i=0;i<TagResults.targets_Fiducials.length; ++i)
+            {
+               
+                int tagid = (int)Math.round(TagResults.targets_Fiducials[i].fiducialID);
+                
+                // if tag is part of coral reef then use it
+                if ((tagid >=6 && tagid <=11) || (tagid >=17 && tagid <=22))
+                {
+                    // set confidence level of apriltag detection
+                    // for now assume constant - may be refined later                           
+                    m_Estimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.02, 0.02, 0.02)); 
 
-    // called by the drive train synchronously with swerve module data updates to
-    // reduce latency
-    public void updateOdometry() {
-        // get gyro angle (in degrees) and make rotation vector
-        Rotation2d gyroangle = new Rotation2d(RobotContainer.gyro.getYawAngle() * DEGtoRAD);
+                    Pose3d pose = TagResults.targets_Fiducials[i].getCameraPose_TargetSpace();
+                    double distance = Math.sqrt(pose.getX()*pose.getX() + pose.getZ()*pose.getZ());
+                
 
-        // get position of all sewrve modules from subsystem
-        SwerveModulePosition[] positions = RobotContainer.drivesystem.GetSwerveDistances();
+                    // are we close to apriltag? if so, then use pose estimate
+                    if (distance <= 1.5)
+                    {
+                        // get field pose from limelight, convert to 2d, then convert to FRC coordinates
+                        Pose2d LLpose =  TagResults.targets_Fiducials[i].getRobotPose_FieldSpace().toPose2d();
+                        Pose2d fieldPose = new Pose2d(LLpose.getX()+8.774176, LLpose.getY()+4.0259, LLpose.getRotation());
+                    
+                        // add in to our position estimator
+                        // assume lag time = camera latency + 20ms
+                        m_Estimator.addVisionMeasurement(fieldPose, PoseTimeStamp.get()-latency - 0.02);
+                    }
+                
+                    //m_test.setDouble(RobotContainer.camera.getLatencyContribution());
 
-        // ensure we have the proper length array positions
-        if (positions.length >= 4) {
-            // update robots odometry
-            m_Estimator.update(gyroangle, positions);
+                } // end if tag belongs to coral reef
+
+        
+            } // end for
+           
+            
+            //m_test.setDouble(timeSinceLastTag.get());
+            timeSinceLastTag.reset();
         }
-    }
-
-  
-    /** Use to set odometry to fixed position and angle */
-    public void setPose(Pose2d position, Rotation2d gyroangle) {
-        // set gyro
-        RobotContainer.gyro.setYawAngle(gyroangle.getDegrees());
-    
-        // set robot odometry
-        m_Estimator.resetPosition(gyroangle,
-            RobotContainer.drivesystem.GetSwerveDistances(),
-            position);
-    }
-  
-    public void setPose(double x, double y, double robotangle, double gyroangle) {
-        setPose(new Pose2d(x,y, new Rotation2d(robotangle)), new Rotation2d(gyroangle)); }
-
-
-
-    /**
-    * adds vision measurements 
-    * @param vision
-    * @param timeStamp
-    * @param distance
-    */
-    /*
-    * public void addVision(Pose2d vision, double distance) {
-    * if (m_useLimelightAngle) {
-    * double stDevs = 0.03 * distance;
-    * 
-    * double stdDevs = 0.06*distance;
-    * m_Estimator.setVisionMeasurementStdDevs(VecBuilder.fill(stdDevs, stdDevs, 2.0
-    * * stdDevs));
-    * m_Estimator.addVisionMeasurement(vision, Timer.getFPGATimestamp());
-    * 
-    * // show april tag as dot on field 2d widget
-    * // RobotContainer.operatorinterface.m_field.getObject("tag").setPose(vision);
-    * } else {
-    * double CurrentGyro = RobotContainer.gyro.getYawAngle()*DEGtoRAD;
-    * double VisionAngle = vision.getRotation().getRadians();
-    * 
-    * Pose2d NewEstimate = new Pose2d(vision.getX(),vision.getY(),new
-    * Rotation2d(0.995*CurrentGyro + 0.005*VisionAngle));
-    * 
-    * double stdDevs = 0.06*distance;
-    * m_Estimator.setVisionMeasurementStdDevs(VecBuilder.fill(stdDevs, stdDevs,
-    * stdDevs));
-    * m_Estimator.addVisionMeasurement(NewEstimate, Timer.getFPGATimestamp());
-    * 
-    * // show apriltag estimate as 'dot' on field2d widget
-    * // RobotContainer.operatorinterface.m_field.getObject("tag").setPose(vision);
-    * }
-    * } */
-
-
-    // -------------------- Robot Current Odometry Access Methods --------------------
 
     
-    /** return robot's current position vector Pose2d */
-    public Pose2d getPose2d() {
-        return m_Estimator.getEstimatedPosition();
     }
+
+
+
+
+    // -------------------- Odometry Store/Recall Methods --------------------
+
 
     Pose2d m_MemPoints[] = { new Pose2d(0, 0, new Rotation2d(0.0)),
       new Pose2d(0, 0, new Rotation2d(0.0)),
@@ -230,27 +323,67 @@ public class Odometry extends SubsystemBase {
 
 
     // -------------------- Subsystem Shuffleboard Methods --------------------
+    
     private GenericEntry m_fieldXPos;
     private GenericEntry m_fieldYPos;
     private GenericEntry m_fieldAngle;
+    private GenericEntry m_DWfieldXPos;
+    private GenericEntry m_DWfieldYPos;
+    private GenericEntry m_DWfieldAngle;
+    
+    
+    private GenericEntry m_detectedtags;
+    private GenericEntry m_test;
 
     /** Initialize subsystem shuffleboard page and controls */
     private void initializeShuffleboard() {
         // Create page in shuffleboard
         ShuffleboardTab Tab = Shuffleboard.getTab("Odometry");
+        
+        // robot position info
         ShuffleboardLayout l1 = Tab.getLayout("Odometry", BuiltInLayouts.kList);
         l1.withPosition(0, 0);
         l1.withSize(2, 4);
-        m_fieldXPos = l1.add("Field X ",0.0 ).getEntry();
-        m_fieldYPos = l1.add("Field Y ",0.0 ).getEntry();
-        m_fieldAngle = l1.add("Angle ",0.0 ).getEntry();
+        m_fieldXPos = l1.add("Field X",0.0 ).getEntry();
+        m_fieldYPos = l1.add("Field Y",0.0 ).getEntry();
+        m_fieldAngle = l1.add("Angle",0.0 ).getEntry();
+
+        // apriltag info
+        ShuffleboardLayout l2 = Tab.getLayout("Tag Info", BuiltInLayouts.kList);
+        l2.withPosition(2, 0);
+        l2.withSize(1, 4);
+        m_detectedtags = l2.add("Detections",new String() ).getEntry();
+        m_test = l2.add("Test", 0.0).getEntry();
+        
+
+         // deadwheel info
+         ShuffleboardLayout l3 = Tab.getLayout("Deadwheel Info(Temp)", BuiltInLayouts.kList);
+         l3.withPosition(3, 0);
+         l3.withSize(2, 4);
+         m_DWfieldXPos = l3.add("DW Field X",0.0 ).getEntry();
+         m_DWfieldYPos = l3.add("DW Field Y",0.0 ).getEntry();
+         m_DWfieldAngle = l3.add("DW Angle",0.0 ).getEntry();
+
     }
 
     /** Update subsystem shuffle board page with current odometry values */
     private void updateShuffleboard() {
-        m_fieldXPos.setDouble(fieldX);
-        m_fieldYPos.setDouble(fieldY);
-        m_fieldAngle.setDouble(fieldAngle);
+        Pose2d CurrentPose = getPose2d();
+        m_fieldXPos.setDouble(CurrentPose.getX());
+        m_fieldYPos.setDouble(CurrentPose.getY());
+        m_fieldAngle.setDouble(CurrentPose.getRotation().getDegrees()); 
+        
+        // temp
+        m_DWfieldXPos.setDouble(DWfieldX);
+        m_DWfieldYPos.setDouble(DWfieldY);
+        m_DWfieldAngle.setDouble(Math.toDegrees(DWfieldAngle)); 
+
+        // show detected tags
+        String tags = new String();
+        if (TagResults!=null && TagResults.targets_Fiducials!=null)
+            for (int i=0;i<TagResults.targets_Fiducials.length; ++i)
+                tags=tags+(int)TagResults.targets_Fiducials[i].fiducialID + " ";
+        m_detectedtags.setString(tags);
     }
 
 
@@ -292,7 +425,9 @@ public class Odometry extends SubsystemBase {
         heading += dt*speed.omegaRadiansPerSecond;
         
         // set new position of robot
-        setPose(new Pose2d (x, y, new Rotation2d(heading)), new Rotation2d(heading));    
+        //setPose(new Pose2d (x, y, new Rotation2d(heading)), new Rotation2d(heading)); 
+        m_Estimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.001, 0.001, 0.001));                     
+        m_Estimator.addVisionMeasurement(new Pose2d (x, y, new Rotation2d(heading)), PoseTimeStamp.get());     
     }
 
 

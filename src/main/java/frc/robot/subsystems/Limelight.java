@@ -342,7 +342,7 @@ public class Limelight extends SubsystemBase {
     try {
         results = mapper.readValue(string, LimelightResults.class);
     } catch (JsonProcessingException e) {
-        System.err.println("lljson error: " + e.getMessage());
+        //System.err.println("lljson error: " + e.getMessage());
     }
 
     return results;
