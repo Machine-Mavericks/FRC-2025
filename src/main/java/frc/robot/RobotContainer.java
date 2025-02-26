@@ -1,6 +1,8 @@
 package frc.robot;
 
+import frc.robot.commandgroups.TwoStationDefense;
 import frc.robot.commandgroups.OneCoralAutoAnywhere;
+import frc.robot.commandgroups.OneStationDefense;
 import frc.robot.commandgroups.TemplateCommandGroup;
 import frc.robot.commandgroups.ThreeCoralAutoAnywhere;
 import frc.robot.commandgroups.TwoCoralAutoAnywhere;
@@ -96,7 +98,7 @@ public class RobotContainer {
 
         driverOp.start().onTrue(new InstantCommand(()->encoder.ResetEncoder()));
         driverOp.x().onTrue(new MoveElevator(ElevatorPositions.LEVEL_2));
-       // driverOp.a().onTrue(new MoveElevator(ElevatorPositions.LEVEL_1));
+        //driverOp.a().onTrue(new MoveElevator(ElevatorPositions.LEVEL_1));
 
 
         // examples:
@@ -107,6 +109,8 @@ public class RobotContainer {
         driverOp.b().onTrue(new MoveElevator(ElevatorPositions.LEVEL_3));
         driverOp.a().onTrue(new MoveElevator(ElevatorPositions.INTAKE));
         driverOp.y().onTrue(new MoveElevator(ElevatorPositions.LEVEL_4));
+        driverOp.leftTrigger().whileTrue(new TwoStationDefense());
+        driverOp.rightTrigger().whileTrue(new OneStationDefense());
   
 
     

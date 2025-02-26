@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 import frc.robot.commands.MoveToPose;
 
+
 // Example Sequential Command Group
 // There are also:
 // ParallelCommandGroup
