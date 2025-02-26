@@ -20,32 +20,32 @@ public class TwoStationDefense extends SequentialCommandGroup {
         new MoveToPose(
             1,
             1,
-            AutoFunctions.redVsBlue(new Pose2d(15.5, 6.8, new Rotation2d(Math.toRadians(55))))),
+            new Pose2d(15.5, 6.8, new Rotation2d(Math.toRadians(55)))),
         
         new MoveToPose(
             1,
             1,
-            AutoFunctions.redVsBlue(new Pose2d(16.4, 6.2, new Rotation2d(Math.toRadians(48))))), 
+            new Pose2d(16.4, 6.2, new Rotation2d(Math.toRadians(48)))), 
         
         new MoveToPose(
             1,
             1,
-            AutoFunctions.redVsBlue(new Pose2d(16.5, 2.2, new Rotation2d(-Math.toRadians(57))))),
+           new Pose2d(16.5, 2.2, new Rotation2d(-Math.toRadians(57)))),
         
         new MoveToPose(
             1,
             1,
-            AutoFunctions.redVsBlue(new Pose2d(15.5, 1.3, new Rotation2d(-Math.toRadians(52))))),
+           new Pose2d(15.5, 1.3, new Rotation2d(-Math.toRadians(52)))),
 
         new MoveToPose(
             1,
             1,
-            AutoFunctions.redVsBlue(new Pose2d(16.5, 2.2, new Rotation2d(-Math.toRadians(57))))),
+            new Pose2d(16.5, 2.2, new Rotation2d(-Math.toRadians(57)))),
 
         new MoveToPose(
             1,
             1,
-            AutoFunctions.redVsBlue(new Pose2d(16.4, 6.2, new Rotation2d(Math.toRadians(48)))))
+            new Pose2d(16.4, 6.2, new Rotation2d(Math.toRadians(48))))
 
     );
   }
