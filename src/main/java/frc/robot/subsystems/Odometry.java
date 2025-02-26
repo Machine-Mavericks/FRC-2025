@@ -44,6 +44,9 @@ public class Odometry extends SubsystemBase {
 
     Pose2d currentPoseBeforeAdjustment;
 
+
+    public boolean TagEnable=false;
+
     public Odometry() {
 
         // create position estimator - set to (0,0,0)(x,y,ang)
@@ -99,7 +102,7 @@ public class Odometry extends SubsystemBase {
         updateDriveWheelOdometry();
         
         // pose update using dead-wheel data
-        updateDeadWheelOdometry();
+        //updateDeadWheelOdometry();
 
         // pose update using apriltag data
         updateAprilTagOdometry();
@@ -245,7 +248,7 @@ public class Odometry extends SubsystemBase {
         double latency = 0.001*RobotContainer.camera.getLatencyContribution();
         
         // if results is not empty and there is a list of apriltags
-        if (TagResults!=null && TagResults.targets_Fiducials!=null)
+        if (TagEnable && TagResults!=null && TagResults.targets_Fiducials!=null)
         {
             for (int i=0;i<TagResults.targets_Fiducials.length; ++i)
             {
@@ -257,14 +260,14 @@ public class Odometry extends SubsystemBase {
                 {
                     // set confidence level of apriltag detection
                     // for now assume constant - may be refined later                           
-                    m_Estimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.02, 0.02, 0.02)); 
+                    m_Estimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.5, 0.5, 0.1)); 
 
                     Pose3d pose = TagResults.targets_Fiducials[i].getCameraPose_TargetSpace();
                     double distance = Math.sqrt(pose.getX()*pose.getX() + pose.getZ()*pose.getZ());
                 
 
                     // are we close to apriltag? if so, then use pose estimate
-                    if (distance <= 1.5)
+                    if (distance <= 2.0)
                     {
                         // get field pose from limelight, convert to 2d, then convert to FRC coordinates
                         Pose2d LLpose =  TagResults.targets_Fiducials[i].getRobotPose_FieldSpace().toPose2d();
