@@ -8,6 +8,7 @@ import frc.robot.RobotContainer;
 import frc.robot.commands.MoveToPose;
 import frc.robot.utils.AutoFunctions;
 
+
 // Example Sequential Command Group
 // There are also:
 // ParallelCommandGroup
