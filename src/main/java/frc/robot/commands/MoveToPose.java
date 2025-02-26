@@ -73,7 +73,8 @@ public class MoveToPose extends Command {
                 heading,
                 new ArrayList<Translation2d>() {{ }},
                 new Pose2d(dest.getX(), dest.getY(), heading),
-                dest.getRotation()
+                dest.getRotation(),
+                false
         );
 
         // initialize the follow-path command

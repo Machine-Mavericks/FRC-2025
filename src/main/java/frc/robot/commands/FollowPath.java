@@ -1,10 +1,14 @@
 package frc.robot.commands;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import frc.robot.utils.AutoFunctions;
 import frc.robot.utils.Utils;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
@@ -25,9 +29,14 @@ public class FollowPath extends Command {
     Trajectory trajectory;
 
     // trajectory points
+    Rotation2d pathStartAngle_unmirrored;
+    Pose2d pathEndPose_unmirrored;
+    List<Translation2d> pathWaypoints_unmirrored;
+    Rotation2d robotEndAngle_unmirrored;
     Rotation2d pathStartAngle;
     Pose2d pathEndPose;
     List<Translation2d> pathWaypoints;
+    Rotation2d robotEndAngle;
 
     // ending speed
     double endSpeed;
@@ -39,7 +48,6 @@ public class FollowPath extends Command {
     Timer pathTime;
 
     // robot rotation control
-    Rotation2d robotEndAngle;
     double endRobotAngle;       // target robot angle in rad
     double startRobotAngle;     // initial robot angle in rad
     double rotationRate;        // desired rotation rate in rad/s
@@ -103,10 +111,10 @@ public class FollowPath extends Command {
 
                 
         // save positions for use during command initialization
-        this.pathStartAngle = pathStartAngle;
-        this.pathEndPose = pathEndPose;
-        this.pathWaypoints = pathWaypoints;
-        this.robotEndAngle = robotEndAngle;
+        this.pathStartAngle_unmirrored = pathStartAngle;
+        this.pathEndPose_unmirrored = pathEndPose;
+        this.pathWaypoints_unmirrored = pathWaypoints;
+        this.robotEndAngle_unmirrored = robotEndAngle;
 
         // save ending speed of robot
         this.endSpeed = endSpeed;
@@ -135,6 +143,28 @@ public class FollowPath extends Command {
         // get current robot position from odometry
         Pose2d currentPos = RobotContainer.odometry.getPose2d();
 
+        // if required, mirror the path points per redvsblue
+        if (redVsBlueEnable)
+        {
+            pathStartAngle = AutoFunctions.redVsBlue(pathStartAngle_unmirrored);
+            pathEndPose = AutoFunctions.redVsBlue(pathEndPose_unmirrored);
+            robotEndAngle = AutoFunctions.redVsBlue(robotEndAngle_unmirrored);
+            
+            pathWaypoints = new ArrayList<>();
+            for (int i=0;i<pathWaypoints_unmirrored.size();++i)
+            {
+                pathWaypoints.add(AutoFunctions.redVsBlue(pathWaypoints_unmirrored.get(i)));
+            }
+        }
+        else
+        {
+            pathStartAngle = pathStartAngle_unmirrored;
+            pathEndPose = pathEndPose_unmirrored;
+            robotEndAngle = robotEndAngle_unmirrored;
+            pathWaypoints = pathWaypoints_unmirrored;
+        }
+        
+        
         // start path at current location of robot - use x,y only!
         // set start angle of path to provided parameter
         Pose2d pathStartPose = new Pose2d(currentPos.getTranslation(),

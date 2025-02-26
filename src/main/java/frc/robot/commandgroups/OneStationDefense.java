@@ -20,12 +20,12 @@ public class OneStationDefense extends SequentialCommandGroup {
         new MoveToPose(
             1,
             1,
-            AutoFunctions.redVsBlue(new Pose2d(15.5, 6.8, new Rotation2d(Math.toRadians(55))))),
+            new Pose2d(15.5, 6.8, new Rotation2d(Math.toRadians(55)))),
         
         new MoveToPose(
             1,
             1,
-            AutoFunctions.redVsBlue(new Pose2d(16.4, 6.2, new Rotation2d(Math.toRadians(48)))))
+            new Pose2d(16.4, 6.2, new Rotation2d(Math.toRadians(48))))
         
 
     );
