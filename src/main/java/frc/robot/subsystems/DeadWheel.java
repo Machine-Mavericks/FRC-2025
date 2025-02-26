@@ -20,17 +20,17 @@ public class DeadWheel extends SubsystemBase {
     private Encoder encoderRear = new Encoder(RobotMap.DIO.REARENCODER_A, RobotMap.DIO.REARENCODER_B);
     
 
-    public static double FRONT_TO_BACK_DISTANCE = 0.65;
-    public static double LATERAL_OFFSET = 0.3;
+    public static double FRONT_TO_BACK_DISTANCE = 0.568;
+    public static double LATERAL_OFFSET = 0.285;
     
 
     /** Place code here to initialize subsystem */
     public DeadWheel() {
-        encoderLeft.setDistancePerPulse(2.54*4.0*Math.PI/1024.0);
+        encoderLeft.setDistancePerPulse(1.05373*2.54*4.0*Math.PI/1024.0);
         encoderLeft.setReverseDirection(true);
-        encoderFront.setDistancePerPulse(2.54*4.0*Math.PI/1024.0);
+        encoderFront.setDistancePerPulse(1.06322*2.54*4.0*Math.PI/1024.0);
         encoderFront.setReverseDirection(true);
-        encoderRear.setDistancePerPulse(2.54*4.0*Math.PI/1024.0);
+        encoderRear.setDistancePerPulse(1.06322*2.54*4.0*Math.PI/1024.0);
         encoderRear.setReverseDirection(false);
         initializeShuffleboard();
     }

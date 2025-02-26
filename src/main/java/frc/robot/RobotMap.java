@@ -49,15 +49,13 @@ public class RobotMap {
   public static class DIO {
         // Deadwheel odometry pods
 
-        public static final int LEFTENCODER_A = 8;
-        public static final int LEFTENCODER_B = 1;
+        public static final int LEFTENCODER_A = 1;
+        public static final int LEFTENCODER_B = 0;
         public static final int FRONTENCODER_A = 4;
         public static final int FRONTENCODER_B = 5;
-        public static final int maxLimitSwitch = 6;
-        public static final int minLimitSwitch = 7;
-        public static final int REARENCODER_A = 2;
-        public static final int REARENCODER_B = 3;
-        public static final int photoSensor = 0;
+        public static final int REARENCODER_A = 3;
+        public static final int REARENCODER_B = 2;
+        public static final int photoSensor = 9;
 
         
     }
@@ -69,6 +67,19 @@ public class RobotMap {
         // PWM port for camera tilting subsystem
         //public static final int CAMERA_SERVO_ID = 1;
     } 
+
+    /**
+     * Inner class to hold RoboRIO analog input constants
+     */
+    public static class AINPorts {
+        
+        // IDs for NEO Swerve steer position sensors
+        public static final int NEO_LF_STEER_SENSOR = 0;
+        public static final int NEO_RF_STEER_SENSOR = 1;
+        public static final int NEO_LR_STEER_SENSOR = 2;
+        public static final int NEO_RR_STEER_SENSOR = 3;
+
+    }
 
     // game controller port IDs
     public static class GamePadPorts {
