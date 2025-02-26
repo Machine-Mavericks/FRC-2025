@@ -21,7 +21,7 @@ public class CoralOuttake extends Command {
     // This method is called once when command is started
     @Override
     public void initialize() {
-        RobotContainer.intake.intakeRun(-1);
+        RobotContainer.intake.intakeRun(1);
         delay.reset();
         delay.start();
 
