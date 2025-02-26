@@ -1,10 +1,14 @@
 package frc.robot.commands;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import frc.robot.utils.AutoFunctions;
 import frc.robot.utils.Utils;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
@@ -25,9 +29,14 @@ public class FollowPath extends Command {
     Trajectory trajectory;
 
     // trajectory points
+    Rotation2d pathStartAngle_unmirrored;
+    Pose2d pathEndPose_unmirrored;
+    List<Translation2d> pathWaypoints_unmirrored;
+    Rotation2d robotEndAngle_unmirrored;
     Rotation2d pathStartAngle;
     Pose2d pathEndPose;
     List<Translation2d> pathWaypoints;
+    Rotation2d robotEndAngle;
 
     // ending speed
     double endSpeed;
@@ -39,7 +48,6 @@ public class FollowPath extends Command {
     Timer pathTime;
 
     // robot rotation control
-    Rotation2d robotEndAngle;
     double endRobotAngle;       // target robot angle in rad
     double startRobotAngle;     // initial robot angle in rad
     double rotationRate;        // desired rotation rate in rad/s
@@ -48,34 +56,11 @@ public class FollowPath extends Command {
     double x_ierror;
     double y_ierror;
 
-    // constructor
-    // MaxSpeed - max robot travel speed (m/s)
-    // MaxAccel - max robot travel accel (m/s2)
-    // StartSpeed - starting robot speed of path (m/s) - normally 0m/s unless continuing from previous path
-    // EndSpeed - ending robot speed of path (m/s) - normally 0m/s unless continuing into subsequent path
-    // pathStartAngle - starting angle of generated path (Rotation2d)
-    // pathWaypoints - list of waypoints (x,y) (List<Translation2d>)
-    // pathEndPose - ending position of path (x,y and angle combined) (Pose2d)
-    // robotEndAngle - angle robot faces at end of path (Rotation2d)
-   /*public FollowPath(double maxSpeed,
-                     double maxAccel,
-                     double StartSpeed,
-                     double endSpeed,
-                     Rotation2d pathStartAngle,
-                     Pose2d pathEndPose,
-                     Rotation2d robotEndAngle)
-   {
-       FollowPath (maxSpeed,
-       maxAccel,
-       StartSpeed,
-       endSpeed,
-       pathStartAngle,
-       List<Translation2d> pathWaypoints,
-       pathEndPose,
-       robotEndAngle)
+    double MaxPathSpeed;
 
-   } */
-
+    // true if to translate destinaton using redvsblue
+    boolean redVsBlueEnable;
+    
     /** A command to follow a path based on input parameters
      *
      *  @param maxSpeed - max robot travel speed (m/s)
@@ -87,14 +72,28 @@ public class FollowPath extends Command {
      *  @param pathEndPose - ending position of path (x,y and angle combined) (Pose2d)
      *  @param robotEndAngle - angle robot faces at end of path (Rotation2d)
      * */
-    public FollowPath(double maxSpeed,
+    
+     public FollowPath(double maxSpeed,
                       double maxAccel,
                       double startSpeed,
                       double endSpeed,
                       Rotation2d pathStartAngle,
                       List<Translation2d> pathWaypoints,
                       Pose2d pathEndPose,
-                      Rotation2d robotEndAngle) {
+                      Rotation2d robotEndAngle) 
+    { this(maxSpeed, maxAccel, startSpeed, endSpeed, pathStartAngle, pathWaypoints, pathEndPose, robotEndAngle, true); }
+    
+    
+     public FollowPath(double maxSpeed,
+                      double maxAccel,
+                      double startSpeed,
+                      double endSpeed,
+                      Rotation2d pathStartAngle,
+                      List<Translation2d> pathWaypoints,
+                      Pose2d pathEndPose,
+                      Rotation2d robotEndAngle,
+                      boolean redVsBlueEnable
+                      ) {
 
         // add subsystem requirements (if any) - for example:
         addRequirements(RobotContainer.drivesystem);
@@ -112,22 +111,25 @@ public class FollowPath extends Command {
 
                 
         // save positions for use during command initialization
-        this.pathStartAngle = pathStartAngle;
-        this.pathEndPose = pathEndPose;
-        this.pathWaypoints = pathWaypoints;
-        this.robotEndAngle = robotEndAngle;
+        this.pathStartAngle_unmirrored = pathStartAngle;
+        this.pathEndPose_unmirrored = pathEndPose;
+        this.pathWaypoints_unmirrored = pathWaypoints;
+        this.robotEndAngle_unmirrored = robotEndAngle;
 
         // save ending speed of robot
         this.endSpeed = endSpeed;
 
+        // save redvsblue translation enable
+        this.redVsBlueEnable = redVsBlueEnable;
+
         // configure PID controllers - set PID gains
-        xController = new PIDController(15.0, 2.00, 0.0);
-        yController = new PIDController(15.0, 2.00, 0.0);
-        thetaController = new PIDController(10.0, 0.05, 0.0);
+        xController = new PIDController(0.5, 5.00, 0.0);
+        yController = new PIDController(0.5, 5.00, 0.0);
+        thetaController = new PIDController(3.0, 0.05, 0.0);
 
         // configure PID controllers integration limiters - prevents excessive windup of integrated error
-        xController.setIntegratorRange(-10.0, 10.0);
-        yController.setIntegratorRange(-10.0, 10.0);
+        xController.setIntegratorRange(-20.0, 20.0);
+        yController.setIntegratorRange(-20.0, 20.0);
         thetaController.setIntegratorRange(-5.0, 5.0);
 
         // set up timer
@@ -141,6 +143,28 @@ public class FollowPath extends Command {
         // get current robot position from odometry
         Pose2d currentPos = RobotContainer.odometry.getPose2d();
 
+        // if required, mirror the path points per redvsblue
+        if (redVsBlueEnable)
+        {
+            pathStartAngle = AutoFunctions.redVsBlue(pathStartAngle_unmirrored);
+            pathEndPose = AutoFunctions.redVsBlue(pathEndPose_unmirrored);
+            robotEndAngle = AutoFunctions.redVsBlue(robotEndAngle_unmirrored);
+            
+            pathWaypoints = new ArrayList<>();
+            for (int i=0;i<pathWaypoints_unmirrored.size();++i)
+            {
+                pathWaypoints.add(AutoFunctions.redVsBlue(pathWaypoints_unmirrored.get(i)));
+            }
+        }
+        else
+        {
+            pathStartAngle = pathStartAngle_unmirrored;
+            pathEndPose = pathEndPose_unmirrored;
+            robotEndAngle = robotEndAngle_unmirrored;
+            pathWaypoints = pathWaypoints_unmirrored;
+        }
+        
+        
         // start path at current location of robot - use x,y only!
         // set start angle of path to provided parameter
         Pose2d pathStartPose = new Pose2d(currentPos.getTranslation(),
@@ -217,10 +241,10 @@ public class FollowPath extends Command {
 
             // manual implementation of x-position PI controller
             double error = targetPathState.poseMeters.getX() - currentPos.getX();
-            x_ierror += 0.60 * error;
-            if (Math.abs(error) > 0.03)
+            x_ierror += 0.1 * error;
+            if (Math.abs(error) > 0.10)
                 x_ierror = 0.0;
-            double dX = 8.0 * error + x_ierror;
+            double dX = 4.0 * error + x_ierror;
 
             // commented out for now.  Will try using manual implementation of PID
             // double dY = -yController.calculate(targetPathState.poseMeters.getY() -
@@ -228,10 +252,18 @@ public class FollowPath extends Command {
 
             // manual implementation of y-position PI controller
             double y_error = targetPathState.poseMeters.getY() - currentPos.getY();
-            y_ierror += 0.60 * y_error;
-            if (Math.abs(y_error) > 0.03)
+            y_ierror += 0.1 * y_error;
+            if (Math.abs(y_error) > 0.10)
                 y_ierror = 0.0;
-            double dY = 8.0 * y_error + y_ierror;
+            double dY = 4.0 * y_error + y_ierror;
+
+            // limits speeds
+            //if (dX > MaxPathSpeed) dX=MaxPathSpeed;
+            //if (dX < -MaxPathSpeed) dX=-MaxPathSpeed;
+            //if (dY > MaxPathSpeed) dY=MaxPathSpeed;
+            //if (dY <-MaxPathSpeed) dY=-MaxPathSpeed;
+
+
 
             // robot rotation controller
             double omega = -thetaController.calculate(Utils.AngleDifferenceRads(currentPos.getRotation().getRadians(), targetRobotAngle));
@@ -248,7 +280,7 @@ public class FollowPath extends Command {
 
         // command is finished if no valid path or when time in command exceeds expected time of path
         return ( trajectory==null ||
-                (pathTime.get() > (trajectory.getTotalTimeSeconds()+0.10)) );
+                (pathTime.get() > (trajectory.getTotalTimeSeconds()+2.0)) );
 
     }
 

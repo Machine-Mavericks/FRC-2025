@@ -196,11 +196,11 @@ public class NeoSwerveDrive extends SubsystemBase {
         SparkMaxConfig driveConfig = new SparkMaxConfig();
         driveConfig.idleMode(IdleMode.kCoast);
         driveConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
-        driveConfig.closedLoop.p(0.0006);
-        driveConfig.closedLoop.i(0.000010);
+        driveConfig.closedLoop.p(0.0005);
+        driveConfig.closedLoop.i(0.000008);
         driveConfig.closedLoop.d(0.0);
         driveConfig.closedLoop.iMaxAccum(0.2);
-        driveConfig.closedLoop.velocityFF(0.0013);
+        driveConfig.closedLoop.velocityFF(0.0012);
         driveConfig.closedLoop.outputRange(-1.0, 1.0);
         driveConfig.encoder.velocityConversionFactor(1.0 / DRIVE_RATIO);
         driveConfig.encoder.positionConversionFactor(1.0 / DRIVE_RATIO);
