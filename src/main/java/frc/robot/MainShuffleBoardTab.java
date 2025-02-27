@@ -104,6 +104,12 @@ public class MainShuffleBoardTab extends SubsystemBase {
         return m_delayTime.getDouble(0.0);
     }
 
+    // returns index of selected auto
+    public int getSelectedAutoIndex()
+    {
+        return m_autonomousPath.getSelected();
+    }
+
     // -------------------- Shuffboard Methods --------------------
 
 
@@ -118,7 +124,7 @@ public class MainShuffleBoardTab extends SubsystemBase {
         // add autonomous commands to page -
         m_autonomousPath = new SendableChooser<Integer>();
         m_autonomousPath.addOption("Do Nothing",0);
-        m_autonomousPath.addOption("Auto 1",1);
+        m_autonomousPath.addOption("Move Off Line",1);
         m_autonomousPath.addOption("Auto 2", 2);
         m_autonomousPath.setDefaultOption("Do Nothing", 0);
 
