@@ -62,7 +62,7 @@ public class RobotMap {
 
     public static class PWMPorts {
         /** PWM Port for led strip */
-        //public static final int LED_BLINKIN = 0;
+        public static final int LED_BLINKING = 0;
 
         // PWM port for camera tilting subsystem
         //public static final int CAMERA_SERVO_ID = 1;

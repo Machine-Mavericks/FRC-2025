@@ -111,6 +111,7 @@ public class RobotContainer {
         driverOp.x().onTrue(new MoveElevator(ElevatorPositions.LEVEL_2));
         driverOp.b().onTrue(new MoveElevator(ElevatorPositions.LEVEL_3));
         driverOp.y().onTrue(new MoveElevator(ElevatorPositions.LEVEL_4));
+<<<<<<< HEAD
 
         driverOp.a().onFalse(new MoveElevator(ElevatorPositions.INTAKE));
         driverOp.x().onFalse(new MoveElevator(ElevatorPositions.INTAKE));
@@ -118,6 +119,10 @@ public class RobotContainer {
         driverOp.y().onFalse(new MoveElevator(ElevatorPositions.INTAKE));
         //driverOp.leftTrigger().whileTrue(new TwoStationDefense());
         //driverOp.rightTrigger().whileTrue(new OneStationDefense());
+=======
+        driverOp.leftTrigger().whileTrue(new TwoStationDefense());
+        
+>>>>>>> 225b180c20d025126999be3bb3429c6708da22ae
   
 
     
