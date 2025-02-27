@@ -82,7 +82,7 @@ public class Robot extends TimedRobot {
     RobotContainer.drivesystem.setDefaultCommand(new ManualDrive());
 
     // temporary
-    RobotContainer.gyro.resetYawAngle();
+    //RobotContainer.gyro.resetYawAngle();
 
   }
 

@@ -1,6 +1,7 @@
 package frc.robot;
 
 import frc.robot.commandgroups.TwoStationDefense;
+import frc.robot.commandgroups.MoveOffLineAnywhere;
 import frc.robot.commandgroups.OneCoralAutoAnywhere;
 import frc.robot.commandgroups.OneStationDefense;
 import frc.robot.commandgroups.TemplateCommandGroup;
@@ -12,6 +13,7 @@ import frc.robot.commands.CoralIntake;
 import frc.robot.commands.CoralOutake;
 import frc.robot.commands.MoveElevator;
 import frc.robot.commands.MoveToPose;
+import frc.robot.commands.Pause;
 import frc.robot.commands.TemplateCommand;
 import frc.robot.subsystems.CoralGrabber;
 import frc.robot.subsystems.DeadWheel;
@@ -28,6 +30,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 
@@ -101,20 +105,20 @@ public class RobotContainer {
             odometry.setPose(pos.getX(), pos.getY(), newHeading.getRadians(), newHeading.getRadians());
         } ));
         
-        
 
         driverOp.start().onTrue(new InstantCommand(()->encoder.ResetEncoder()));
-        
-        //driverOp.a().onTrue(new MoveElevator(ElevatorPositions.LEVEL_1));
-        
-        // examples:
-        // on press of driver controller A button, run example TemplateCommand
-        driverOp.rightBumper().whileTrue(new CoralIntake());
-        driverOp.leftBumper().whileTrue(new CoralOutake());
-        // on press of operator controller X button, run example TemplateGroupCommand
-        toolOp.a().onTrue(new MoveElevator(ElevatorPositions.LEVEL_1));
-        toolOp.x().onTrue(new MoveElevator(ElevatorPositions.LEVEL_2));
-        toolOp.b().onTrue(new MoveElevator(ElevatorPositions.LEVEL_3));
+
+        driverOp.leftBumper().whileTrue(new ApproachReef(true));
+        driverOp.rightBumper().whileTrue(new ApproachReef(false));
+
+        // operator controls 
+        toolOp.leftBumper().whileTrue(new CoralIntake());
+        toolOp.rightBumper().whileTrue(new CoralOutake());
+        toolOp.back().whileTrue(new CoralBack());
+
+        toolOp.a().onTrue(new MoveElevator(ElevatorPositions.LEVEL_2));
+        toolOp.x().onTrue(new MoveElevator(ElevatorPositions.LEVEL_3));
+        toolOp.b().onTrue(new MoveElevator(ElevatorPositions.LEVEL_1));
         toolOp.y().onTrue(new MoveElevator(ElevatorPositions.LEVEL_4));
 
 
@@ -122,17 +126,16 @@ public class RobotContainer {
         toolOp.x().onFalse(new MoveElevator(ElevatorPositions.INTAKE));
         toolOp.b().onFalse(new MoveElevator(ElevatorPositions.INTAKE));
         toolOp.y().onFalse(new MoveElevator(ElevatorPositions.INTAKE));
+
+        //driverOp.a().onTrue(new MoveElevator(ElevatorPositions.LEVEL_1));
+        
+        // examples:
+        // on press of driver controller A button, run example TemplateCommand
+
+        // on press of operator controller X button, run example TemplateGroupCommand
+        
         //driverOp.leftTrigger().whileTrue(new TwoStationDefense());
         //driverOp.rightTrigger().whileTrue(new OneStationDefense())
-        driverOp.x().whileTrue(new ApproachReef(true));
-        driverOp.y().whileTrue(new ApproachReef(false));
-
-        driverOp.leftTrigger().whileTrue(new TwoStationDefense());
-
-
-        
-
-  
 
     
         // description of commands available:
@@ -160,15 +163,22 @@ public class RobotContainer {
         // get autonomous path to run
         // for example, a subsystem could made responsible for returning selected path
         // from a list populated in shuffleboard.
-        int index = 0; //RobotContainer.autopathselect.GetSelectedPath();
+        int index = RobotContainer.mainShufflePage.getSelectedAutoIndex(); //RobotContainer.autopathselect.GetSelectedPath();
+
+        Command chosenCommand =  null; 
+
     
+        
         // return autonomous command to be run in autonomous
         if (index == 0)
-            return new TemplateCommandGroup();
+            chosenCommand = new Pause(20.0); // do nothing command 
         else if (index == 1)
-            return new TemplateCommandGroup();
-        else
-            return null;
+            chosenCommand = new MoveOffLineAnywhere(); // drive off the line 
+        
+
+        return new SequentialCommandGroup(
+            new Pause(RobotContainer.mainShufflePage.getAutoDelay()),
+            chosenCommand);
   }
   
 }
