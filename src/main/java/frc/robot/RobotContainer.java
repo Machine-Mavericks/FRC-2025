@@ -6,8 +6,9 @@ import frc.robot.commandgroups.OneStationDefense;
 import frc.robot.commandgroups.TemplateCommandGroup;
 import frc.robot.commandgroups.ThreeCoralAutoAnywhere;
 import frc.robot.commandgroups.TwoCoralAutoAnywhere;
+import frc.robot.commands.CoralBack;
 import frc.robot.commands.CoralIntake;
-import frc.robot.commands.CoralOuttake;
+import frc.robot.commands.CoralOutake;
 import frc.robot.commands.MoveElevator;
 import frc.robot.commands.MoveToPose;
 import frc.robot.commands.TemplateCommand;
@@ -74,6 +75,7 @@ public class RobotContainer {
         encoder = new DeadWheel();
         elevator = new Elevator();
         intake = new CoralGrabber();
+        
         // and so on
     
 
@@ -97,20 +99,25 @@ public class RobotContainer {
         
 
         driverOp.start().onTrue(new InstantCommand(()->encoder.ResetEncoder()));
-        driverOp.x().onTrue(new MoveElevator(ElevatorPositions.LEVEL_2));
+        
         //driverOp.a().onTrue(new MoveElevator(ElevatorPositions.LEVEL_1));
-
-
+        
         // examples:
         // on press of driver controller A button, run example TemplateCommand
-        driverOp.leftBumper().onTrue(new CoralIntake());
-        driverOp.rightBumper().onTrue(new CoralOuttake());
+        driverOp.rightBumper().whileTrue(new CoralIntake());
+        driverOp.leftBumper().whileTrue(new CoralOutake());
         // on press of operator controller X button, run example TemplateGroupCommand
+        driverOp.a().onTrue(new MoveElevator(ElevatorPositions.LEVEL_1));
+        driverOp.x().onTrue(new MoveElevator(ElevatorPositions.LEVEL_2));
         driverOp.b().onTrue(new MoveElevator(ElevatorPositions.LEVEL_3));
-        driverOp.a().onTrue(new MoveElevator(ElevatorPositions.INTAKE));
         driverOp.y().onTrue(new MoveElevator(ElevatorPositions.LEVEL_4));
-        driverOp.leftTrigger().whileTrue(new TwoStationDefense());
-        driverOp.rightTrigger().whileTrue(new OneStationDefense());
+
+        driverOp.a().onFalse(new MoveElevator(ElevatorPositions.INTAKE));
+        driverOp.x().onFalse(new MoveElevator(ElevatorPositions.INTAKE));
+        driverOp.b().onFalse(new MoveElevator(ElevatorPositions.INTAKE));
+        driverOp.y().onFalse(new MoveElevator(ElevatorPositions.INTAKE));
+        //driverOp.leftTrigger().whileTrue(new TwoStationDefense());
+        //driverOp.rightTrigger().whileTrue(new OneStationDefense());
   
 
     

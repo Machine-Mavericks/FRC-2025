@@ -31,7 +31,7 @@ public class FourCoralAuto extends SequentialCommandGroup {
 
 
         // coral grabber not completed yet but will work like elevator
-        new InstantCommand(()->RobotContainer.intake.OutakeRun(1)),
+        new InstantCommand(()->RobotContainer.intake.intakeRun(-1)),
 
         // Drives to the humen station to pick up (fill in pos please)
         new MoveToPose(1, 
@@ -57,7 +57,7 @@ public class FourCoralAuto extends SequentialCommandGroup {
         new InstantCommand(()->RobotContainer.elevator.Level4()),
 
         // run outake 
-        new InstantCommand(()->RobotContainer.intake.OutakeRun(1)),
+        new InstantCommand(()->RobotContainer.intake.intakeRun(-1)),
         //fill in position robot needs to go to based on the auto layout 
         //(park in humen station at end of auto so can start cycleing in tele)
         new MoveToPose(1, 
@@ -81,7 +81,7 @@ public class FourCoralAuto extends SequentialCommandGroup {
 
         
         // run outake 
-        new InstantCommand(()->RobotContainer.intake.OutakeRun(1)),
+        new InstantCommand(()->RobotContainer.intake.intakeRun(-1)),
         // coral station
         new MoveToPose(1, 
         1,

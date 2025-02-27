@@ -6,12 +6,12 @@ import frc.robot.RobotContainer;
 
 
 // command template
-public class CoralOuttake extends Command {
+public class CoralBack extends Command {
 
     Timer delay;
 
     // constructor
-    public CoralOuttake() {
+    public CoralBack() {
 
         // add subsystem requirements (if any) - for example:
         addRequirements(RobotContainer.intake);

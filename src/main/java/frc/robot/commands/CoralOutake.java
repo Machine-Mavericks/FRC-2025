@@ -1,18 +1,22 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 
 
 
 // command template
-public class CoralIntake extends Command {
+public class CoralOutake extends Command {
+
+    Timer delay;
 
     // constructor
-    public CoralIntake() {
+    public CoralOutake() {
 
         // add subsystem requirements (if any) - for example:
         addRequirements(RobotContainer.intake);
+        delay = new Timer();
     }
 
     // This method is called once when command is started
@@ -26,18 +30,15 @@ public class CoralIntake extends Command {
     public void execute() {
        
     }
-
     // This method to return true only when command is to finish. Otherwise return false
     @Override
     public boolean isFinished() {
-        if(RobotContainer.intake.getSensorState()){
-            RobotContainer.intake.intakeRun(0);
+        if (delay.get() >= 2){
             return true;
         }else{
-            RobotContainer.intake.intakeRun(-1);
             return false;
-
-         }
+        }
+        
         
 
     }

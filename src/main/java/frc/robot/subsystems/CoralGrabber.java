@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -23,14 +25,18 @@ public class CoralGrabber extends SubsystemBase {
     private SparkMax m_IntakeMotor1;
     private SparkMax m_IntakeMotor2;
     private DigitalInput photoSensor;
-
+    private SparkMaxConfig intakeConfig;
 
 
     public CoralGrabber() {
         
         m_IntakeMotor1 = new SparkMax (RobotMap.CANID.IN1_INTAKE_Motor,MotorType.kBrushless);
         m_IntakeMotor2 = new SparkMax (RobotMap.CANID.IN2_INTAKE_Motor,MotorType.kBrushless);
-       photoSensor =  new DigitalInput(RobotMap.DIO.photoSensor);
+        photoSensor =  new DigitalInput(RobotMap.DIO.photoSensor);
+        intakeConfig = new SparkMaxConfig();
+        intakeConfig.idleMode(IdleMode.kBrake);
+        m_IntakeMotor1.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        m_IntakeMotor2.configure(intakeConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     /** Method called periodically by the scheduler
@@ -41,9 +47,9 @@ public class CoralGrabber extends SubsystemBase {
     }
 
     public void intakeRun(double speed){
-        
         m_IntakeMotor1.set(0-speed);
         m_IntakeMotor2.set(speed);
+
         
        
     }
@@ -53,12 +59,10 @@ public class CoralGrabber extends SubsystemBase {
     }
     
         
-    public void OutakeRun(double speed){
-        m_IntakeMotor1.set(0-speed);
-        m_IntakeMotor2.set(speed);
-        m_IntakeMotor1.set(0);
-        m_IntakeMotor2.set(0);
-    }
+    // public void OutakeRun(double speed){
+    //     m_IntakeMotor1.set(speed);
+    //     m_IntakeMotor2.set(0-speed);
+    // }
     
 
     // place special subsystem methods here
