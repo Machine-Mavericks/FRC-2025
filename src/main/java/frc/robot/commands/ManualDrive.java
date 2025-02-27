@@ -64,7 +64,7 @@ public class ManualDrive extends Command {
         double dY = -RobotContainer.driverOp.getLeftX();
         double omega = -2.0 * RobotContainer.driverOp.getRightX();
         double speedTrigger = RobotContainer.driverOp.getRightTriggerAxis();
-        boolean Park = RobotContainer.driverOp.leftBumper().getAsBoolean();
+        //boolean Park = RobotContainer.driverOp.leftBumper().getAsBoolean();
 
         // if on red team, reverse x and y movements to match FRC field coordinates
         if (DriverStation.getAlliance().get() == Alliance.Red)
@@ -141,10 +141,10 @@ public class ManualDrive extends Command {
         deltat.reset();
 
         // drive robot
-        if (!Park)
+        //if (!Park)
             RobotContainer.drivesystem.FieldDrive(dX, dY, omega, false);
-        else
-            RobotContainer.drivesystem.FieldDrive(0.0, 0.0, 0.0, true);
+        //else
+            //RobotContainer.drivesystem.FieldDrive(0.0, 0.0, 0.0, true);
     }
 
     // This method to return true only when command is to finish. Otherwise return false

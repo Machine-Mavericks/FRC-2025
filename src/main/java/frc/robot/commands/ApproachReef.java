@@ -26,6 +26,10 @@ public class ApproachReef extends Command {
     // is target detected
     boolean TargetDetected;
 
+    final double LeftOffset = 0.0; 
+
+    final double RightOffset = 0.0;
+
     // constructor
     public ApproachReef(boolean side) {
 
@@ -33,7 +37,7 @@ public class ApproachReef extends Command {
         addRequirements(RobotContainer.drivesystem);
 
         // set up sideways and rotational controllers
-        yControl = new PIDController(0.028, 0.005, 0.0);
+        yControl = new PIDController(0.040, 0.005, 0.0);
         omegaControl = new PIDController(0.09, 0.001, 0.0000);
 
         // by default - choose left side
@@ -54,6 +58,11 @@ public class ApproachReef extends Command {
 
         // get apriltag id that we are trying to approach
         DestinationTagID=(int)RobotContainer.camera.getPrimAprilTagID();
+
+        if (chooseLeftSide == true)
+            RobotContainer.camera.setPipeline(0);
+        else 
+            RobotContainer.camera.setPipeline(1);
         
         // determine desired robot angle
         targetAngle = 0.0;
@@ -120,18 +129,24 @@ public class ApproachReef extends Command {
 
         // sideways control
         if (chooseLeftSide)
-            y_speed = yControl.calculate(horizError-10.0);
+            y_speed = yControl.calculate(horizError+LeftOffset);
         else
-            y_speed = yControl.calculate(horizError+10.0);
+            y_speed = yControl.calculate(horizError+RightOffset);
         
-        if (y_speed > 0.75)
-            y_speed = 0.75;
-        if (y_speed < -0.75)
-            y_speed = -0.75;
+        if (y_speed > 1.0)
+            y_speed = 1.0;
+        if (y_speed < -1.0)
+            y_speed = -1.0;
+
 
         // rotational control
         double currentAngle = RobotContainer.odometry.getPose2d().getRotation().getDegrees();        
         omega_speed = omegaControl.calculate(Utils.AngleDifference(targetAngle,currentAngle));
+
+        if (omega_speed > 0.5)
+                omega_speed = 0.5;
+        if (omega_speed < -0.5)
+                omega_speed = -0.5;
         
 
         // drive robot
@@ -146,7 +161,8 @@ public class ApproachReef extends Command {
     @Override
     public boolean isFinished() {
 
-        return !TargetDetected;
+        return !TargetDetected || (chooseLeftSide && RobotContainer.camera.getTargetArea() > 4.2) ||
+         (!chooseLeftSide && RobotContainer.camera.getTargetArea() > 10.1);
 
     }
 

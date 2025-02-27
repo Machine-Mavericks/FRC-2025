@@ -6,6 +6,7 @@ import frc.robot.commandgroups.OneStationDefense;
 import frc.robot.commandgroups.TemplateCommandGroup;
 import frc.robot.commandgroups.ThreeCoralAutoAnywhere;
 import frc.robot.commandgroups.TwoCoralAutoAnywhere;
+import frc.robot.commands.ApproachReef;
 import frc.robot.commands.CoralBack;
 import frc.robot.commands.CoralIntake;
 import frc.robot.commands.CoralOutake;
@@ -15,6 +16,7 @@ import frc.robot.commands.TemplateCommand;
 import frc.robot.subsystems.CoralGrabber;
 import frc.robot.subsystems.DeadWheel;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Pigeon;
 import frc.robot.subsystems.SwerveDrive;
@@ -50,6 +52,7 @@ public class RobotContainer {
     public static DeadWheel encoder;
     public static Elevator elevator;
     public static CoralGrabber intake;
+    public static LED LED;
     // and so on
 
     
@@ -75,6 +78,8 @@ public class RobotContainer {
         encoder = new DeadWheel();
         elevator = new Elevator();
         intake = new CoralGrabber();
+        LED = new LED();
+
         
         // and so on
     
@@ -107,22 +112,26 @@ public class RobotContainer {
         driverOp.rightBumper().whileTrue(new CoralIntake());
         driverOp.leftBumper().whileTrue(new CoralOutake());
         // on press of operator controller X button, run example TemplateGroupCommand
-        driverOp.a().onTrue(new MoveElevator(ElevatorPositions.LEVEL_1));
-        driverOp.x().onTrue(new MoveElevator(ElevatorPositions.LEVEL_2));
-        driverOp.b().onTrue(new MoveElevator(ElevatorPositions.LEVEL_3));
-        driverOp.y().onTrue(new MoveElevator(ElevatorPositions.LEVEL_4));
-<<<<<<< HEAD
+        toolOp.a().onTrue(new MoveElevator(ElevatorPositions.LEVEL_1));
+        toolOp.x().onTrue(new MoveElevator(ElevatorPositions.LEVEL_2));
+        toolOp.b().onTrue(new MoveElevator(ElevatorPositions.LEVEL_3));
+        toolOp.y().onTrue(new MoveElevator(ElevatorPositions.LEVEL_4));
 
-        driverOp.a().onFalse(new MoveElevator(ElevatorPositions.INTAKE));
-        driverOp.x().onFalse(new MoveElevator(ElevatorPositions.INTAKE));
-        driverOp.b().onFalse(new MoveElevator(ElevatorPositions.INTAKE));
-        driverOp.y().onFalse(new MoveElevator(ElevatorPositions.INTAKE));
+
+        toolOp.a().onFalse(new MoveElevator(ElevatorPositions.INTAKE));
+        toolOp.x().onFalse(new MoveElevator(ElevatorPositions.INTAKE));
+        toolOp.b().onFalse(new MoveElevator(ElevatorPositions.INTAKE));
+        toolOp.y().onFalse(new MoveElevator(ElevatorPositions.INTAKE));
         //driverOp.leftTrigger().whileTrue(new TwoStationDefense());
-        //driverOp.rightTrigger().whileTrue(new OneStationDefense());
-=======
+        //driverOp.rightTrigger().whileTrue(new OneStationDefense())
+        driverOp.x().whileTrue(new ApproachReef(true));
+        driverOp.y().whileTrue(new ApproachReef(false));
+
         driverOp.leftTrigger().whileTrue(new TwoStationDefense());
+
+
         
->>>>>>> 225b180c20d025126999be3bb3429c6708da22ae
+
   
 
     
