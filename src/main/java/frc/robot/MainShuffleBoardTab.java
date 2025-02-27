@@ -28,6 +28,8 @@ public class MainShuffleBoardTab extends SubsystemBase {
     // <add any other controls here that go on main shufflebard page
     private GenericEntry m_delayTime;
     private SendableChooser<Integer> m_autonomousPath;
+    private SendableChooser<Integer> m_StartPosition;
+
 
     // Odometry Shuffleboad Entries
     private GenericEntry m_robotX;
@@ -110,6 +112,11 @@ public class MainShuffleBoardTab extends SubsystemBase {
         return m_autonomousPath.getSelected();
     }
 
+    public int getStartPositionIndex()
+    {
+        return m_StartPosition.getSelected();
+    }
+
     // -------------------- Shuffboard Methods --------------------
 
 
@@ -125,7 +132,8 @@ public class MainShuffleBoardTab extends SubsystemBase {
         m_autonomousPath = new SendableChooser<Integer>();
         m_autonomousPath.addOption("Do Nothing",0);
         m_autonomousPath.addOption("Move Off Line",1);
-        m_autonomousPath.addOption("Auto 2", 2);
+        m_autonomousPath.addOption("One Coral Right", 2);
+        m_autonomousPath.addOption("One Coral Left", 3);
         m_autonomousPath.setDefaultOption("Do Nothing", 0);
 
         // add selection box of paths
@@ -133,18 +141,33 @@ public class MainShuffleBoardTab extends SubsystemBase {
                 .withWidget(BuiltInWidgets.kComboBoxChooser)
                 .withPosition(0, 0)
                 .withSize(2,1);
+
+
+
+        // start position
+        m_StartPosition = new SendableChooser<Integer>();
+        m_StartPosition .addOption("1-RightWall",0);
+        m_StartPosition .addOption("2-RightCenter",1);
+        m_StartPosition .addOption("3-Center", 2);
+        m_StartPosition .addOption("2-LeftCenter",3);
+        m_StartPosition .addOption("3-LeftWall", 4);
+        m_StartPosition .setDefaultOption("3-Center", 2);
+
+        // add selection box of paths
+        tab.add("Start Pos'n", m_StartPosition)
+        .withWidget(BuiltInWidgets.kComboBoxChooser)
+        .withPosition(2, 1)
+        .withSize(2,1);
         
         // time to delay auto by
         m_delayTime = tab.add("Auto Delay Time", 0)
                         .withWidget(BuiltInWidgets.kNumberSlider)
                         .withPosition(2, 0).
-                        withSize(1, 1).
+                        withSize(2, 1).
                         withProperties(Map.of("min", 0, "max", 15))
                         .getEntry();
         
 
-        
-        
         // create controls to display robot position, angle, and gyro angle
         ShuffleboardLayout OdometryInfoLayout = tab.getLayout("Odometry", BuiltInLayouts.kList);
         OdometryInfoLayout.withPosition(0, 1);
@@ -155,8 +178,8 @@ public class MainShuffleBoardTab extends SubsystemBase {
   
         // add field widget 
         tab.add("Field", m_field)
-        .withPosition(3, 0)
-        .withSize(5, 4);
+        .withPosition(4, 0)
+        .withSize(4, 3);
 
 
         // Create System Info Page
