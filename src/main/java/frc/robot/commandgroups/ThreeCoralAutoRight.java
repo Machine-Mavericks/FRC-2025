@@ -17,10 +17,10 @@ import frc.robot.utils.AutoFunctions;
 // ParallelCommandGroup
 // ParallelRaceGroup
 // ParallelDeadlineGroup
-public class TwoCoralAutoRight extends SequentialCommandGroup {
+public class ThreeCoralAutoRight extends SequentialCommandGroup {
 
     // constructor
-    public TwoCoralAutoRight() {
+    public ThreeCoralAutoRight() {
 
        addCommands (
 
@@ -96,6 +96,36 @@ public class TwoCoralAutoRight extends SequentialCommandGroup {
         new Pause(2),
 
         new InstantCommand(()->RobotContainer.elevator.Level4()),
+
+        new Pause(1),
+
+        new CoralOutake(), 
+
+        new Pause(1),
+
+        new InstantCommand(()-> RobotContainer.intake.intakeRun(0)),
+
+        new InstantCommand(()->RobotContainer.elevator.LEVEL_0()),
+
+        new MoveToPose(1, 
+        0.5,
+        new Pose2d (14,6.8, new Rotation2d(Math.toRadians(-51)))),
+
+        new Pause(5),
+
+        new CoralIntake(),
+
+        new Pause(1),
+
+        new MoveToPose(0.5, 1.5,
+        new Pose2d(11,2, new Rotation2d(Math.toRadians(-120.0)))),
+
+
+        new ApproachReef(false), 
+
+        new Pause(2),
+
+        new InstantCommand(()->RobotContainer.elevator.Level3()),
 
         new Pause(1),
 

@@ -17,10 +17,10 @@ import frc.robot.utils.AutoFunctions;
 // ParallelCommandGroup
 // ParallelRaceGroup
 // ParallelDeadlineGroup
-public class TwoCoralAutoRight extends SequentialCommandGroup {
+public class ThreeCoralAutoLeft extends SequentialCommandGroup {
 
     // constructor
-    public TwoCoralAutoRight() {
+    public ThreeCoralAutoLeft() {
 
        addCommands (
 
@@ -58,9 +58,39 @@ public class TwoCoralAutoRight extends SequentialCommandGroup {
 
         // move to in front of reef target  (tag22 for blue, tag 9 for red)
         new MoveToPose(0.5, 1.5,
-                new Pose2d(11,2, new Rotation2d(Math.toRadians(-120.0)))),
+                new Pose2d(4.76,5.65, new Rotation2d(Math.toRadians(-120.0)))),
 
         
+        new ApproachReef(true), 
+
+        new Pause(2),
+
+        new InstantCommand(()->RobotContainer.elevator.Level4()),
+
+        new Pause(1),
+
+        new CoralOutake(), 
+
+        new Pause(1),
+
+        new InstantCommand(()-> RobotContainer.intake.intakeRun(0)),
+
+        new InstantCommand(()->RobotContainer.elevator.LEVEL_0()),
+
+        new MoveToPose(1, 
+        0.5,
+        new Pose2d (1.5,6.8, new Rotation2d(Math.toRadians(-51)))),
+
+        new Pause(5),
+
+        new CoralIntake(),
+
+        new Pause(1),
+
+        new MoveToPose(0.5, 1.5,
+        new Pose2d(4.76,5.65, new Rotation2d(Math.toRadians(-120.0)))),
+
+
         new ApproachReef(false), 
 
         new Pause(2),
@@ -79,7 +109,7 @@ public class TwoCoralAutoRight extends SequentialCommandGroup {
 
         new MoveToPose(1, 
         0.5,
-        new Pose2d (14,6.8, new Rotation2d(Math.toRadians(-51)))),
+        new Pose2d (1.5,6.8, new Rotation2d(Math.toRadians(-51)))),
 
         new Pause(5),
 
@@ -88,14 +118,14 @@ public class TwoCoralAutoRight extends SequentialCommandGroup {
         new Pause(1),
 
         new MoveToPose(0.5, 1.5,
-        new Pose2d(11,2, new Rotation2d(Math.toRadians(-120.0)))),
+        new Pose2d(4.76,5.65, new Rotation2d(Math.toRadians(-120.0)))),
 
 
-        new ApproachReef(true), 
+        new ApproachReef(false), 
 
         new Pause(2),
 
-        new InstantCommand(()->RobotContainer.elevator.Level4()),
+        new InstantCommand(()->RobotContainer.elevator.Level3()),
 
         new Pause(1),
 

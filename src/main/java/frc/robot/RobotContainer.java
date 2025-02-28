@@ -6,7 +6,6 @@ import frc.robot.commandgroups.OneCoralAutoLeft;
 import frc.robot.commandgroups.OneCoralAutoRight;
 import frc.robot.commandgroups.OneStationDefense;
 import frc.robot.commandgroups.TemplateCommandGroup;
-import frc.robot.commandgroups.ThreeCoralAutoAnywhere;
 import frc.robot.commands.ApproachReef;
 import frc.robot.commands.CoralBack;
 import frc.robot.commands.CoralIntake;
