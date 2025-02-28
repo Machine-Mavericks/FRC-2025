@@ -2,6 +2,7 @@ package frc.robot;
 
 import frc.robot.commandgroups.TwoStationDefense;
 import frc.robot.commandgroups.MoveOffLineAnywhere;
+import frc.robot.commandgroups.OneCoralAutoCenter;
 import frc.robot.commandgroups.OneCoralAutoLeft;
 import frc.robot.commandgroups.OneCoralAutoRight;
 import frc.robot.commandgroups.OneStationDefense;
@@ -178,6 +179,8 @@ public class RobotContainer {
             else if (index == 2)
             chosenCommand = new OneCoralAutoRight();
             else if (index == 3)
+            chosenCommand = new OneCoralAutoCenter();
+            else if (index == 4)
             chosenCommand = new OneCoralAutoLeft();
         
 

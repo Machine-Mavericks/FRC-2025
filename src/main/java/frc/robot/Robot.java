@@ -19,6 +19,8 @@ public class Robot extends TimedRobot {
 
   private final RobotContainer m_robotContainer;
 
+
+  private boolean isElevatorInitialized = false;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -62,6 +64,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.schedule();
     }
     RobotContainer.elevator.ZeroEncoder();
+    isElevatorInitialized = true;
   }
 
   /** This function is called periodically during autonomous. */
@@ -77,7 +80,14 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    RobotContainer.elevator.ZeroEncoder();
+
+    if (!isElevatorInitialized){
+      RobotContainer.elevator.ZeroEncoder(); 
+      isElevatorInitialized = true;
+    }
+
+    RobotContainer.elevator.LEVEL_0();
+  
 
     // set default swerve drive command to manual drive mode
     RobotContainer.drivesystem.setDefaultCommand(new ManualDrive());

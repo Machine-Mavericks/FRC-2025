@@ -37,7 +37,7 @@ public class ApproachReef extends Command {
         addRequirements(RobotContainer.drivesystem);
 
         // set up sideways and rotational controllers
-        yControl = new PIDController(0.040, 0.005, 0.0);
+        yControl = new PIDController(0.03, 0.005, 0.0);
         omegaControl = new PIDController(0.09, 0.001, 0.0000);
 
         // by default - choose left side
@@ -124,8 +124,10 @@ public class ApproachReef extends Command {
         // double horizontal error to target
         double horizError = RobotContainer.camera.getHorizontalTargetOffsetAngle();
 
+        //TargetDetected = RobotContainer.camera.isTargetPresent();
+
         // determine forward speed (m/s)
-        x_speed = 0.4;
+        x_speed = 0.3;
 
         // sideways control
         if (chooseLeftSide)
@@ -143,11 +145,15 @@ public class ApproachReef extends Command {
         double currentAngle = RobotContainer.odometry.getPose2d().getRotation().getDegrees();        
         omega_speed = omegaControl.calculate(Utils.AngleDifference(targetAngle,currentAngle));
 
-        if (omega_speed > 0.5)
-                omega_speed = 0.5;
-        if (omega_speed < -0.5)
-                omega_speed = -0.5;
-        
+        if (omega_speed > 0.42)
+                omega_speed = 0.42;
+        if (omega_speed < -0.42)
+                omega_speed = -0.42;
+        if (!RobotContainer.camera.isTargetPresent()){
+            x_speed = 0.0;
+            y_speed = 0.0;
+
+        }
 
         // drive robot
         RobotContainer.drivesystem.RobotDrive(x_speed, y_speed, omega_speed, false);
@@ -169,6 +175,7 @@ public class ApproachReef extends Command {
     // This method is called once when command is finished.
     @Override
     public void end(boolean interrupted) {
+        RobotContainer.drivesystem.RobotDrive(0, 0, 0, false);
 
     }
 
