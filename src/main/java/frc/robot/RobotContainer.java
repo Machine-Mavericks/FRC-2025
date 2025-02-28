@@ -2,7 +2,8 @@ package frc.robot;
 
 import frc.robot.commandgroups.TwoStationDefense;
 import frc.robot.commandgroups.MoveOffLineAnywhere;
-import frc.robot.commandgroups.OneCoralAutoAnywhere;
+import frc.robot.commandgroups.OneCoralAutoLeft;
+import frc.robot.commandgroups.OneCoralAutoRight;
 import frc.robot.commandgroups.OneStationDefense;
 import frc.robot.commandgroups.TemplateCommandGroup;
 import frc.robot.commandgroups.ThreeCoralAutoAnywhere;
@@ -174,6 +175,10 @@ public class RobotContainer {
             chosenCommand = new Pause(20.0); // do nothing command 
         else if (index == 1)
             chosenCommand = new MoveOffLineAnywhere(); // drive off the line 
+            else if (index == 2)
+            chosenCommand = new OneCoralAutoRight();
+            else if (index == 3)
+            chosenCommand = new OneCoralAutoLeft();
         
 
         return new SequentialCommandGroup(
