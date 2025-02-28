@@ -37,7 +37,7 @@ public class TwoCoralAutoAnywhere extends SequentialCommandGroup {
         
         
         // at the same time as driving lower slides to a position for intake 
-        new InstantCommand(()->RobotContainer.elevator.returnToIntake()),
+        new InstantCommand(()->RobotContainer.elevator.LEVEL_0()),
 
         // run intake 
         new InstantCommand(()->RobotContainer.intake.intakeRun(1)),
@@ -59,7 +59,7 @@ public class TwoCoralAutoAnywhere extends SequentialCommandGroup {
         new Pose2d (1.5,6.8, new Rotation2d(Math.toRadians(-51)))),
 
         // at the same time as driving lower slides to zero 
-        new InstantCommand(()->RobotContainer.elevator.returnToIntake())
+        new InstantCommand(()->RobotContainer.elevator.LEVEL_0())
         // end of auto
 
 

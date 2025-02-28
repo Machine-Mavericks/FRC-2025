@@ -66,7 +66,15 @@ public class OneCoralAutoLeft extends SequentialCommandGroup {
 
         new InstantCommand(()->RobotContainer.elevator.Level4()),
 
-        new CoralOutake()
+        new Pause(1),
+
+        new CoralOutake(), 
+
+        new Pause(1),
+
+        new InstantCommand(()->RobotContainer.elevator.LEVEL_0()),
+
+        new Pause(2)
         
     
         // To Do

@@ -25,8 +25,8 @@ public class MoveElevator extends Command {
     @Override
     public void execute() {
         switch (targetLevel) {
-            case INTAKE:
-                RobotContainer.elevator.returnToIntake();
+            case LEVEL_0:
+                RobotContainer.elevator.LEVEL_0();
                 break;
             case LEVEL_1:
                 RobotContainer.elevator.Level1();

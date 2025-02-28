@@ -123,10 +123,10 @@ public class RobotContainer {
         toolOp.y().onTrue(new MoveElevator(ElevatorPositions.LEVEL_4));
 
 
-        toolOp.a().onFalse(new MoveElevator(ElevatorPositions.INTAKE));
-        toolOp.x().onFalse(new MoveElevator(ElevatorPositions.INTAKE));
-        toolOp.b().onFalse(new MoveElevator(ElevatorPositions.INTAKE));
-        toolOp.y().onFalse(new MoveElevator(ElevatorPositions.INTAKE));
+        toolOp.a().onFalse(new MoveElevator(ElevatorPositions.LEVEL_0));
+        toolOp.x().onFalse(new MoveElevator(ElevatorPositions.LEVEL_0));
+        toolOp.b().onFalse(new MoveElevator(ElevatorPositions.LEVEL_0));
+        toolOp.y().onFalse(new MoveElevator(ElevatorPositions.LEVEL_0));
 
         //driverOp.a().onTrue(new MoveElevator(ElevatorPositions.LEVEL_1));
         

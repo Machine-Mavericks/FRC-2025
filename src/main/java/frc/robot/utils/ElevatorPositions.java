@@ -6,7 +6,7 @@ package frc.robot.utils;
 
 /** Add your docs here. */
 public enum ElevatorPositions {
-INTAKE,
+LEVEL_0,
 LEVEL_1,
 LEVEL_2,
 LEVEL_3,
