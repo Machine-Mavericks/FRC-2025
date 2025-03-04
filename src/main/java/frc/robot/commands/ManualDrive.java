@@ -78,7 +78,7 @@ public class ManualDrive extends Command {
         // made the dead zones a circle instead of a square, old equation commented below
         dX = Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2)) > 0.1 ? dX : 0;
         dY = Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2)) > 0.1 ? dY : 0;
-        omega = Math.abs(omega) > 0.2 ? omega : 0;
+        omega = Math.sqrt(Math.pow(omega, 2) + Math.pow(RobotContainer.driverOp.getRightY(), 2)) > 0.1  ? omega : 0;
         // dX = Math.abs(dX) > 0.1 ? dX : 0;
         // dY = Math.abs(dY) > 0.1 ? dY : 0;
         // omega = Math.abs(omega) > 0.2 ? omega : 0;
