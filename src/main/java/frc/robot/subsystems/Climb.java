@@ -54,11 +54,11 @@ public class Climb extends SubsystemBase {
     }
 
     public void Extend(){
-       m_ClimbMotor.getClosedLoopController().setReference(extended);
+       m_ClimbMotor.getClosedLoopController().setReference(currentPos - extended);
     }
 
     public void Retract(){
-       m_ClimbMotor.getClosedLoopController().setReference(retracted);
+       m_ClimbMotor.getClosedLoopController().setReference(currentPos - retracted);
     }
 
     // place special subsystem methods here
