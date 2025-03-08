@@ -26,21 +26,14 @@ public class Climb extends SubsystemBase {
 
     /** Place code here to initialize subsystem */
 
-    private SparkMax m_ClimbMotor1Max;
-    private SparkMax m_ClimbMotor2Max;
+    private SparkMax m_ClimbMotor;
     SparkMaxConfig climbConfig = new SparkMaxConfig();
-    
-    // gear ratio is 80-1 and only needs to travel 90 degrees
-    private static double  ClimbSpeed = 1;
+    double currentPos = 0;
+    double extended = 1;
+    double retracted = 0;
 
     public Climb() {
-        // still needs limit switches
-        m_ClimbMotor1Max = new SparkMax (RobotMap.CANID.Cl1_Climb_Motor,MotorType.kBrushless);
-        m_ClimbMotor2Max = new SparkMax (RobotMap.CANID.CL2_Climb_Motor,MotorType.kBrushless);
-        climbConfig.limitSwitch.reverseLimitSwitchEnabled(true);
-        climbConfig.limitSwitch.forwardLimitSwitchEnabled(true);
-        climbConfig.limitSwitch.forwardLimitSwitchType(Type.kNormallyClosed);
-        climbConfig.limitSwitch.reverseLimitSwitchType(Type.kNormallyClosed);
+        m_ClimbMotor = new SparkMax (RobotMap.CANID.Cl_Climb_Motor,MotorType.kBrushless);
         climbConfig.idleMode(IdleMode.kBrake);
         climbConfig.inverted(false);
         climbConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
@@ -49,10 +42,7 @@ public class Climb extends SubsystemBase {
         climbConfig.closedLoop.d(0.0);
         climbConfig.closedLoop.outputRange(-1.0,1.0);
         climbConfig.closedLoop.positionWrappingEnabled(false);
-        m_ClimbMotor1Max.configure(climbConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        SparkMaxConfig followConfig = new SparkMaxConfig();
-        followConfig.follow(m_ClimbMotor1Max, false);
-        m_ClimbMotor2Max.configure(followConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        m_ClimbMotor.configure(climbConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     }
 
@@ -60,12 +50,15 @@ public class Climb extends SubsystemBase {
      * Place any code here you wish to have run periodically */
     @Override
     public void periodic() {
-
+        currentPos = m_ClimbMotor.getEncoder.getPosition();
     }
 
-    public void climbRun(double state){
-        m_ClimbMotor1Max.set(ClimbSpeed * state);
-        m_ClimbMotor2Max.set(ClimbSpeed * state);
+    public void Extend(){
+       m_ClimbMotor.getClosedLoopController().setReference(extended);
+    }
+
+    public void Retract(){
+       m_ClimbMotor.getClosedLoopController().setReference(retracted);
     }
 
     // place special subsystem methods here
