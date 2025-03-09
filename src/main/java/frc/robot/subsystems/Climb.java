@@ -48,18 +48,19 @@ public class Climb extends SubsystemBase {
 
     /** Method called periodically by the scheduler
      * Place any code here you wish to have run periodically */
-    @Override
-    public void periodic() {
-        currentPos = m_ClimbMotor.getEncoder.getPosition();
-    }
+    
+    // @Override
+    // public void periodic() {
+    //     currentPos = m_ClimbMotor.getEncoder.getPosition();
+    // }
 
-    public void Extend(){
-       m_ClimbMotor.getClosedLoopController().setReference(currentPos - extended);
-    }
+    // public void Extend(){
+    //    m_ClimbMotor.getClosedLoopController().setReference(currentPos - extended);
+    // }
 
-    public void Retract(){
-       m_ClimbMotor.getClosedLoopController().setReference(currentPos - retracted);
-    }
+    // public void Retract(){
+    //    m_ClimbMotor.getClosedLoopController().setReference(currentPos - retracted);
+    // }
 
     // place special subsystem methods here
     // this is where rest of program can access functions to return

@@ -57,7 +57,7 @@ public class RobotContainer {
     public static Elevator elevator;
     public static CoralGrabber intake;
     public static LED LED;
-    public static Climb climb;
+    //public static Climb climb;
     // and so on
  
     
@@ -84,7 +84,7 @@ public class RobotContainer {
         elevator = new Elevator();
         intake = new CoralGrabber();
         LED = new LED();
-        climb = new climb();
+        //climb = new climb();
 
         
         // and so on
@@ -118,8 +118,8 @@ public class RobotContainer {
         toolOp.rightBumper().whileTrue(new CoralOutake());
         toolOp.back().whileTrue(new CoralBack());
 
-        toolOp.leftTrigger().whileTrue(new InstantCommand(()->climb.Extend()));
-         toolOp.rightTrigger().whileTrue(new InstantCommand(()->climb.Retract()));
+        //toolOp.leftTrigger().whileTrue(new InstantCommand(()->climb.Extend()));
+        //toolOp.rightTrigger().whileTrue(new InstantCommand(()->climb.Retract()));
 
         toolOp.a().onTrue(new MoveElevator(ElevatorPositions.LEVEL_2));
         toolOp.x().onTrue(new MoveElevator(ElevatorPositions.LEVEL_3));

@@ -26,11 +26,11 @@ public class DeadWheel extends SubsystemBase {
 
     /** Place code here to initialize subsystem */
     public DeadWheel() {
-        encoderLeft.setDistancePerPulse(1.05373*2.54*4.0*Math.PI/1024.0);
+        encoderLeft.setDistancePerPulse(1.0*2.54*4.0*Math.PI/1024.0);
         encoderLeft.setReverseDirection(true);
-        encoderFront.setDistancePerPulse(1.06322*2.54*4.0*Math.PI/1024.0);
+        encoderFront.setDistancePerPulse(1.0*2.54*4.0*Math.PI/1024.0);
         encoderFront.setReverseDirection(true);
-        encoderRear.setDistancePerPulse(1.06322*2.54*4.0*Math.PI/1024.0);
+        encoderRear.setDistancePerPulse(1.0*2.54*4.0*Math.PI/1024.0);
         encoderRear.setReverseDirection(false);
         initializeShuffleboard();
     }
