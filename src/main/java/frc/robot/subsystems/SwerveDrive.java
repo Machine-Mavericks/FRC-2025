@@ -231,7 +231,7 @@ public class SwerveDrive extends SubsystemBase {
         // used CTRE webpage to estimate gains from Phoenix 5 gains used in 2023
         // set sensor to mechanism gear ratio
         TalonFXConfiguration driveConfig = new TalonFXConfiguration();
-        driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         driveConfig.MotorOutput.DutyCycleNeutralDeadband = 0.0001;
         driveConfig.Slot0.kP = 2.4;    // volts/rps
         driveConfig.Slot0.kI = 0.0;    // volts/rps-s

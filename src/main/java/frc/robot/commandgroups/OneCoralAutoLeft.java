@@ -56,25 +56,29 @@ public class OneCoralAutoLeft extends SequentialCommandGroup {
         } ),
 
         // move to in front of reef target  (tag22 for blue, tag 9 for red)
-        new MoveToPose(0.5, 1.5,
-                new Pose2d(4.76,5.65, new Rotation2d(Math.toRadians(-120.0)))),
+        new MoveToPose(1.5, 1.5,
+                new Pose2d(6.0, 5.0, new Rotation2d(Math.toRadians(-120.0)))),
 
         
         new ApproachReef(false), 
 
-        new Pause(2),
+        new Pause(0.25),
 
         new InstantCommand(()->RobotContainer.elevator.Level4()),
 
+        new Pause(2),
+
+        new InstantCommand(()->RobotContainer.intake.intakeRun(-1)),
+
+        //new CoralOutake(), 
+
         new Pause(1),
 
-        new CoralOutake(), 
-
-        new Pause(1),
+        new InstantCommand(()->RobotContainer.intake.intakeRun(0)),
 
         new InstantCommand(()->RobotContainer.elevator.LEVEL_0()),
 
-        new Pause(2)
+        new Pause(0.25)
         
     
         // To Do

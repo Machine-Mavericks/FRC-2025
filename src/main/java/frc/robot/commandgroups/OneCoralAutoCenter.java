@@ -3,7 +3,6 @@ package frc.robot.commandgroups;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 import frc.robot.commands.ApproachReef;
@@ -17,10 +16,10 @@ import frc.robot.utils.AutoFunctions;
 // ParallelCommandGroup
 // ParallelRaceGroup
 // ParallelDeadlineGroup
-public class OneCoralAutoRight extends SequentialCommandGroup {
+public class OneCoralAutoCenter extends SequentialCommandGroup {
 
     // constructor
-    public OneCoralAutoRight() {
+    public OneCoralAutoCenter() {
 
         addCommands (
 
@@ -58,34 +57,28 @@ public class OneCoralAutoRight extends SequentialCommandGroup {
 
         // move to in front of reef target  (tag22 for blue, tag 9 for red)
         new MoveToPose(1.5, 1.5,
-                new Pose2d(4.76,2.4, new Rotation2d(Math.toRadians(120.0)))),
+                new Pose2d(6.55, 3.5, new Rotation2d(Math.toRadians(-180.0)))),
 
+        
         new ApproachReef(false), 
 
-        //new Pause(0.25),
+        new Pause(0.25),
 
         new InstantCommand(()->RobotContainer.elevator.Level4()),
 
-        new Pause(1.5),
+        new Pause(2),
 
         new InstantCommand(()->RobotContainer.intake.intakeRun(-1)),
 
-        //new CoralOutake(),
+        //new CoralOutake(), 
 
         new Pause(1),
 
         new InstantCommand(()->RobotContainer.intake.intakeRun(0)),
 
-        new InstantCommand(()->RobotContainer.elevator.LEVEL_0())
+        new InstantCommand(()->RobotContainer.elevator.LEVEL_0()),
 
-        //new Pause(2)
-
-        
-
-
-
-        
-
+        new Pause(0.25)
         
     
         // To Do

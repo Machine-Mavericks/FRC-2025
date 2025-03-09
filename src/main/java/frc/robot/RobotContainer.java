@@ -2,6 +2,7 @@ package frc.robot;
 
 import frc.robot.commandgroups.TwoStationDefense;
 import frc.robot.commandgroups.MoveOffLineAnywhere;
+import frc.robot.commandgroups.OneCoralAutoCenter;
 import frc.robot.commandgroups.OneCoralAutoLeft;
 import frc.robot.commandgroups.OneCoralAutoRight;
 import frc.robot.commandgroups.OneStationDefense;
@@ -57,8 +58,9 @@ public class RobotContainer {
     public static Elevator elevator;
     public static CoralGrabber intake;
     public static LED LED;
+    public static Climb climb;
     // and so on
-
+ 
     
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer(Robot robotptr) {
@@ -84,6 +86,7 @@ public class RobotContainer {
         elevator = new Elevator();
         intake = new CoralGrabber();
         LED = new LED();
+        climb = new climb();
 
         
         // and so on
@@ -116,6 +119,9 @@ public class RobotContainer {
         toolOp.leftBumper().whileTrue(new CoralIntake());
         toolOp.rightBumper().whileTrue(new CoralOutake());
         toolOp.back().whileTrue(new CoralBack());
+
+        toolOp.leftTrigger().whileTrue(new InstantCommand(()->climb.Extend()));
+         toolOp.rightTrigger().whileTrue(new InstantCommand(()->climb.Retract()));
 
         toolOp.a().onTrue(new MoveElevator(ElevatorPositions.LEVEL_2));
         toolOp.x().onTrue(new MoveElevator(ElevatorPositions.LEVEL_3));
@@ -178,6 +184,8 @@ public class RobotContainer {
             else if (index == 2)
             chosenCommand = new OneCoralAutoRight();
             else if (index == 3)
+            chosenCommand = new OneCoralAutoCenter();
+            else if (index == 4)
             chosenCommand = new OneCoralAutoLeft();
         
 
