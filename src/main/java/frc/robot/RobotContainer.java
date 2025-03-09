@@ -52,6 +52,7 @@ public class RobotContainer {
     public static Odometry odometry;
     public static TemplateSubsystem mySubsystem;
     public static Limelight camera;
+    public static Limelight camleft;
     public static DeadWheel encoder;
     public static Elevator elevator;
     public static CoralGrabber intake;
@@ -78,6 +79,7 @@ public class RobotContainer {
         odometry = new Odometry();
         mySubsystem = new TemplateSubsystem();
         camera = new Limelight("camera", true);
+        camleft = new Limelight("camleft", true);
         encoder = new DeadWheel();
         elevator = new Elevator();
         intake = new CoralGrabber();
