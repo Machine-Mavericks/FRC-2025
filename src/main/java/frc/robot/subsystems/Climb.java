@@ -52,6 +52,7 @@ public class Climb extends SubsystemBase {
 
     /** Method called periodically by the scheduler
      * Place any code here you wish to have run periodically */
+
     @Override
     public void periodic() {
         currentPos = m_ClimbMotor.getEncoder().getPosition();
