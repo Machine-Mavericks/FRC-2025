@@ -52,7 +52,7 @@ public class RobotContainer {
     public static SwerveDrive drivesystem;
     public static Odometry odometry;
     public static TemplateSubsystem mySubsystem;
-    public static Limelight camera;
+    public static Limelight camr;
     public static Limelight camleft;
     public static DeadWheel encoder;
     public static Elevator elevator;
@@ -80,7 +80,7 @@ public class RobotContainer {
         drivesystem = new SwerveDrive();
         odometry = new Odometry();
         mySubsystem = new TemplateSubsystem();
-        camera = new Limelight("camera", true);
+        camr = new Limelight("camera", true);
         camleft = new Limelight("camleft", true);
         encoder = new DeadWheel();
         elevator = new Elevator();
@@ -106,7 +106,7 @@ public class RobotContainer {
         driverOp.back().onTrue(new InstantCommand(()-> {
             Pose2d pos = odometry.getPose2d();
             Rotation2d newHeading = AutoFunctions.redVsBlue(new Rotation2d(0.0));
-            odometry.setPose(pos.getX(), pos.getY(), newHeading.getRadians(), newHeading.getRadians());
+            odometry.setPose(0.0, 0.0, newHeading.getRadians(), newHeading.getRadians());
         } ));
         
 

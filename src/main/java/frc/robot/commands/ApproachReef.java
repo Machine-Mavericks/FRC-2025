@@ -2,9 +2,12 @@ package frc.robot.commands;
 
 import java.util.List;
 
+import org.ejml.equation.Variable;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.Limelight;
 import frc.robot.utils.Utils;
 
 
@@ -12,6 +15,9 @@ import frc.robot.utils.Utils;
 public class ApproachReef extends Command {
 
     boolean chooseLeftSide;
+    
+    // our chosen camera to use
+    Limelight selectedCamera;
 
     // controller to steer towards reef - y used for 'sideways control'
     PIDController yControl;  
@@ -54,15 +60,15 @@ public class ApproachReef extends Command {
         omegaControl.reset();
 
         // is tag detected?
-        TargetDetected = RobotContainer.camera.isTargetPresent();
+        TargetDetected = RobotContainer.camr.isTargetPresent()||RobotContainer.camleft.isTargetPresent();
 
         // get apriltag id that we are trying to approach
-        DestinationTagID=(int)RobotContainer.camera.getPrimAprilTagID();
+        DestinationTagID=(int)RobotContainer.camr.getPrimAprilTagID();
 
         if (chooseLeftSide == true)
-            RobotContainer.camera.setPipeline(0);
+            selectedCamera = RobotContainer.camleft;
         else 
-            RobotContainer.camera.setPipeline(1);
+            selectedCamera = RobotContainer.camr;
         
         // determine desired robot angle
         targetAngle = 0.0;
@@ -122,7 +128,7 @@ public class ApproachReef extends Command {
         double omega_speed;
 
         // double horizontal error to target
-        double horizError = RobotContainer.camera.getHorizontalTargetOffsetAngle();
+        double horizError = selectedCamera.getHorizontalTargetOffsetAngle();
 
         //TargetDetected = RobotContainer.camera.isTargetPresent();
 
@@ -149,7 +155,7 @@ public class ApproachReef extends Command {
                 omega_speed = 0.42;
         if (omega_speed < -0.42)
                 omega_speed = -0.42;
-        if (!RobotContainer.camera.isTargetPresent()){
+        if (!RobotContainer.camr.isTargetPresent()){
             x_speed = 0.0;
             y_speed = 0.0;
 
@@ -167,8 +173,8 @@ public class ApproachReef extends Command {
     @Override
     public boolean isFinished() {
 
-        return !TargetDetected || (chooseLeftSide && RobotContainer.camera.getTargetArea() > 4.2) ||
-         (!chooseLeftSide && RobotContainer.camera.getTargetArea() > 10.1);
+        return !TargetDetected || (chooseLeftSide && RobotContainer.camr.getTargetArea() > 4.2) ||
+         (!chooseLeftSide && RobotContainer.camr.getTargetArea() > 10.1);
 
     }
 

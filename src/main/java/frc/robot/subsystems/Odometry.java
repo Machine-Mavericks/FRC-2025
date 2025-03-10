@@ -242,10 +242,10 @@ public class Odometry extends SubsystemBase {
     private void updateAprilTagOdometry() {
     
         // get updates from camera
-        TagResults = RobotContainer.camera.GetJSONResults();
+        TagResults = RobotContainer.camr.GetJSONResults();
     
         // get time latency from camera
-        double latency = 0.001*RobotContainer.camera.getLatencyContribution();
+        double latency = 0.001*RobotContainer.camr.getLatencyContribution();
         
         // if results is not empty and there is a list of apriltags
         if (TagEnable && TagResults!=null && TagResults.targets_Fiducials!=null)
