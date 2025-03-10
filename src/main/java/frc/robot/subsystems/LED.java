@@ -19,7 +19,7 @@ public class LED extends SubsystemBase {
     AddressableLED m_led;
     AddressableLEDBuffer m_ledBuffer;
 
-    private final int NumLEDs = 30;
+    private final int NumLEDs = 75;
 
     // used for simple light strobe
     private int StrobeIndex = 0;
@@ -54,7 +54,7 @@ public class LED extends SubsystemBase {
             timer = 0;
 
         if (timer == 0) {
-            StrobeIndex++;
+            StrobeIndex ++;
             if (StrobeIndex >= NumLEDs){
                 StrobeIndex = 0;
             }
