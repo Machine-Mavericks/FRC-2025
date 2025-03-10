@@ -59,16 +59,18 @@ public class ApproachReef extends Command {
         yControl.reset();
         omegaControl.reset();
 
-        // is tag detected?
-        TargetDetected = RobotContainer.camr.isTargetPresent()||RobotContainer.camleft.isTargetPresent();
-
-        // get apriltag id that we are trying to approach
-        DestinationTagID=(int)RobotContainer.camr.getPrimAprilTagID();
-
         if (chooseLeftSide == true)
             selectedCamera = RobotContainer.camleft;
         else 
             selectedCamera = RobotContainer.camr;
+
+        // is tag detected?
+        TargetDetected = selectedCamera.isTargetPresent();
+
+        // get apriltag id that we are trying to approach
+        DestinationTagID=(int)selectedCamera.getPrimAprilTagID();
+
+        
         
         // determine desired robot angle
         targetAngle = 0.0;
@@ -173,8 +175,8 @@ public class ApproachReef extends Command {
     @Override
     public boolean isFinished() {
 
-        return !TargetDetected || (chooseLeftSide && RobotContainer.camr.getTargetArea() > 4.2) ||
-         (!chooseLeftSide && RobotContainer.camr.getTargetArea() > 10.1);
+        return !TargetDetected || (chooseLeftSide && selectedCamera.getTargetArea() > 4.2) ||
+         (!chooseLeftSide && selectedCamera.getTargetArea() > 10.1);
 
     }
 
