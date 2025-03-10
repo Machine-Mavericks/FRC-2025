@@ -1,9 +1,5 @@
 package frc.robot.commands;
 
-import java.util.List;
-
-import org.ejml.equation.Variable;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
@@ -157,7 +153,7 @@ public class ApproachReef extends Command {
                 omega_speed = 0.42;
         if (omega_speed < -0.42)
                 omega_speed = -0.42;
-        if (!RobotContainer.camr.isTargetPresent()){
+        if (!selectedCamera.isTargetPresent()){
             x_speed = 0.0;
             y_speed = 0.0;
 
