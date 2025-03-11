@@ -1,9 +1,13 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Limelight;
+import frc.robot.utils.AutoFunctions;
 import frc.robot.utils.Utils;
 
 
@@ -39,7 +43,7 @@ public class ApproachReef extends Command {
         addRequirements(RobotContainer.drivesystem);
 
         // set up sideways and rotational controllers
-        yControl = new PIDController(0.03, 0.005, 0.0);
+        yControl = new PIDController(0.09, 0.005, 0.0);
         omegaControl = new PIDController(0.09, 0.001, 0.0000);
 
         // by default - choose left side
@@ -128,10 +132,29 @@ public class ApproachReef extends Command {
         // double horizontal error to target
         double horizError = selectedCamera.getHorizontalTargetOffsetAngle();
 
-        //TargetDetected = RobotContainer.camera.isTargetPresent();
-
         // determine forward speed (m/s)
-        x_speed = 0.3;
+        x_speed = 1.5;
+
+        // determine distance from center of reef
+        Translation2d CurrentPosition = RobotContainer.odometry.getPose2d().getTranslation();
+        Translation2d CenterReef = AutoFunctions.redVsBlue(new Translation2d(4.489, 4.0259));
+
+        // distance to reef = distance to center minus radius of reef
+        double distanceToReef = CurrentPosition.getDistance(CenterReef) - 0.84;
+        
+        // determine new speed target - over 1.5m away, use full speed
+        // slope = 1.5m/s(initial) - 0.3m/s (end speed) / 1.5m decel distance, offset = 0.3m/s
+        if (distanceToReef < 1.5)
+            x_speed = (1.5 - 0.3)/1.5 * distanceToReef + 0.3;
+        
+        if (x_speed < 0.0)
+            x_speed = 0.0;
+
+        //TargetDetected = RobotContainer.camera.isTargetPresent();
+        //if ((chooseLeftSide && selectedCamera.getTargetArea() > 7.7) ||( !chooseLeftSide && selectedCamera.getTargetArea() > 2.74)){
+        //    x_speed = 0.3;
+        //}
+
 
         // sideways control
         if (chooseLeftSide)
@@ -139,10 +162,10 @@ public class ApproachReef extends Command {
         else
             y_speed = yControl.calculate(horizError+RightOffset);
         
-        if (y_speed > 1.0)
-            y_speed = 1.0;
-        if (y_speed < -1.0)
-            y_speed = -1.0;
+        if (y_speed > 2.0)
+            y_speed = 2.0;
+        if (y_speed < -2.0)
+            y_speed = -2.0;
 
 
         // rotational control
@@ -162,9 +185,15 @@ public class ApproachReef extends Command {
         // drive robot
         RobotContainer.drivesystem.RobotDrive(x_speed, y_speed, omega_speed, false);
 
+<<<<<<< HEAD
         if (chooseLeftSide && selectedCamera.getTargetArea() > 4.2 || !chooseLeftSide && selectedCamera.getTargetArea() > 10.1){
             
         }
+=======
+   
+
+
+>>>>>>> 898c203f5317608dcd04893705ebe814ac1a6b7f
 
 
     }
@@ -173,8 +202,8 @@ public class ApproachReef extends Command {
     @Override
     public boolean isFinished() {
 
-        return !TargetDetected || (chooseLeftSide && selectedCamera.getTargetArea() > 4.2) ||
-         (!chooseLeftSide && selectedCamera.getTargetArea() > 10.1);
+        return !TargetDetected || (chooseLeftSide && selectedCamera.getTargetArea() > 48.0) ||
+         (!chooseLeftSide && selectedCamera.getTargetArea() > 7.0);
 
     }
 

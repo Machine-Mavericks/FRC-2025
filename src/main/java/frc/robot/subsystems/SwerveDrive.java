@@ -233,7 +233,7 @@ public class SwerveDrive extends SubsystemBase {
         TalonFXConfiguration driveConfig = new TalonFXConfiguration();
         driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         driveConfig.MotorOutput.DutyCycleNeutralDeadband = 0.0001;
-        driveConfig.Slot0.kP = 2.4;    // volts/rps
+        driveConfig.Slot0.kP = 2.0;    // volts/rps
         driveConfig.Slot0.kI = 0.0;    // volts/rps-s
         driveConfig.Slot0.kD = 0.0;    // volts/rps/s
         driveConfig.Slot0.kS = 0.08;   // volts

@@ -5,11 +5,14 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
+import frc.robot.utils.AutoFunctions;
 import frc.robot.utils.Utils;
 
 // command controls mecanum in manual mode
@@ -32,6 +35,10 @@ public class ManualDrive extends Command {
 
     Timer deltat;
 
+    // rotate to reef controller
+    PIDController omegaControl;
+
+    
     // constructor
     public ManualDrive() {
 
@@ -39,6 +46,8 @@ public class ManualDrive extends Command {
         addRequirements(RobotContainer.drivesystem);
 
         deltat = new Timer();
+
+        omegaControl = new PIDController(0.09, 0.001, 0.0000);
     }
 
     // This method is called once when command is started
@@ -52,6 +61,8 @@ public class ManualDrive extends Command {
         old_dY = 0.0;
         deltat.reset();
         deltat.start();
+        omegaControl.reset();
+
     }
 
     // This method is called periodically while command is active
@@ -84,8 +95,73 @@ public class ManualDrive extends Command {
         // omega = Math.abs(omega) > 0.2 ? omega : 0;
         
 
+        boolean EnableDriftCorrection = true;
+        if (RobotContainer.intake.getSensorState())
+        {
+            
+            // determine distance from center of reef
+            Translation2d CurrentPosition = RobotContainer.odometry.getPose2d().getTranslation();
+            Translation2d CenterReef = AutoFunctions.redVsBlue(new Translation2d(4.489, 4.0259));
+
+            // heading to center of reef
+            double ReefAngle = CenterReef.minus(CurrentPosition).getAngle().getDegrees();
+            
+            // current robot angle
+            double RobotAngle = RobotContainer.gyro.getYawAngle();
+
+            /*double TargetAngle=0.0;
+            if (ReefAngle > -30.0 && ReefAngle <=30.0)
+                TargetAngle = 0.0;
+            else if (ReefAngle > -90.0 && ReefAngle <=-30.0)
+                TargetAngle = -60.0;
+            else if (ReefAngle > -150.0 && ReefAngle <=-90.0)
+                TargetAngle = -120.0;
+            else if (ReefAngle <= -150.0 || ReefAngle >= 150.0)
+                TargetAngle = -180.0;
+            else if (ReefAngle >30.0 && ReefAngle <=90.0)
+                TargetAngle = 60.0;
+            else if (ReefAngle >90.0 && ReefAngle < 150.0)
+                TargetAngle = 120.0; */
+
+
+            double TargetAngle=0.0;
+            if (ReefAngle > -35.0 && ReefAngle <=35.0)
+                TargetAngle = 0.0;
+            else if (ReefAngle > -95.0 && ReefAngle <=-25.0)
+                TargetAngle = -60.0;
+            else if (ReefAngle > -155.0 && ReefAngle <=-85.0)
+                TargetAngle = -120.0;
+            else if (ReefAngle <= -145.0 || ReefAngle >= 145.0)
+                TargetAngle = -180.0;
+            else if (ReefAngle >25.0 && ReefAngle <=95.0)
+                TargetAngle = 60.0;
+            else if (ReefAngle >85.0 && ReefAngle < 155.0)
+                TargetAngle = 120.0;
+            
+                double error = Utils.AngleDifference(TargetAngle,RobotAngle);
+                error = Math.abs(error) > 1.0 ? error : 0;
+            
+            omega = omegaControl.calculate(error);
+             //omega = omegaControl.calculate(Utils.AngleDifference(30.0,RobotAngle));
+            
+            // deadband the control
+            //omega = Math.abs(omega) > 0.1 ? omega : 0;
+            
+            if (omega > 3.0)
+                    omega = 3.0;
+            if (omega < -3.0)
+                    omega = -3.0;
+
+            EnableDriftCorrection = false;
+        }
+        else{
+            omegaControl.reset();
+        }
+        
+    
+
         // --------- Correct robot angle for gyro angle wander --------
-        if(omega == 0.0 && !RobotContainer.driverOp.back().getAsBoolean())
+        if(EnableDriftCorrection && omega == 0.0 && !RobotContainer.driverOp.back().getAsBoolean())
         {
             if (m_pidDelay > 0)
                 m_pidDelay --;

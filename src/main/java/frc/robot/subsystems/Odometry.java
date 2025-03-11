@@ -105,7 +105,8 @@ public class Odometry extends SubsystemBase {
         //updateDeadWheelOdometry();
 
         // pose update using apriltag data
-        updateAprilTagOdometry();
+        updateAprilTagOdometry(RobotContainer.camleft);
+        updateAprilTagOdometry(RobotContainer.camr);
 
 
         updateShuffleboard();
@@ -179,59 +180,59 @@ public class Odometry extends SubsystemBase {
     double DWfieldAngle = 0.0;
 
     // helper function to update dead wheel odometry - called by periodic()
-    private void updateDeadWheelOdometry() {
+    // private void updateDeadWheelOdometry() {
     
-        // get all the deadwheel encoder distances (in m)
-        double leftPos = RobotContainer.encoder.getLeftEncoderDistance()*0.01;
-        double frontPos = RobotContainer.encoder.getFrontEncoderDistance()*0.01;
-        double rearPos = RobotContainer.encoder.getRearEncoderDistance()*0.01;
+    //     // get all the deadwheel encoder distances (in m)
+    //     //double leftPos = RobotContainer.encoder.getLeftEncoderDistance()*0.01;
+    //     //double frontPos = RobotContainer.encoder.getFrontEncoderDistance()*0.01;
+    //     //double rearPos = RobotContainer.encoder.getRearEncoderDistance()*0.01;
 
-        // determine changes in distances.
-        double leftChangePos = leftPos - previousLeft;
-        double frontChangePos = frontPos - previousFront;
-        double rearChangePos = rearPos - previousRear;
+    //     // determine changes in distances.
+    //     //double leftChangePos = leftPos - previousLeft;
+    //     //double frontChangePos = frontPos - previousFront;
+    //     //double rearChangePos = rearPos - previousRear;
 
-        // keep encoder positions for next time
-        previousLeft = leftPos;
-        previousFront = frontPos;
-        previousRear = rearPos;
+    //     // keep encoder positions for next time
+    //     //previousLeft = leftPos;
+    //     //previousFront = frontPos;
+    //     //previousRear = rearPos;
 
-        // creating the value of sin theta (aka the angle of the hipotinuse)
-        double theta = Math.asin((frontChangePos - rearChangePos) / DeadWheel.FRONT_TO_BACK_DISTANCE);
+    //     // creating the value of sin theta (aka the angle of the hipotinuse)
+    //     //double theta = Math.asin((frontChangePos - rearChangePos) / DeadWheel.FRONT_TO_BACK_DISTANCE);
 
-        // equation that tells us how much the robot has moved sideways (=avg of front and back encoders)
-        double LateralChange = (frontChangePos + rearChangePos) / 2.0;
+    //     // equation that tells us how much the robot has moved sideways (=avg of front and back encoders)
+    //     double LateralChange = (frontChangePos + rearChangePos) / 2.0;
 
-        // equation that tells us how much the robot has moved forward 
-        double ForwardChange = (leftChangePos + DeadWheel.LATERAL_OFFSET * Math.sin(theta));
+    //     // equation that tells us how much the robot has moved forward 
+    //     //double ForwardChange = (leftChangePos + DeadWheel.LATERAL_OFFSET * Math.sin(theta));
 
 
-        // need to convert lateral and forward movement from robot-orientation to field-orientation
-        // based on angle of gyro
-        double IMUHeading = Math.toRadians(RobotContainer.gyro.getYawAngle());
+    //     // need to convert lateral and forward movement from robot-orientation to field-orientation
+    //     // based on angle of gyro
+    //     double IMUHeading = Math.toRadians(RobotContainer.gyro.getYawAngle());
 
-        double fieldForwardChange = ForwardChange * Math.cos(IMUHeading) - LateralChange * Math.sin(IMUHeading);
+    //     double fieldForwardChange = ForwardChange * Math.cos(IMUHeading) - LateralChange * Math.sin(IMUHeading);
 
-        double fieldLateralChange = ForwardChange * Math.sin(IMUHeading) + LateralChange * Math.cos(IMUHeading);
+    //     double fieldLateralChange = ForwardChange * Math.sin(IMUHeading) + LateralChange * Math.cos(IMUHeading);
 
         
         
         
         
-        Pose2d newPose = new Pose2d(currentPoseBeforeAdjustment.getX()+fieldForwardChange,
-                                    currentPoseBeforeAdjustment.getY()+fieldLateralChange,
-                                    new Rotation2d(IMUHeading));
+    //     Pose2d newPose = new Pose2d(currentPoseBeforeAdjustment.getX()+fieldForwardChange,
+    //                                 currentPoseBeforeAdjustment.getY()+fieldLateralChange,
+    //                                 new Rotation2d(IMUHeading));
            
-        // temp
-        DWfieldX += fieldForwardChange;
-        DWfieldY += fieldLateralChange;
-        DWfieldAngle = IMUHeading;                            
+    //     // temp
+    //     DWfieldX += fieldForwardChange;
+    //     DWfieldY += fieldLateralChange;
+    //     DWfieldAngle = IMUHeading;                            
 
-        // add new position estimate into pose estimator                            
-        m_Estimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.01, 0.01, 0.001));                     
-        m_Estimator.addVisionMeasurement(newPose, PoseTimeStamp.get());                              
+    //     // add new position estimate into pose estimator                            
+    //     m_Estimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.01, 0.01, 0.001));                     
+    //     m_Estimator.addVisionMeasurement(newPose, PoseTimeStamp.get());                              
         
-    }
+    // }
 
 
 
@@ -239,16 +240,16 @@ public class Odometry extends SubsystemBase {
     
     
     // helper function to updates drive wheel odometry - called by periodic()
-    private void updateAprilTagOdometry() {
+    private void updateAprilTagOdometry(Limelight camera) {
     
         // get updates from camera
-        TagResults = RobotContainer.camr.GetJSONResults();
+        TagResults = camera.GetJSONResults();
     
         // get time latency from camera
         double latency = 0.001*RobotContainer.camr.getLatencyContribution();
         
         // if results is not empty and there is a list of apriltags
-        if (TagEnable && TagResults!=null && TagResults.targets_Fiducials!=null)
+        if (TagResults!=null && TagResults.targets_Fiducials!=null)
         {
             for (int i=0;i<TagResults.targets_Fiducials.length; ++i)
             {
@@ -267,11 +268,15 @@ public class Odometry extends SubsystemBase {
                 
 
                     // are we close to apriltag? if so, then use pose estimate
-                    if (distance <= 2.0)
+                    if (distance <= 1.75)
                     {
                         // get field pose from limelight, convert to 2d, then convert to FRC coordinates
                         Pose2d LLpose =  TagResults.targets_Fiducials[i].getRobotPose_FieldSpace().toPose2d();
-                        Pose2d fieldPose = new Pose2d(LLpose.getX()+8.774176, LLpose.getY()+4.0259, LLpose.getRotation());
+
+                        // get angle from gyro 
+                        Rotation2d gyroangle = new Rotation2d(Math.toRadians(RobotContainer.gyro.getYawAngle()));
+
+                        Pose2d fieldPose = new Pose2d(LLpose.getX()+8.774176, LLpose.getY()+4.0259, gyroangle);
                     
                         // add in to our position estimator
                         // assume lag time = camera latency + 20ms
