@@ -272,7 +272,11 @@ public class Odometry extends SubsystemBase {
                     {
                         // get field pose from limelight, convert to 2d, then convert to FRC coordinates
                         Pose2d LLpose =  TagResults.targets_Fiducials[i].getRobotPose_FieldSpace().toPose2d();
-                        Pose2d fieldPose = new Pose2d(LLpose.getX()+8.774176, LLpose.getY()+4.0259, LLpose.getRotation());
+
+                        // get angle from gyro 
+                        Rotation2d gyroangle = new Rotation2d(Math.toRadians(RobotContainer.gyro.getYawAngle()));
+
+                        Pose2d fieldPose = new Pose2d(LLpose.getX()+8.774176, LLpose.getY()+4.0259, gyroangle);
                     
                         // add in to our position estimator
                         // assume lag time = camera latency + 20ms
