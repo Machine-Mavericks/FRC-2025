@@ -105,7 +105,8 @@ public class Odometry extends SubsystemBase {
         //updateDeadWheelOdometry();
 
         // pose update using apriltag data
-        updateAprilTagOdometry();
+        updateAprilTagOdometry(RobotContainer.camleft);
+        updateAprilTagOdometry(RobotContainer.camr);
 
 
         updateShuffleboard();
@@ -239,16 +240,16 @@ public class Odometry extends SubsystemBase {
     
     
     // helper function to updates drive wheel odometry - called by periodic()
-    private void updateAprilTagOdometry() {
+    private void updateAprilTagOdometry(Limelight camera) {
     
         // get updates from camera
-        TagResults = RobotContainer.camr.GetJSONResults();
+        TagResults = camera.GetJSONResults();
     
         // get time latency from camera
         double latency = 0.001*RobotContainer.camr.getLatencyContribution();
         
         // if results is not empty and there is a list of apriltags
-        if (TagEnable && TagResults!=null && TagResults.targets_Fiducials!=null)
+        if (TagResults!=null && TagResults.targets_Fiducials!=null)
         {
             for (int i=0;i<TagResults.targets_Fiducials.length; ++i)
             {
@@ -267,7 +268,7 @@ public class Odometry extends SubsystemBase {
                 
 
                     // are we close to apriltag? if so, then use pose estimate
-                    if (distance <= 2.0)
+                    if (distance <= 1.5)
                     {
                         // get field pose from limelight, convert to 2d, then convert to FRC coordinates
                         Pose2d LLpose =  TagResults.targets_Fiducials[i].getRobotPose_FieldSpace().toPose2d();
