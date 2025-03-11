@@ -133,6 +133,10 @@ public class ApproachReef extends Command {
         // determine forward speed (m/s)
         x_speed = 1.5;
 
+        if ((chooseLeftSide && selectedCamera.getTargetArea() > 7.7) ||( !chooseLeftSide && selectedCamera.getTargetArea() > 2.74)){
+            x_speed = 0.5;
+        }
+
         // sideways control
         if (chooseLeftSide)
             y_speed = yControl.calculate(horizError+LeftOffset);
@@ -162,7 +166,7 @@ public class ApproachReef extends Command {
         // drive robot
         RobotContainer.drivesystem.RobotDrive(x_speed, y_speed, omega_speed, false);
 
-       
+   
 
 
 
