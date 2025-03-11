@@ -39,7 +39,7 @@ public class ApproachReef extends Command {
         addRequirements(RobotContainer.drivesystem);
 
         // set up sideways and rotational controllers
-        yControl = new PIDController(0.03, 0.005, 0.0);
+        yControl = new PIDController(0.11, 0.005, 0.0);
         omegaControl = new PIDController(0.09, 0.001, 0.0000);
 
         // by default - choose left side
@@ -131,7 +131,7 @@ public class ApproachReef extends Command {
         //TargetDetected = RobotContainer.camera.isTargetPresent();
 
         // determine forward speed (m/s)
-        x_speed = 0.3;
+        x_speed = 1.5;
 
         // sideways control
         if (chooseLeftSide)
@@ -139,10 +139,10 @@ public class ApproachReef extends Command {
         else
             y_speed = yControl.calculate(horizError+RightOffset);
         
-        if (y_speed > 1.0)
-            y_speed = 1.0;
-        if (y_speed < -1.0)
-            y_speed = -1.0;
+        if (y_speed > 3.0)
+            y_speed = 3.0;
+        if (y_speed < -3.0)
+            y_speed = -3.0;
 
 
         // rotational control
@@ -162,6 +162,8 @@ public class ApproachReef extends Command {
         // drive robot
         RobotContainer.drivesystem.RobotDrive(x_speed, y_speed, omega_speed, false);
 
+       
+
 
 
 
@@ -171,8 +173,8 @@ public class ApproachReef extends Command {
     @Override
     public boolean isFinished() {
 
-        return !TargetDetected || (chooseLeftSide && selectedCamera.getTargetArea() > 4.2) ||
-         (!chooseLeftSide && selectedCamera.getTargetArea() > 10.1);
+        return !TargetDetected || (chooseLeftSide && selectedCamera.getTargetArea() > 48.0) ||
+         (!chooseLeftSide && selectedCamera.getTargetArea() > 7.0);
 
     }
 

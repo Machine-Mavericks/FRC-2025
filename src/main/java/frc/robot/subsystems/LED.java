@@ -83,30 +83,32 @@ public class LED extends SubsystemBase {
             if (StrobeIndex>2)
                 m_ledBuffer.setRGB(StrobeIndex-3, 115, 255, 0);
 
-        else {
+        }else {
         if (DriverStation.getAlliance().get() == Alliance.Blue) {
             m_ledBuffer.setRGB(StrobeIndex, 0, 0, 255);
             if (StrobeIndex>0)
                 m_ledBuffer.setRGB(StrobeIndex-1, 0, 0, 255);
             if (StrobeIndex>1)
                 m_ledBuffer.setRGB(StrobeIndex-2, 0, 0, 255);
-                if (StrobeIndex>2)
-                m_ledBuffer.setRGB(StrobeIndex-3, 0, 0, 255);}
-        else {
+            if (StrobeIndex>2)
+                m_ledBuffer.setRGB(StrobeIndex-3, 0, 0, 255);
+        }else {
             m_ledBuffer.setRGB(StrobeIndex, 255, 0, 0);
             if (StrobeIndex>0)
                 m_ledBuffer.setRGB(StrobeIndex-1, 255, 0, 0);
             if (StrobeIndex>1)
                 m_ledBuffer.setRGB(StrobeIndex-2, 255, 0, 0);
-                if (StrobeIndex>2)
+            if (StrobeIndex>2)
                 m_ledBuffer.setRGB(StrobeIndex-3, 255, 0, 0);
-        }}
-
-
-
-
-        m_led.setData(m_ledBuffer);
         }
+
+
+
+
+            m_led.setData(m_ledBuffer);
+        
+    
+            }
     
         }
     }
