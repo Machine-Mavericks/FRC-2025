@@ -73,8 +73,7 @@ public class LED extends SubsystemBase {
                 m_ledBuffer.setRGB(StrobeIndex-2, 255, 255, 255);
             if (StrobeIndex>2)
                 m_ledBuffer.setRGB(StrobeIndex-3, 255, 255, 255);
-        }else{
-        if(RobotContainer.camleft.isTargetPresent()) {
+        }else if(RobotContainer.camleft.isTargetPresent()) {
             m_ledBuffer.setRGB(StrobeIndex, 115, 255, 0);
             if (StrobeIndex>0)
                 m_ledBuffer.setRGB(StrobeIndex-1, 115, 255, 0);
@@ -83,7 +82,7 @@ public class LED extends SubsystemBase {
             if (StrobeIndex>2)
                 m_ledBuffer.setRGB(StrobeIndex-3, 115, 255, 0);
 
-        }else {
+        } else {
         if (DriverStation.getAlliance().get() == Alliance.Blue) {
             m_ledBuffer.setRGB(StrobeIndex, 0, 0, 255);
             if (StrobeIndex>0)
@@ -101,15 +100,22 @@ public class LED extends SubsystemBase {
             if (StrobeIndex>2)
                 m_ledBuffer.setRGB(StrobeIndex-3, 255, 0, 0);
         }
+    }
 
 
 
 
-            m_led.setData(m_ledBuffer);
+        m_led.setData(m_ledBuffer);
+        }
+
+
+
+
+          
         
     
             }
     
-        }
-    }
-}
+        
+    
+
