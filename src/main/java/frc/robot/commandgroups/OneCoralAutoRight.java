@@ -31,22 +31,22 @@ public class OneCoralAutoRight extends SequentialCommandGroup {
             Pose2d startpose;
             switch (startposn) {
                 case 0:
-                    startpose = new Pose2d(7.55, 0.4, new Rotation2d(0.0));
+                    startpose = new Pose2d(7.55, 0.4, new Rotation2d(Math.toRadians(180.0)));
                     break;
                 case 1:
-                    startpose = new Pose2d(7.55, 2.0, new Rotation2d(0.0));
+                    startpose = new Pose2d(7.55, 2.0, new Rotation2d(Math.toRadians(180.0)));
                     break;
                 case 2:
-                    startpose = new Pose2d(7.55, 4.02, new Rotation2d(0.0));
+                    startpose = new Pose2d(7.55, 4.02, new Rotation2d(Math.toRadians(180.0)));
                     break;
                 case 3:
-                    startpose = new Pose2d(7.55, 6.02, new Rotation2d(0.0));
+                    startpose = new Pose2d(7.55, 6.02, new Rotation2d(Math.toRadians(180.0)));
                     break;
                 case 4:
-                    startpose = new Pose2d(7.55, 7.65, new Rotation2d(0.0));
+                    startpose = new Pose2d(7.55, 7.65, new Rotation2d(Math.toRadians(180.0)));
                     break;
                 default:
-                    startpose = new Pose2d(7.55, 4.02, new Rotation2d(0.0));
+                    startpose = new Pose2d(7.55, 4.02, new Rotation2d(Math.toRadians(180.0)));
             };
 
             // convert for red vs blue
