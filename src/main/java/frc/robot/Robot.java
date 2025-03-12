@@ -86,7 +86,7 @@ public class Robot extends TimedRobot {
       isElevatorInitialized = true;
     }
 
-    RobotContainer.elevator.LEVEL_0();
+    RobotContainer.elevator.Level0();
   
 
     // set default swerve drive command to manual drive mode

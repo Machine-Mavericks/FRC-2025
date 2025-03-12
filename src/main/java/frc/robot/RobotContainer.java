@@ -11,6 +11,7 @@ import frc.robot.commands.ApproachReef;
 import frc.robot.commands.CoralBack;
 import frc.robot.commands.CoralIntake;
 import frc.robot.commands.CoralOutake;
+import frc.robot.commands.ManualDrive;
 import frc.robot.commands.MoveElevator;
 import frc.robot.commands.MoveToPose;
 import frc.robot.commands.Pause;
@@ -34,6 +35,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 
 public class RobotContainer {
@@ -60,6 +62,8 @@ public class RobotContainer {
     public static CoralGrabber intake;
     public static LED LED;
     public static Climb climb;
+    public static boolean snapToReef = true; 
+    
     //public static Climb climb;
     // and so on
  
@@ -99,6 +103,14 @@ public class RobotContainer {
         configureBindings();
     }
 
+    // turns off auto snap to reef 
+    public void ToggleSnapToReef(){
+        if (snapToReef){
+            snapToReef = false; 
+        }else{
+            snapToReef = true; 
+        }
+    }
 
     /** Use this method to define your trigger->command mappings. */
     private void configureBindings() {
@@ -117,6 +129,8 @@ public class RobotContainer {
 
         driverOp.leftBumper().whileTrue(new ApproachReef(true));
         driverOp.rightBumper().whileTrue(new ApproachReef(false));
+        driverOp.rightStick().onTrue(new InstantCommand(()->ToggleSnapToReef()));
+        
 
         // operator controls 
         toolOp.leftBumper().whileTrue(new CoralIntake());

@@ -41,7 +41,7 @@ public class FourCoralAuto extends SequentialCommandGroup {
         
 
         // at the same time as driving lower slides to a position for intake 
-        new InstantCommand(()->RobotContainer.elevator.LEVEL_0()),
+        new InstantCommand(()->RobotContainer.elevator.Level0()),
 
 
         // run intake 
@@ -66,7 +66,7 @@ public class FourCoralAuto extends SequentialCommandGroup {
 
 
         // at the same time as driving lower slides to zero 
-        new InstantCommand(()->RobotContainer.elevator.LEVEL_0()),
+        new InstantCommand(()->RobotContainer.elevator.Level0()),
 
         // run intake 
         new InstantCommand(()->RobotContainer.intake.intakeRun(1)),

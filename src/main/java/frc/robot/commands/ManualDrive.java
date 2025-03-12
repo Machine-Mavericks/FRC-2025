@@ -25,6 +25,8 @@ public class ManualDrive extends Command {
     private Double m_PIDTarget = null;    // Use Double class so it can be set to null
     private long m_pidDelay = -1;
 
+    
+
     double powerFactor;
     double basePowerFacter = 0.12;
     double boostPowerFacter = 0.88;
@@ -54,6 +56,8 @@ public class ManualDrive extends Command {
     @Override
     public void initialize() {
         m_headingPID.setIntegratorRange(-7.0, 7.0);
+
+        
         
         m_PIDTarget = null;
         m_pidDelay = 10;
@@ -75,6 +79,7 @@ public class ManualDrive extends Command {
         double dY = -RobotContainer.driverOp.getLeftX();
         double omega = -2.0 * RobotContainer.driverOp.getRightX();
         double speedTrigger = RobotContainer.driverOp.getRightTriggerAxis();
+        
         //boolean Park = RobotContainer.driverOp.leftBumper().getAsBoolean();
 
         // if on red team, reverse x and y movements to match FRC field coordinates
@@ -96,7 +101,7 @@ public class ManualDrive extends Command {
         
 
         boolean EnableDriftCorrection = true;
-        if (RobotContainer.intake.getSensorState())
+        if (RobotContainer.intake.getSensorState() && RobotContainer.snapToReef)
         {
             
             // determine distance from center of reef

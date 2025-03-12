@@ -30,22 +30,22 @@ public class OneCoralAutoCenter extends SequentialCommandGroup {
             Pose2d startpose;
             switch (startposn) {
                 case 0:
-                    startpose = new Pose2d(7.55, 0.4, new Rotation2d(0.0));
+                    startpose = new Pose2d(7.55, 0.4, new Rotation2d(Math.toRadians(180.0)));
                     break;
                 case 1:
-                    startpose = new Pose2d(7.55, 2.0, new Rotation2d(0.0));
+                    startpose = new Pose2d(7.55, 2.0, new Rotation2d(Math.toRadians(180.0)));
                     break;
                 case 2:
-                    startpose = new Pose2d(7.55, 4.02, new Rotation2d(0.0));
+                    startpose = new Pose2d(7.55, 4.02, new Rotation2d(Math.toRadians(180.0)));
                     break;
                 case 3:
-                    startpose = new Pose2d(7.55, 6.02, new Rotation2d(0.0));
+                    startpose = new Pose2d(7.55, 6.02, new Rotation2d(Math.toRadians(180.0)));
                     break;
                 case 4:
-                    startpose = new Pose2d(7.55, 7.65, new Rotation2d(0.0));
+                    startpose = new Pose2d(7.55, 7.65, new Rotation2d(Math.toRadians(180.0)));
                     break;
                 default:
-                    startpose = new Pose2d(7.55, 4.02, new Rotation2d(0.0));
+                    startpose = new Pose2d(7.55, 4.02, new Rotation2d(Math.toRadians(180.0)));
             };
 
             // convert for red vs blue
@@ -53,12 +53,18 @@ public class OneCoralAutoCenter extends SequentialCommandGroup {
             
             // set odometry
             RobotContainer.odometry.setPose(startpose);
+
+        
         } ),
 
-        // move to in front of reef target  (tag22 for blue, tag 9 for red)
-        new MoveToPose(1.5, 1.5,
-                new Pose2d(6.55, 3.5, new Rotation2d(Math.toRadians(-180.0)))),
+        // move to in front of reef target  (tag21 for blue, tag 10 for red)
+        //new InstantCommand(()->RobotContainer.snapToReef = false),
 
+        // new MoveToPose(
+        //     1.5,
+        //     1.5,
+        //     new Pose2d(6.55, 4.02, new Rotation2d(Math.toRadians(180.0)))
+        // ),
         
         new ApproachReef(false), 
 
@@ -68,15 +74,13 @@ public class OneCoralAutoCenter extends SequentialCommandGroup {
 
         new Pause(2),
 
-        new InstantCommand(()->RobotContainer.intake.intakeRun(-1)),
-
-        //new CoralOutake(), 
+        new InstantCommand(()->RobotContainer.intake.intakeRun(-0.7)),
 
         new Pause(1),
 
         new InstantCommand(()->RobotContainer.intake.intakeRun(0)),
 
-        new InstantCommand(()->RobotContainer.elevator.LEVEL_0()),
+        new InstantCommand(()->RobotContainer.elevator.Level0()),
 
         new Pause(0.25)
         

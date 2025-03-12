@@ -76,7 +76,7 @@ public class OneCoralAutoRight extends SequentialCommandGroup {
 
         new InstantCommand(()->RobotContainer.intake.intakeRun(0)),
 
-        new InstantCommand(()->RobotContainer.elevator.LEVEL_0())
+        new InstantCommand(()->RobotContainer.elevator.Level0())
 
         //new Pause(2)
 
