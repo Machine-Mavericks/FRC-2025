@@ -7,6 +7,7 @@ import frc.robot.commandgroups.OneCoralAutoLeft;
 import frc.robot.commandgroups.OneCoralAutoRight;
 import frc.robot.commandgroups.OneStationDefense;
 import frc.robot.commandgroups.TemplateCommandGroup;
+import frc.robot.commandgroups.TwoCoralAutoLeft;
 import frc.robot.commands.ApproachReef;
 import frc.robot.commands.CoralBack;
 import frc.robot.commands.CoralIntake;
@@ -204,6 +205,8 @@ public class RobotContainer {
             chosenCommand = new OneCoralAutoCenter();
             else if (index == 4)
             chosenCommand = new OneCoralAutoLeft();
+            else if (index == 5)
+            chosenCommand = new TwoCoralAutoLeft();
         
 
         return new SequentialCommandGroup(
