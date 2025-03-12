@@ -185,9 +185,15 @@ public class ApproachReef extends Command {
         // drive robot
         RobotContainer.drivesystem.RobotDrive(x_speed, y_speed, omega_speed, false);
 
+<<<<<<< HEAD
+        if (chooseLeftSide && selectedCamera.getTargetArea() > 4.2 || !chooseLeftSide && selectedCamera.getTargetArea() > 10.1){
+            
+        }
+=======
    
 
 
+>>>>>>> 898c203f5317608dcd04893705ebe814ac1a6b7f
 
 
     }

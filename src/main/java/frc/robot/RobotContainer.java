@@ -18,7 +18,7 @@ import frc.robot.commands.Pause;
 import frc.robot.commands.TemplateCommand;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.CoralGrabber;
-//import frc.robot.subsystems.DeadWheel;
+import frc.robot.subsystems.DeadWheel;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Limelight;
@@ -57,7 +57,7 @@ public class RobotContainer {
     public static TemplateSubsystem mySubsystem;
     public static Limelight camr;
     public static Limelight camleft;
-   // public static DeadWheel encoder;
+    public static DeadWheel encoder;
     public static Elevator elevator;
     public static CoralGrabber intake;
     public static LED LED;
@@ -86,9 +86,9 @@ public class RobotContainer {
         drivesystem = new SwerveDrive();
         odometry = new Odometry();
         mySubsystem = new TemplateSubsystem();
-        camr = new Limelight("camr", true);
+        camr = new Limelight("camera", true);
         camleft = new Limelight("camleft", true);
-        //encoder = new DeadWheel();
+        encoder = new DeadWheel();
         elevator = new Elevator();
         intake = new CoralGrabber();
         LED = new LED();
@@ -125,7 +125,7 @@ public class RobotContainer {
         } ));
         
 
-        //driverOp.start().onTrue(new InstantCommand(()->encoder.ResetEncoder()));
+        driverOp.start().onTrue(new InstantCommand(()->encoder.ResetEncoder()));
 
         driverOp.leftBumper().whileTrue(new ApproachReef(true));
         driverOp.rightBumper().whileTrue(new ApproachReef(false));
