@@ -2,6 +2,7 @@ package frc.robot.commandgroups;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.Odometry;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
@@ -58,7 +59,9 @@ public class TwoCoralAutoRight extends SequentialCommandGroup {
             // move to in front of reef target  (tag22 for blue, tag 9 for red)
             // move to veiw pose 
             //new InstantCommand(()->RobotContainer.snapToReef = false),
-            
+           new InstantCommand(()-> RobotContainer.odometry.TagEnable = false),
+
+
             new MoveToPose(
                 1.0,
                 0.5,

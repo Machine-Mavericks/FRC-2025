@@ -73,20 +73,8 @@ public class ThreeCoralAutoRight extends SequentialCommandGroup {
             // raise to level 4 height
             new InstantCommand(()->RobotContainer.elevator.Level4()),
     
-            new Pause(0.5),
-    
-            // deposite 
-            new InstantCommand(()->RobotContainer.intake.intakeRun(-0.7)),
-    
-            new Pause(1.0),
-    
-            new InstantCommand(()->RobotContainer.intake.intakeRun(0)),
-    
-            new Pause(1.0),
-    
-            //lower elevator for travel 
-            new InstantCommand(()->RobotContainer.elevator.Level0()),
-    
+            new DepositeAndLower(),
+            
             new Pause(2.0),
     
             // move to pickup 
@@ -98,13 +86,7 @@ public class ThreeCoralAutoRight extends SequentialCommandGroup {
     
             new Pause(1.0),
     
-    
-            // intake new peice 
-            new InstantCommand(()->RobotContainer.intake.intakeRun(0.7)),
-    
-            new Pause(2),
-    
-            new InstantCommand(()->RobotContainer.intake.intakeRun(0)),
+            new AutoIntakeCommand(),
     
             new Pause(1),
     
@@ -123,19 +105,7 @@ public class ThreeCoralAutoRight extends SequentialCommandGroup {
             // rais elevator to level 4 
             new InstantCommand(()->RobotContainer.elevator.Level4()),
     
-            new Pause(1),
-    
-            // deposite 
-            new InstantCommand(()->RobotContainer.intake.intakeRun(-0.7)),
-    
-            new Pause(1),
-    
-            new InstantCommand(()->RobotContainer.intake.intakeRun(0)),
-    
-            new Pause(1),
-    
-            // lower elevator 
-            new InstantCommand(()->RobotContainer.elevator.Level0()),
+            new DepositeAndLower(),
     
             new Pause(1.0),
 
@@ -154,21 +124,10 @@ public class ThreeCoralAutoRight extends SequentialCommandGroup {
             // rais elevator to level 4 
             new InstantCommand(()->RobotContainer.elevator.Level4()),
     
-            new Pause(1),
+            // deposite
+            new DepositeAndLower()
     
-            // deposite 
-            new InstantCommand(()->RobotContainer.intake.intakeRun(-0.7)),
-    
-            new Pause(1),
-    
-            new InstantCommand(()->RobotContainer.intake.intakeRun(0)),
-    
-            new Pause(1),
-    
-            // lower elevator 
-            new InstantCommand(()->RobotContainer.elevator.Level0()),
-    
-            new Pause(1.0)
+
     
             // drive back to humen station 
     
@@ -179,11 +138,7 @@ public class ThreeCoralAutoRight extends SequentialCommandGroup {
             // ),
     
             // intake peice for tele
-            // new InstantCommand(()->RobotContainer.intake.intakeRun(0.7)),
-    
-            // new Pause(1),
-    
-            // new InstantCommand(()->RobotContainer.intake.intakeRun(0)),
+            // new AutoIntakeCommand()
     
             );
         }
