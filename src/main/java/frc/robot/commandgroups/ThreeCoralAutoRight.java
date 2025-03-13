@@ -66,17 +66,16 @@ public class ThreeCoralAutoRight extends SequentialCommandGroup {
                 new Pose2d(3.7,2.3, new Rotation2d(Math.toRadians(60.0)))
             ),
     
+            new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(true)),
             // approach reef 
             new ApproachReef(true),
-    
-            new Pause(1.0),
+
+            new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
     
             // raise to level 4 height
             new InstantCommand(()->RobotContainer.elevator.Level4()),
     
             new DepositeAndLower(),
-            
-            new Pause(2.0),
     
             // move to pickup 
             new MoveToPose(
@@ -85,11 +84,7 @@ public class ThreeCoralAutoRight extends SequentialCommandGroup {
                 new Pose2d (4.6,32.5, new Rotation2d(Math.toRadians(-114)))
             ),
     
-            new Pause(1.0),
-    
             new AutoIntakeCommand(),
-    
-            new Pause(1),
     
             // move to veiw point number two
             new MoveToPose(
@@ -97,18 +92,17 @@ public class ThreeCoralAutoRight extends SequentialCommandGroup {
                 1.5,
                 new Pose2d(3.7,2.3, new Rotation2d(Math.toRadians(60)))
             ),
-    
+
+            new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(true)),
             // apprach reef 
             new ApproachReef(false), 
-    
-            new Pause(1),
+
+            new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
     
             // rais elevator to level 4 
             new InstantCommand(()->RobotContainer.elevator.Level4()),
     
             new DepositeAndLower(),
-    
-            new Pause(1.0),
 
             // move to veiw point number two
             new MoveToPose(
@@ -117,10 +111,11 @@ public class ThreeCoralAutoRight extends SequentialCommandGroup {
                 new Pose2d(3.5,6.0, new Rotation2d(Math.toRadians(60)))
             ),
     
+            new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(true)),
             // apprach reef 
             new ApproachReef(false), 
-    
-            new Pause(1),
+
+            new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
     
             // rais elevator to level 4 
             new InstantCommand(()->RobotContainer.elevator.Level4()),
