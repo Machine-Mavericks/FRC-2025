@@ -56,6 +56,7 @@ public class TwoCoralAutoRight extends SequentialCommandGroup {
                 RobotContainer.odometry.setPose(startpose);
             } ),
     
+            new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
             // move to in front of reef target  (tag22 for blue, tag 9 for red)
             // move to veiw pose 
             //new InstantCommand(()->RobotContainer.snapToReef = false),
