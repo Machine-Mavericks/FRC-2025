@@ -62,7 +62,7 @@ public class TwoCoralAutoRight extends SequentialCommandGroup {
             new MoveToPose(
                 1.0,
                 0.5,
-                new Pose2d(3.7,2.3, new Rotation2d(Math.toRadians(-60.0)))
+                new Pose2d(3.7,2.3, new Rotation2d(Math.toRadians(60.0)))
             ),
     
             // approach reef 
@@ -112,7 +112,7 @@ public class TwoCoralAutoRight extends SequentialCommandGroup {
             new MoveToPose(
                 0.5, 
                 1.5,
-                new Pose2d(3.7,2.3, new Rotation2d(Math.toRadians(-60)))
+                new Pose2d(3.7,2.3, new Rotation2d(Math.toRadians(60)))
             ),
     
             // apprach reef 
