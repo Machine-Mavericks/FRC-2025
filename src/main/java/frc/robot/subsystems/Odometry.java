@@ -396,7 +396,7 @@ public class Odometry extends SubsystemBase {
                 tags=tags+(int)TagResults.targets_Fiducials[i].fiducialID + " ";
         m_detectedtags.setString(tags);
     }
-    void EnableApriltagProcessing(boolean enable){
+    public void EnableApriltagProcessing(boolean enable){
         TagEnable = enable;
     }
 
