@@ -32,6 +32,8 @@ public class Elevator extends SubsystemBase {
     public static double L2 = 23.0, L3 = 40.5, L4 = 73.0, L1 = 10.7, L0 = 0.0;
     static double ticksMoved;
     static double feedForward = 0.45;
+    double TargetPositionCM = 0.0;
+
     // Local objects and variables here
     // These are for things that only belong to, and used by, the subsystem
 
@@ -107,26 +109,31 @@ public class Elevator extends SubsystemBase {
     }
 
     public void Level1() {
+        TargetPositionCM = L1;
         elevatorMotorL.getClosedLoopController().setReference(cmToRotations(L1), ControlType.kPosition,
                 ClosedLoopSlot.kSlot0, feedForward);
     }
 
     public void Level2() {
+        TargetPositionCM = cmToRotations(L2);
         elevatorMotorL.getClosedLoopController().setReference(cmToRotations(L2), ControlType.kPosition,
                 ClosedLoopSlot.kSlot0, feedForward);
     }
 
     public void Level3() {
+        TargetPositionCM = cmToRotations(L3);
         elevatorMotorL.getClosedLoopController().setReference(cmToRotations(L3), ControlType.kPosition,
                 ClosedLoopSlot.kSlot0, feedForward);
     }
 
     public void Level4() {
+        TargetPositionCM = cmToRotations(L4);
         elevatorMotorL.getClosedLoopController().setReference(cmToRotations(L4), ControlType.kPosition,
                 ClosedLoopSlot.kSlot0, feedForward);
     }
 
     public void Level0() {
+        TargetPositionCM = 0.0;
         ticksMoved = elevatorMotorL.getEncoder().getPosition();
         elevatorMotorL.getClosedLoopController().setReference(0 - (ticksMoved), ControlType.kPosition,
                 ClosedLoopSlot.kSlot0, feedForward);
@@ -142,6 +149,18 @@ public class Elevator extends SubsystemBase {
         return rotations * (gearCircumference / gearRatio);
         // 8.43 - 1 gear ratio
         // 3.588" diameter
+
+    }
+
+    // is elevator at (or near) its target position
+    public boolean isElevatorAtDestination() {
+
+        // return true if elevator within 2cm of target position
+        if (Math.abs(rotationstoCm(elevatorMotorL.getEncoder().getPosition()) - 
+                    TargetPositionCM) < 2.0)
+            return true;
+        else
+            return false;
 
     }
 
