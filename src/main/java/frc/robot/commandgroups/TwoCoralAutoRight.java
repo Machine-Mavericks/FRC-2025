@@ -62,8 +62,8 @@ public class TwoCoralAutoRight extends SequentialCommandGroup {
             new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
 
             new MoveToPose(
-                4.5,
-                3.0,
+                4.0,
+                6.0,
                 new Pose2d(3.7,2.4, new Rotation2d(Math.toRadians(60.0)))
             ),
     
@@ -84,20 +84,21 @@ public class TwoCoralAutoRight extends SequentialCommandGroup {
     
             new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
             // deposite 
+            
             new DepositeAndLower(),
-    
+
             new ParallelCommandGroup(new CoralIntake(),
             // move to pickup 
                 new MoveToPose(
-                    4.5, 
-                    3.0,
+                    4.0, 
+                    6.0,
                     new Pose2d (1.2,1.2, new Rotation2d(Math.toRadians(56))))
             ),         
     
             // move to veiw point number two
             new MoveToPose(
-                4.5, 
-                3.0,
+                4.0, 
+                6.0,
                 new Pose2d(3.4,2.9, new Rotation2d(Math.toRadians(60)))
             ),
     
