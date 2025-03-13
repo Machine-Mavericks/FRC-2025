@@ -27,20 +27,20 @@ public class DepositeAndLower extends SequentialCommandGroup {
         addCommands (
         // Turn off tag detection
         //new InstantCommand(()->RobotContainer.odometry.TagEnable=false)
-            new Pause(1.0), 
+            new Pause(1.25), 
 
-            new InstantCommand(()->RobotContainer.intake.intakeRun(-0.7)),
+            new InstantCommand(()->RobotContainer.intake.intakeRun(-1.0)),
     
-            new Pause(1),
+            new Pause(0.25),
     
             new InstantCommand(()->RobotContainer.intake.intakeRun(0)),
     
-            new Pause(0.75),
+            new Pause(0.25),
 
              // lower elevator 
-            new InstantCommand(()->RobotContainer.elevator.Level0()),
+            new InstantCommand(()->RobotContainer.elevator.Level0())
     
-            new Pause(2.0)
+            //new Pause(1.25)
         
 
        

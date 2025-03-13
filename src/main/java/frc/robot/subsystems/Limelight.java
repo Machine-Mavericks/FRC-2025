@@ -136,6 +136,12 @@ public class Limelight extends SubsystemBase {
         return m_table.getEntry("tid").getDouble(0);
     }
 
+    // set primary tag Id for txty targertting 
+    public void SetPriorityTagID(int tagnum){
+        m_table.getEntry("priorityid").setInteger(tagnum);
+    }
+
+    
     /** Set list of tag IDs to be used for localization.
      * Tags not in this list will be ignored */
     public void SetFiducialIDFiltersOverride(int[] validIDs) {

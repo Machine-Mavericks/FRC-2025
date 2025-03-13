@@ -95,6 +95,8 @@ public class Robot extends TimedRobot {
     // temporary
     //RobotContainer.gyro.resetYawAngle();
 
+    RobotContainer.camleft.SetPriorityTagID(-1);
+    RobotContainer.camr.SetPriorityTagID(-1);
   }
 
   /** This function is called periodically during operator control. */

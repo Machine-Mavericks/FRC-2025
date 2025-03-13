@@ -48,7 +48,7 @@ public class Elevator extends SubsystemBase {
         elevatorConfig.idleMode(IdleMode.kBrake);// change to break later
         elevatorConfig.inverted(true);
         elevatorConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
-        elevatorConfig.closedLoop.p(0.25);
+        elevatorConfig.closedLoop.p(0.15);
         elevatorConfig.closedLoop.i(0.0);
         elevatorConfig.closedLoop.d(0.0);
         elevatorConfig.closedLoop.outputRange(-0.1, 0.4);
@@ -103,8 +103,9 @@ public class Elevator extends SubsystemBase {
     @Override
     public void periodic() {
         updateShuffleboard();
-        if(elevatorMotorL.getForwardLimitSwitch().isPressed()){
-            ZeroEncoder();
+        if(elevatorMotorL.getReverseLimitSwitch().isPressed()){
+            elevatorMotorL.getEncoder().setPosition(0);
+            elevatorMotorR.getEncoder().setPosition(0);
         }
     }
 

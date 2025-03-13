@@ -43,7 +43,7 @@ public class ApproachReef extends Command {
         addRequirements(RobotContainer.drivesystem);
 
         // set up sideways and rotational controllers
-        yControl = new PIDController(0.09, 0.005, 0.0);
+        yControl = new PIDController(0.04, 0.005, 0.0);
         omegaControl = new PIDController(0.09, 0.001, 0.0000);
 
         // by default - choose left side
