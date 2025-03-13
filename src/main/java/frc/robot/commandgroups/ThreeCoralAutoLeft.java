@@ -22,8 +22,7 @@ public class ThreeCoralAutoLeft extends SequentialCommandGroup {
     // constructor
     public ThreeCoralAutoLeft() {
 
-       addCommands (
-
+        addCommands (
         // depending on start position, set odometry
         new InstantCommand(()-> {
             int startposn = RobotContainer.mainShufflePage.getStartPositionIndex();
@@ -31,22 +30,22 @@ public class ThreeCoralAutoLeft extends SequentialCommandGroup {
             Pose2d startpose;
             switch (startposn) {
                 case 0:
-                    startpose = new Pose2d(7.55, 0.4, new Rotation2d(0.0));
+                    startpose = new Pose2d(7.55, 0.4, new Rotation2d((Math.toRadians(180.0))));
                     break;
                 case 1:
-                    startpose = new Pose2d(7.55, 2.0, new Rotation2d(0.0));
+                    startpose = new Pose2d(7.55, 2.0, new Rotation2d((Math.toRadians(180.0))));
                     break;
                 case 2:
-                    startpose = new Pose2d(7.55, 4.02, new Rotation2d(0.0));
+                    startpose = new Pose2d(7.55, 4.02, new Rotation2d((Math.toRadians(180.0))));
                     break;
                 case 3:
-                    startpose = new Pose2d(7.55, 6.02, new Rotation2d(0.0));
+                    startpose = new Pose2d(7.55, 6.02, new Rotation2d((Math.toRadians(180.0))));
                     break;
                 case 4:
-                    startpose = new Pose2d(7.55, 7.65, new Rotation2d(0.0));
+                    startpose = new Pose2d(7.55, 7.65, new Rotation2d((Math.toRadians(180.0))));
                     break;
                 default:
-                    startpose = new Pose2d(7.55, 4.02, new Rotation2d(0.0));
+                    startpose = new Pose2d(7.55, 4.02, new Rotation2d((Math.toRadians(180.0))));
             };
 
             // convert for red vs blue
@@ -56,117 +55,105 @@ public class ThreeCoralAutoLeft extends SequentialCommandGroup {
             RobotContainer.odometry.setPose(startpose);
         } ),
 
+        new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
         // move to in front of reef target  (tag22 for blue, tag 9 for red)
-        new MoveToPose(0.5, 1.5,
-                new Pose2d(4.76,5.65, new Rotation2d(Math.toRadians(-120.0)))),
-
+        // move to veiw pose 
+        //new InstantCommand(()->RobotContainer.snapToReef = false),
         
+        new MoveToPose(
+            1.0,
+            0.5,
+            new Pose2d(3.5,6.0, new Rotation2d(Math.toRadians(-60.0)))
+        ),
+
+        // approach reef 
+        new ApproachReef(true),
+
+        new Pause(1.0),
+
+        // raise to level 4 height
+        new InstantCommand(()->RobotContainer.elevator.Level4()),
+
+        new DepositeAndLower(),
+        // move to pickup 
+        new MoveToPose(
+            1, 
+            0.5,
+            new Pose2d (1.06,7.3, new Rotation2d(Math.toRadians(-56)))
+        ),
+
+        new Pause(1.0),
+
+        new AutoIntakeCommand(),
+
+        // move to veiw point number two
+        new MoveToPose(
+            0.5, 
+            1.5,
+            new Pose2d(3.5,6.0, new Rotation2d(Math.toRadians(-60)))
+        ),
+
+        // apprach reef 
+        new ApproachReef(false), 
+
+        new Pause(1),
+
+        // rais elevator to level 4 
+        new InstantCommand(()->RobotContainer.elevator.Level4()),
+
+        new DepositeAndLower(),
+         // move to pickup 
+         new MoveToPose(
+            1, 
+            0.5,
+            new Pose2d (1.06,7.3, new Rotation2d(Math.toRadians(-56)))
+        ),
+
+        new Pause(1.0),
+
+
+        // intake new peice 
+        new InstantCommand(()->RobotContainer.intake.intakeRun(0.7)),
+
+        new Pause(2),
+
+        new InstantCommand(()->RobotContainer.intake.intakeRun(0)),
+
+        new Pause(1),
+
+        // move to veiw point number three
+        new MoveToPose(
+            0.5, 
+            1.5,
+            new Pose2d(3.5,6.0, new Rotation2d(Math.toRadians(-60)))
+        ),
+
+        // apprach reef 
         new ApproachReef(true), 
 
-        new Pause(2),
+        new Pause(1),
 
+        // rais elevator to level 4 
         new InstantCommand(()->RobotContainer.elevator.Level4()),
 
-        new Pause(1),
+        new DepositeAndLower(),
 
-        new CoralOutake(), 
+        new Pause(1.0)
 
-        new Pause(1),
+        // drive back to humen station 
 
-        new InstantCommand(()-> RobotContainer.intake.intakeRun(0)),
+        //new MoveToPose(
+        //     0.5, 
+        //     1.5,
+        //     new Pose2d(1.06,7.3, new Rotation2d(Math.toRadians(-56)))
+        // ),
 
-        new InstantCommand(()->RobotContainer.elevator.Level0()),
+        // intake peice for tele
+        // new InstantCommand(()->RobotContainer.intake.intakeRun(0.7)),
 
-        new MoveToPose(1, 
-        0.5,
-        new Pose2d (1.5,6.8, new Rotation2d(Math.toRadians(-51)))),
+        // new Pause(1),
 
-        new Pause(5),
-
-        new CoralIntake(),
-
-        new Pause(1),
-
-        new MoveToPose(0.5, 1.5,
-        new Pose2d(4.76,5.65, new Rotation2d(Math.toRadians(-120.0)))),
-
-
-        new ApproachReef(false), 
-
-        new Pause(2),
-
-        new InstantCommand(()->RobotContainer.elevator.Level4()),
-
-        new Pause(1),
-
-        new CoralOutake(), 
-
-        new Pause(1),
-
-        new InstantCommand(()-> RobotContainer.intake.intakeRun(0)),
-
-        new InstantCommand(()->RobotContainer.elevator.Level0()),
-
-        new MoveToPose(1, 
-        0.5,
-        new Pose2d (1.5,6.8, new Rotation2d(Math.toRadians(-51)))),
-
-        new Pause(5),
-
-        new CoralIntake(),
-
-        new Pause(1),
-
-        new MoveToPose(0.5, 1.5,
-        new Pose2d(4.76,5.65, new Rotation2d(Math.toRadians(-120.0)))),
-
-
-        new ApproachReef(false), 
-
-        new Pause(2),
-
-        new InstantCommand(()->RobotContainer.elevator.Level3()),
-
-        new Pause(1),
-
-        new CoralOutake(), 
-
-        new Pause(1),
-
-        new InstantCommand(()-> RobotContainer.intake.intakeRun(0)),
-
-        new InstantCommand(()->RobotContainer.elevator.Level0())
-
-
-
-
-        
-    
-        // To Do
-        // KN: drop reef approach and stop stuff here
-    
-
-
-
-        
-        // //fill in position robot needs to go to based on the auto layout
-        // new MoveToPose(1, 
-        //                1,
-        //                new Pose2d (5.5,5.5, new Rotation2d(Math.toRadians(-119)))),
-
-        // // run at same time as drive and fill in position for Level four placement 
-        // new InstantCommand(()->RobotContainer.elevator.Level4()),
-
-        // // coral grabber not completed yet but will work like elevator
-        // new InstantCommand(()->RobotContainer.intake.OutakeRun(1)), 
-
-        // // Drives to the humen station at end to be ready for teleop (fill in pos please)
-        // new MoveToPose(1, 
-        //                0.5,
-        //                new Pose2d (1.5,6.8, new Rotation2d(Math.toRadians(-51)))),
-        
-        // // at the same time as driving lower slides back to zero 
-        // new InstantCommand(()->RobotContainer.elevator.returnToIntake())
+        // new InstantCommand(()->RobotContainer.intake.intakeRun(0)),
 
         );
     }

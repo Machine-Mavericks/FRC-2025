@@ -45,7 +45,7 @@ public class Odometry extends SubsystemBase {
     Pose2d currentPoseBeforeAdjustment;
 
 
-    public boolean TagEnable=false;
+    public boolean TagEnable = true;
 
     public Odometry() {
 
@@ -105,8 +105,11 @@ public class Odometry extends SubsystemBase {
         //updateDeadWheelOdometry();
 
         // pose update using apriltag data
-        updateAprilTagOdometry(RobotContainer.camleft);
-        updateAprilTagOdometry(RobotContainer.camr);
+        if (TagEnable){
+            updateAprilTagOdometry(RobotContainer.camleft);
+            updateAprilTagOdometry(RobotContainer.camr);
+        }
+       
 
 
         updateShuffleboard();
@@ -171,7 +174,7 @@ public class Odometry extends SubsystemBase {
 
         }
     }
-
+    
     
     // ---------- Dead-wheel update odometry methods ----------
 
@@ -393,7 +396,9 @@ public class Odometry extends SubsystemBase {
                 tags=tags+(int)TagResults.targets_Fiducials[i].fiducialID + " ";
         m_detectedtags.setString(tags);
     }
-
+    public void EnableApriltagProcessing(boolean enable){
+        TagEnable = enable;
+    }
 
 
     // ---------- Subsystem Simulation Methods ----------

@@ -29,7 +29,7 @@ public class Elevator extends SubsystemBase {
     static double gearDiameterCM = 3.588 * 2.54;
     static double gearCircumference = gearDiameterCM * Math.PI;
     static double gearRatio = 8.43, paddingOffset = 0;
-    public static double L2 = 23.0, L3 = 40.5, L4 = 73.0, L1 = 10.7, L0 = 0.0;
+    public static double L2 = 23.0, L3 = 40.5, L4 = 73.0, L1 = 10.7, L0 = 0.0; // in cm
     static double ticksMoved;
     static double feedForward = 0.45;
     double TargetPositionCM = 0.0;
@@ -51,7 +51,7 @@ public class Elevator extends SubsystemBase {
         elevatorConfig.closedLoop.p(0.3);
         elevatorConfig.closedLoop.i(0.0);
         elevatorConfig.closedLoop.d(0.0);
-        elevatorConfig.closedLoop.outputRange(-0.1, 0.3);
+        elevatorConfig.closedLoop.outputRange(-0.1, 0.4);
         elevatorConfig.closedLoop.positionWrappingEnabled(false);
         elevatorConfig.encoder.positionConversionFactor(1);
         elevatorMotorL.configure(elevatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);

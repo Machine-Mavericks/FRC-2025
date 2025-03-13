@@ -99,14 +99,17 @@ public class ManualDrive extends Command {
         // dY = Math.abs(dY) > 0.1 ? dY : 0;
         // omega = Math.abs(omega) > 0.2 ? omega : 0;
         
+        // determine distance from center of reef to robot
+        Translation2d CurrentPosition = RobotContainer.odometry.getPose2d().getTranslation();
+        Translation2d CenterReef = AutoFunctions.redVsBlue(new Translation2d(4.489, 4.0259));
+        double distanceToReef = CurrentPosition.getDistance(CenterReef) - 0.84;
 
         boolean EnableDriftCorrection = true;
-        if (RobotContainer.intake.getSensorState() && RobotContainer.snapToReef)
+        if (RobotContainer.intake.getSensorState() && RobotContainer.snapToReef&& distanceToReef < 1.5)
         {
             
             // determine distance from center of reef
-            Translation2d CurrentPosition = RobotContainer.odometry.getPose2d().getTranslation();
-            Translation2d CenterReef = AutoFunctions.redVsBlue(new Translation2d(4.489, 4.0259));
+           
 
             // heading to center of reef
             double ReefAngle = CenterReef.minus(CurrentPosition).getAngle().getDegrees();

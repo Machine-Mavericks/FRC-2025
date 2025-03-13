@@ -57,6 +57,8 @@ public class OneCoralAutoCenter extends SequentialCommandGroup {
         
         } ),
 
+        
+
         // move to in front of reef target  (tag21 for blue, tag 10 for red)
         //new InstantCommand(()->RobotContainer.snapToReef = false),
 
@@ -65,6 +67,7 @@ public class OneCoralAutoCenter extends SequentialCommandGroup {
         //     1.5,
         //     new Pose2d(6.55, 4.02, new Rotation2d(Math.toRadians(180.0)))
         // ),
+        new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
         
         new ApproachReef(false), 
 
