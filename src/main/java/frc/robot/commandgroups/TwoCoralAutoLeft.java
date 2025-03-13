@@ -60,13 +60,13 @@ public class TwoCoralAutoLeft extends SequentialCommandGroup {
         //new InstantCommand(()->RobotContainer.snapToReef = false),
         
         new MoveToPose(
+            1.5,
             1.0,
-            0.5,
             new Pose2d(3.5,6.0, new Rotation2d(Math.toRadians(-60.0)))
         ),
 
         // approach reef 
-        new ApproachReef(true),
+        //new ApproachReef(true),
 
         new Pause(1.0),
 
@@ -78,61 +78,61 @@ public class TwoCoralAutoLeft extends SequentialCommandGroup {
         // deposite 
         new InstantCommand(()->RobotContainer.intake.intakeRun(-0.7)),
 
-        new Pause(1.0),
+        new Pause(0.5),
 
         new InstantCommand(()->RobotContainer.intake.intakeRun(0)),
 
-        new Pause(1.0),
+        new Pause(0.15),
 
         //lower elevator for travel 
         new InstantCommand(()->RobotContainer.elevator.Level0()),
 
-        new Pause(2.0),
+        new Pause(0.5),
 
         // move to pickup 
         new MoveToPose(
-            1, 
-            0.5,
+            1.5, 
+            1.0,
             new Pose2d (1.06,7.3, new Rotation2d(Math.toRadians(-56)))
         ),
 
-        new Pause(1.0),
+        new Pause(0.15),
 
 
         // intake new peice 
         new InstantCommand(()->RobotContainer.intake.intakeRun(0.7)),
 
-        new Pause(2),
+        new Pause(1.0),
 
         new InstantCommand(()->RobotContainer.intake.intakeRun(0)),
 
-        new Pause(1),
+        new Pause(0.15),
 
         // move to veiw point number two
         new MoveToPose(
-            0.5, 
-            1.5,
+            1.5, 
+            1.0,
             new Pose2d(3.5,6.0, new Rotation2d(Math.toRadians(-60)))
         ),
 
         // apprach reef 
         new ApproachReef(false), 
 
-        new Pause(1),
+        new Pause(0.15),
 
         // rais elevator to level 4 
         new InstantCommand(()->RobotContainer.elevator.Level4()),
 
-        new Pause(1),
+        new Pause(0.5),
 
         // deposite 
         new InstantCommand(()->RobotContainer.intake.intakeRun(-0.7)),
 
-        new Pause(1),
+        new Pause(0.5),
 
         new InstantCommand(()->RobotContainer.intake.intakeRun(0)),
 
-        new Pause(1),
+        new Pause(0.15),
 
         // lower elevator 
         new InstantCommand(()->RobotContainer.elevator.Level0()),
