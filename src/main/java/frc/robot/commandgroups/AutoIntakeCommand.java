@@ -28,7 +28,7 @@ public class AutoIntakeCommand extends SequentialCommandGroup {
         // Turn off tag detection
         //new InstantCommand(()->RobotContainer.odometry.TagEnable=false)
                     // intake new peice 
-                    new InstantCommand(()->RobotContainer.intake.intakeRun(0.7)),
+                    new InstantCommand(()->RobotContainer.intake.intakeRun(-0.7)),
     
                     new Pause(1.0),
             

@@ -57,16 +57,11 @@ public class TwoCoralAutoRight extends SequentialCommandGroup {
             } ),
     
             new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
-            // move to in front of reef target  (tag22 for blue, tag 9 for red)
-            // move to veiw pose 
-            //new InstantCommand(()->RobotContainer.snapToReef = false),
-            //new InstantCommand(()-> RobotContainer.odometry.TagEnable = false),
-
 
             new MoveToPose(
+                1.5,
                 1.0,
-                0.5,
-                new Pose2d(3.7,2.3, new Rotation2d(Math.toRadians(60.0)))
+                new Pose2d(3.3,2.3, new Rotation2d(Math.toRadians(60.0)))
             ),
     
             // approach reef
@@ -86,16 +81,16 @@ public class TwoCoralAutoRight extends SequentialCommandGroup {
             new MoveToPose(
                 1, 
                 0.5,
-                new Pose2d (1.3,1.3, new Rotation2d(Math.toRadians(-15)))
+                new Pose2d (1.2,1.2, new Rotation2d(Math.toRadians(56)))
             ),
     
-            new AutoIntakeCommand(),
+            new CoralIntake(),
     
             // move to veiw point number two
             new MoveToPose(
-                0.5, 
-                1.5,
-                new Pose2d(3.7,2.3, new Rotation2d(Math.toRadians(60)))
+                1.5, 
+                1.0,
+                new Pose2d(3.3,2.3, new Rotation2d(Math.toRadians(60)))
             ),
     
             new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(true)),

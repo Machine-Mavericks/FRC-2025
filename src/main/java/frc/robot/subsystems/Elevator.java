@@ -29,7 +29,7 @@ public class Elevator extends SubsystemBase {
     static double gearDiameterCM = 3.588 * 2.54;
     static double gearCircumference = gearDiameterCM * Math.PI;
     static double gearRatio = 8.43, paddingOffset = 0;
-    public static double L2 = 23.0, L3 = 40.5, L4 = 73.0, L1 = 10.7, L0 = 0.0; // in cm
+    public static double L2 = 23.0, L3 = 44.0, L4 = 73.0, L1 = 10.7, L0 = 0.0; // in cm
     static double ticksMoved;
     static double feedForward = 0.45;
     double TargetPositionCM = 0.0;
@@ -48,7 +48,7 @@ public class Elevator extends SubsystemBase {
         elevatorConfig.idleMode(IdleMode.kBrake);// change to break later
         elevatorConfig.inverted(true);
         elevatorConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
-        elevatorConfig.closedLoop.p(0.3);
+        elevatorConfig.closedLoop.p(0.25);
         elevatorConfig.closedLoop.i(0.0);
         elevatorConfig.closedLoop.d(0.0);
         elevatorConfig.closedLoop.outputRange(-0.1, 0.4);
@@ -115,19 +115,19 @@ public class Elevator extends SubsystemBase {
     }
 
     public void Level2() {
-        TargetPositionCM = cmToRotations(L2);
+        TargetPositionCM = L2;
         elevatorMotorL.getClosedLoopController().setReference(cmToRotations(L2), ControlType.kPosition,
                 ClosedLoopSlot.kSlot0, feedForward);
     }
 
     public void Level3() {
-        TargetPositionCM = cmToRotations(L3);
+        TargetPositionCM = L3;
         elevatorMotorL.getClosedLoopController().setReference(cmToRotations(L3), ControlType.kPosition,
                 ClosedLoopSlot.kSlot0, feedForward);
     }
 
     public void Level4() {
-        TargetPositionCM = cmToRotations(L4);
+        TargetPositionCM = L4;
         elevatorMotorL.getClosedLoopController().setReference(cmToRotations(L4), ControlType.kPosition,
                 ClosedLoopSlot.kSlot0, feedForward);
     }
