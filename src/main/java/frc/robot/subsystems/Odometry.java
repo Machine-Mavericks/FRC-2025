@@ -271,7 +271,7 @@ public class Odometry extends SubsystemBase {
                 
 
                     // are we close to apriltag? if so, then use pose estimate
-                    if (distance <= 0.0)// was 1.75 
+                    if (distance <= 1.75)// was 1.75 
                     {
                         // get field pose from limelight, convert to 2d, then convert to FRC coordinates
                         Pose2d LLpose =  TagResults.targets_Fiducials[i].getRobotPose_FieldSpace().toPose2d();

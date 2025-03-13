@@ -60,7 +60,7 @@ public class TwoCoralAutoRight extends SequentialCommandGroup {
             // move to in front of reef target  (tag22 for blue, tag 9 for red)
             // move to veiw pose 
             //new InstantCommand(()->RobotContainer.snapToReef = false),
-           new InstantCommand(()-> RobotContainer.odometry.TagEnable = false),
+            //new InstantCommand(()-> RobotContainer.odometry.TagEnable = false),
 
 
             new MoveToPose(
@@ -69,29 +69,18 @@ public class TwoCoralAutoRight extends SequentialCommandGroup {
                 new Pose2d(3.7,2.3, new Rotation2d(Math.toRadians(60.0)))
             ),
     
-            // approach reef 
-            //new ApproachReef(true),
+            // approach reef
+            new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(true)),
+
+            new ApproachReef(true),
     
-            new Pause(1.0),
+            new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
     
             // raise to level 4 height
             new InstantCommand(()->RobotContainer.elevator.Level4()),
     
-            new Pause(1.0),
-    
             // deposite 
-            new InstantCommand(()->RobotContainer.intake.intakeRun(-0.7)),
-    
-            new Pause(1.0),
-    
-            new InstantCommand(()->RobotContainer.intake.intakeRun(0)),
-    
-            new Pause(1.0),
-    
-            //lower elevator for travel 
-            new InstantCommand(()->RobotContainer.elevator.Level0()),
-    
-            new Pause(1.0),
+            new DepositeAndLower(),
     
             // move to pickup 
             new MoveToPose(
@@ -100,17 +89,7 @@ public class TwoCoralAutoRight extends SequentialCommandGroup {
                 new Pose2d (1.3,1.3, new Rotation2d(Math.toRadians(-15)))
             ),
     
-            new Pause(1.0),
-    
-    
-            // intake new peice 
-            new InstantCommand(()->RobotContainer.intake.intakeRun(0.7)),
-    
-            new Pause(2),
-    
-            new InstantCommand(()->RobotContainer.intake.intakeRun(0)),
-    
-            new Pause(1),
+            new AutoIntakeCommand(),
     
             // move to veiw point number two
             new MoveToPose(
@@ -119,44 +98,17 @@ public class TwoCoralAutoRight extends SequentialCommandGroup {
                 new Pose2d(3.7,2.3, new Rotation2d(Math.toRadians(60)))
             ),
     
+            new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(true)),
             // apprach reef 
-           // new ApproachReef(false), 
+            new ApproachReef(false), 
     
-            new Pause(1),
+            new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
     
             // rais elevator to level 4 
             new InstantCommand(()->RobotContainer.elevator.Level4()),
     
-            new Pause(1),
-    
             // deposite 
-            new InstantCommand(()->RobotContainer.intake.intakeRun(-0.7)),
-    
-            new Pause(1),
-    
-            new InstantCommand(()->RobotContainer.intake.intakeRun(0)),
-    
-            new Pause(1),
-    
-            // lower elevator 
-            new InstantCommand(()->RobotContainer.elevator.Level0()),
-    
-            new Pause(1.0)
-    
-            // drive back to humen station 
-    
-            //new MoveToPose(
-            //     0.5, 
-            //     1.5,
-            //     new Pose2d(1.06,7.3, new Rotation2d(Math.toRadians(-56)))
-            // ),
-    
-            // intake peice for tele
-            // new InstantCommand(()->RobotContainer.intake.intakeRun(0.7)),
-    
-            // new Pause(1),
-    
-            // new InstantCommand(()->RobotContainer.intake.intakeRun(0)),
+            new DepositeAndLower()
     
             );
         }
