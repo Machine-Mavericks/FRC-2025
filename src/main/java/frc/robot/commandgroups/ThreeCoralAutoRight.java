@@ -2,7 +2,10 @@ package frc.robot.commandgroups;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 import frc.robot.commands.ApproachReef;
@@ -61,41 +64,56 @@ public class ThreeCoralAutoRight extends SequentialCommandGroup {
             //new InstantCommand(()->RobotContainer.snapToReef = false),
             
             new MoveToPose(
-                1.0,
-                0.5,
-                new Pose2d(3.7,2.3, new Rotation2d(Math.toRadians(60.0)))
+                4.0,
+                6.0,
+                new Pose2d(5.4,2.3, new Rotation2d(Math.toRadians(120.0)))
             ),
     
             new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(true)),
+           
+            new InstantCommand(()-> {
+                if  (DriverStation.getAlliance().get()==Alliance.Blue)
+                    RobotContainer.camleft.SetPriorityTagID(17);
+                else 
+                    RobotContainer.camleft.SetPriorityTagID(8);
+                }),
+
+                  // raise to level 4 height
+            new InstantCommand(()->RobotContainer.elevator.Level4()),
+            
             // approach reef 
             new ApproachReef(true),
 
             new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
     
-            // raise to level 4 height
-            new InstantCommand(()->RobotContainer.elevator.Level4()),
-    
             new DepositeAndLower(),
     
+             new ParallelCommandGroup(new CoralIntake(),
             // move to pickup 
-            new MoveToPose(
-                1, 
-                0.5,
-                new Pose2d (4.6,32.5, new Rotation2d(Math.toRadians(-114)))
-            ),
-    
-            new AutoIntakeCommand(),
+                new MoveToPose(
+                    4.0, 
+                    6.0,
+                    new Pose2d (1.2,1.2, new Rotation2d(Math.toRadians(56))))
+            ),   
     
             // move to veiw point number two
             new MoveToPose(
-                0.5, 
-                1.5,
+                4.0, 
+                6.0,
                 new Pose2d(3.7,2.3, new Rotation2d(Math.toRadians(60)))
             ),
 
             new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(true)),
+           
+            new InstantCommand(()-> {
+                if  (DriverStation.getAlliance().get()==Alliance.Blue)
+                    RobotContainer.camleft.SetPriorityTagID(17);
+                else 
+                    RobotContainer.camleft.SetPriorityTagID(8);
+                }),
+
             // apprach reef 
-            new ApproachReef(false), 
+            new ApproachReef(true), 
 
             new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
     
@@ -103,26 +121,40 @@ public class ThreeCoralAutoRight extends SequentialCommandGroup {
             new InstantCommand(()->RobotContainer.elevator.Level4()),
     
             new DepositeAndLower(),
-
-            // move to veiw point number two
-            new MoveToPose(
-                0.5, 
-                1.5,
-                new Pose2d(3.5,6.0, new Rotation2d(Math.toRadians(60)))
-            ),
-    
-            new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(true)),
-            // apprach reef 
-            new ApproachReef(false), 
-
-            new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
-    
-            // rais elevator to level 4 
-            new InstantCommand(()->RobotContainer.elevator.Level4()),
-    
-            // deposite
-            new DepositeAndLower()
-    
+             // move to pickup 
+             new ParallelCommandGroup(new CoralIntake(),
+             // move to pickup 
+                 new MoveToPose(
+                     4.0, 
+                     6.0,
+                     new Pose2d (1.2,1.2, new Rotation2d(Math.toRadians(56))))
+             ),   
+     
+             // move to veiw point number two
+             new MoveToPose(
+                 4.0, 
+                 6.0,
+                 new Pose2d(3.7,2.3, new Rotation2d(Math.toRadians(60)))
+             ),
+ 
+             new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(true)),
+            
+             new InstantCommand(()-> {
+                 if  (DriverStation.getAlliance().get()==Alliance.Blue)
+                     RobotContainer.camleft.SetPriorityTagID(17);
+                 else 
+                     RobotContainer.camleft.SetPriorityTagID(8);
+                 }),
+ 
+             // apprach reef 
+             new ApproachReef(false), 
+ 
+             new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
+     
+             // rais elevator to level 4 
+             new InstantCommand(()->RobotContainer.elevator.Level4()),
+     
+             new DepositeAndLower()
 
     
             // drive back to humen station 
