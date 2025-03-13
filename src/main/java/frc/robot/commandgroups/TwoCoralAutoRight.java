@@ -62,18 +62,18 @@ public class TwoCoralAutoRight extends SequentialCommandGroup {
             new MoveToPose(
                 1.0,
                 0.5,
-                new Pose2d(3.7,2.3, new Rotation2d(Math.toRadians(-60.0)))
+                new Pose2d(3.7,2.3, new Rotation2d(Math.toRadians(60.0)))
             ),
     
             // approach reef 
-            new ApproachReef(true),
+            //new ApproachReef(true),
     
             new Pause(1.0),
     
             // raise to level 4 height
             new InstantCommand(()->RobotContainer.elevator.Level4()),
     
-            new Pause(0.5),
+            new Pause(1.0),
     
             // deposite 
             new InstantCommand(()->RobotContainer.intake.intakeRun(-0.7)),
@@ -87,13 +87,13 @@ public class TwoCoralAutoRight extends SequentialCommandGroup {
             //lower elevator for travel 
             new InstantCommand(()->RobotContainer.elevator.Level0()),
     
-            new Pause(2.0),
+            new Pause(1.0),
     
             // move to pickup 
             new MoveToPose(
                 1, 
                 0.5,
-                new Pose2d (4.6,32.5, new Rotation2d(Math.toRadians(-114)))
+                new Pose2d (1.3,1.3, new Rotation2d(Math.toRadians(-15)))
             ),
     
             new Pause(1.0),
@@ -112,11 +112,11 @@ public class TwoCoralAutoRight extends SequentialCommandGroup {
             new MoveToPose(
                 0.5, 
                 1.5,
-                new Pose2d(3.7,2.3, new Rotation2d(Math.toRadians(-60)))
+                new Pose2d(3.7,2.3, new Rotation2d(Math.toRadians(60)))
             ),
     
             // apprach reef 
-            new ApproachReef(false), 
+           // new ApproachReef(false), 
     
             new Pause(1),
     
