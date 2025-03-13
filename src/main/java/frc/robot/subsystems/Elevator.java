@@ -49,7 +49,7 @@ public class Elevator extends SubsystemBase {
         elevatorConfig.closedLoop.p(0.3);
         elevatorConfig.closedLoop.i(0.0);
         elevatorConfig.closedLoop.d(0.0);
-        elevatorConfig.closedLoop.outputRange(-0.1, 0.3);
+        elevatorConfig.closedLoop.outputRange(-0.1, 0.4);
         elevatorConfig.closedLoop.positionWrappingEnabled(false);
         elevatorConfig.encoder.positionConversionFactor(1);
         elevatorMotorL.configure(elevatorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
