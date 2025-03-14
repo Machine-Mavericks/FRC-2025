@@ -97,6 +97,8 @@ public class Robot extends TimedRobot {
 
     RobotContainer.camleft.SetPriorityTagID(-1);
     RobotContainer.camr.SetPriorityTagID(-1);
+
+    RobotContainer.odometry.EnableApriltagProcessing(true);
   }
 
   /** This function is called periodically during operator control. */
