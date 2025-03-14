@@ -2,7 +2,10 @@ package frc.robot.commandgroups;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotContainer;
 import frc.robot.commands.ApproachReef;
@@ -56,47 +59,57 @@ public class TwoCoralAutoLeft extends SequentialCommandGroup {
         } ),
 
         new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
-        // move to in front of reef target  (tag22 for blue, tag 9 for red)
-        // move to veiw pose 
-        //new InstantCommand(()->RobotContainer.snapToReef = false),
         
         new MoveToPose(
-            1.5,
-            1.0,
+            4.0,
+            6.0,
             new Pose2d(3.5,6.0, new Rotation2d(Math.toRadians(-60.0)))
         ),
 
         new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(true)),
-        // approach reef 
-        new ApproachReef(true),
 
-        new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
+            new InstantCommand(()-> {
+            if  (DriverStation.getAlliance().get()==Alliance.Blue)
+                RobotContainer.camr.SetPriorityTagID(19);
+            else 
+                RobotContainer.camr.SetPriorityTagID(6);
+            }),
 
         // raise to level 4 height
         new InstantCommand(()->RobotContainer.elevator.Level4()),
 
+        new ApproachReef(false),
         // deposite 
+        new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
+       
         new DepositeAndLower(),
 
+        new ParallelCommandGroup(new CoralIntake(),
         // move to pickup 
         new MoveToPose(
-            1.5, 
-            1.0,
-            new Pose2d (1.06,7.3, new Rotation2d(Math.toRadians(-56)))
+            4.0, 
+                6.0,
+            new Pose2d (1.06,7.3, new Rotation2d(Math.toRadians(-56))))
         ),
 
-        // intake new peice 
-        new AutoIntakeCommand(),
         // move to veiw point number two
         new MoveToPose(
-            1.5, 
-            1.0,
+            4.0, 
+                6.0,
             new Pose2d(3.5,6.0, new Rotation2d(Math.toRadians(-60)))
         ),
 
         new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(true)),
+        
+        new InstantCommand(()-> {
+            if  (DriverStation.getAlliance().get()==Alliance.Blue)
+                RobotContainer.camr.SetPriorityTagID(19);
+            else 
+                RobotContainer.camr.SetPriorityTagID(6);
+            }),
+
         // apprach reef 
-        new ApproachReef(false), 
+        new ApproachReef(true), 
 
         new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
 
