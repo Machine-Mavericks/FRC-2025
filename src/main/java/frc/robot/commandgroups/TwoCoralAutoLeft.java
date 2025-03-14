@@ -42,7 +42,7 @@ public class TwoCoralAutoLeft extends SequentialCommandGroup {
                     startpose = new Pose2d(7.55, 4.02, new Rotation2d((Math.toRadians(180.0))));
                     break;
                 case 3:
-                    startpose = new Pose2d(7.55, 6.02, new Rotation2d((Math.toRadians(180.0))));
+                    startpose = new Pose2d(7.1, 6.02, new Rotation2d((Math.toRadians(180.0))));
                     break;
                 case 4:
                     startpose = new Pose2d(7.55, 7.65, new Rotation2d((Math.toRadians(180.0))));
@@ -88,8 +88,8 @@ public class TwoCoralAutoLeft extends SequentialCommandGroup {
         // move to pickup 
         new MoveToPose(
             4.0, 
-                6.0,
-            new Pose2d (1.06,7.3, new Rotation2d(Math.toRadians(-56))))
+            6.0,
+            new Pose2d (1.145,7.0, new Rotation2d(Math.toRadians(-54))))
         ),
 
         // move to veiw point number two
