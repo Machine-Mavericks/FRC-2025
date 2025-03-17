@@ -102,7 +102,7 @@ public class TwoCoralAutoRight extends SequentialCommandGroup {
                 new MoveToPose(//waiting on point
                     4.0, 
                     6.0,
-                    new Pose2d (1.145,1.059, new Rotation2d(Math.toRadians(54))))
+                    new Pose2d (1.039,0.8622, new Rotation2d(Math.toRadians(54))))
             ),         
     
             // move to veiw point number two

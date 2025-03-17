@@ -63,7 +63,7 @@ public class ThreeCoralAutoRight extends SequentialCommandGroup {
             // move to veiw pose 
             //new InstantCommand(()->RobotContainer.snapToReef = false),
             
-            new MoveToPose( //change pos then up speed 
+            new MoveToPose( 
                 4.0, 
                 6.0,
                 new Pose2d(5.3,2.3, new Rotation2d(Math.toRadians(120.0)))
@@ -105,7 +105,7 @@ public class ThreeCoralAutoRight extends SequentialCommandGroup {
                 new MoveToPose(
                     4.0, 
                     6.0,
-                    new Pose2d (1.2,1.2, new Rotation2d(Math.toRadians(54))))
+                    new Pose2d (1.2,0.98, new Rotation2d(Math.toRadians(54))))
             ),   
     
             // move to veiw point number two
@@ -139,7 +139,7 @@ public class ThreeCoralAutoRight extends SequentialCommandGroup {
                  new MoveToPose(
                      4.0, 
                      6.0,
-                     new Pose2d (1.2,1.2, new Rotation2d(Math.toRadians(56))))
+                     new Pose2d (1.2,0.98, new Rotation2d(Math.toRadians(56))))
             ),   
      
              // move to veiw point number two

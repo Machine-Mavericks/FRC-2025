@@ -89,7 +89,7 @@ public class TwoCoralAutoLeft extends SequentialCommandGroup {
         new MoveToPose(
             4.0, 
             6.0,
-            new Pose2d (1.145,7.0, new Rotation2d(Math.toRadians(-54))))
+            new Pose2d (1.039,7.1897, new Rotation2d(Math.toRadians(-54))))
         ),
 
         // move to veiw point number two
@@ -103,9 +103,9 @@ public class TwoCoralAutoLeft extends SequentialCommandGroup {
         
         new InstantCommand(()-> {
             if  (DriverStation.getAlliance().get()==Alliance.Blue)
-                RobotContainer.camr.SetPriorityTagID(19);
+                RobotContainer.camleft.SetPriorityTagID(19);
             else 
-                RobotContainer.camr.SetPriorityTagID(6);
+                RobotContainer.camleft.SetPriorityTagID(6);
             }),
 
         // apprach reef 

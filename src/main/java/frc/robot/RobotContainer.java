@@ -20,7 +20,7 @@ import frc.robot.commands.MoveElevator;
 import frc.robot.commands.MoveToPose;
 import frc.robot.commands.Pause;
 import frc.robot.commands.TemplateCommand;
-import frc.robot.subsystems.Climb;
+//import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.CoralGrabber;
 //import frc.robot.subsystems.DeadWheel;
 import frc.robot.subsystems.Elevator;
@@ -65,7 +65,7 @@ public class RobotContainer {
     public static Elevator elevator;
     public static CoralGrabber intake;
     public static LED LED;
-    public static Climb climb;
+    //public static Climb climb;
     public static boolean snapToReef = true; 
     
     //public static Climb climb;
@@ -96,7 +96,7 @@ public class RobotContainer {
         elevator = new Elevator();
         intake = new CoralGrabber();
         LED = new LED();
-        climb = new Climb();
+        //climb = new Climb();
 
 
         
