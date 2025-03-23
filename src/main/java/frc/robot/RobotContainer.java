@@ -12,6 +12,7 @@ import frc.robot.commandgroups.ThreeCoralAutoRight;
 import frc.robot.commandgroups.TwoCoralAutoLeft;
 import frc.robot.commandgroups.TwoCoralAutoRight;
 import frc.robot.commands.ApproachReef;
+import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.CoralBack;
 import frc.robot.commands.CoralIntake;
 import frc.robot.commands.CoralOutake;
@@ -20,7 +21,7 @@ import frc.robot.commands.MoveElevator;
 import frc.robot.commands.MoveToPose;
 import frc.robot.commands.Pause;
 import frc.robot.commands.TemplateCommand;
-//import frc.robot.subsystems.Climb;
+import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.CoralGrabber;
 //import frc.robot.subsystems.DeadWheel;
 import frc.robot.subsystems.Elevator;
@@ -65,7 +66,7 @@ public class RobotContainer {
     public static Elevator elevator;
     public static CoralGrabber intake;
     public static LED LED;
-    //public static Climb climb;
+    public static Climb climb;
     public static boolean snapToReef = true; 
     
     //public static Climb climb;
@@ -96,7 +97,7 @@ public class RobotContainer {
         elevator = new Elevator();
         intake = new CoralGrabber();
         LED = new LED();
-        //climb = new Climb();
+        climb = new Climb();
 
 
         
@@ -134,6 +135,9 @@ public class RobotContainer {
         driverOp.leftBumper().whileTrue(new ApproachReef(true));
         driverOp.rightBumper().whileTrue(new ApproachReef(false));
         driverOp.rightStick().onTrue(new InstantCommand(()->ToggleSnapToReef()));
+
+        driverOp.a().whileTrue(new ClimbCommand(true)); // pulling in 
+        driverOp.b().whileTrue(new ClimbCommand(false)); // pushing out 
         
 
         // operator controls 

@@ -169,8 +169,8 @@ public class ManualDrive extends Command {
     
 
         // --------- Correct robot angle for gyro angle wander --------
-        if(EnableDriftCorrection && omega == 0.0 && !RobotContainer.driverOp.back().getAsBoolean())
-        {
+        if(false && omega == 0.0 && !RobotContainer.driverOp.back().getAsBoolean())
+        {// was EnableDriftCorrection 
             if (m_pidDelay > 0)
                 m_pidDelay --;
             else
