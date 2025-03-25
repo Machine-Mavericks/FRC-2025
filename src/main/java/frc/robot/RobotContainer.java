@@ -19,7 +19,9 @@ import frc.robot.commands.ManualDrive;
 import frc.robot.commands.MoveElevator;
 import frc.robot.commands.MoveToPose;
 import frc.robot.commands.Pause;
+import frc.robot.commands.RemoveAlgae;
 import frc.robot.commands.TemplateCommand;
+import frc.robot.subsystems.AlgaeRemover;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.CoralGrabber;
 //import frc.robot.subsystems.DeadWheel;
@@ -67,6 +69,7 @@ public class RobotContainer {
     public static LED LED;
     public static Climb climb;
     public static boolean snapToReef = true; 
+    public static AlgaeRemover algaeRemover;
     
     //public static Climb climb;
     // and so on
@@ -97,6 +100,7 @@ public class RobotContainer {
         intake = new CoralGrabber();
         LED = new LED();
         climb = new Climb();
+        algaeRemover = new AlgaeRemover();
 
 
         
@@ -140,6 +144,7 @@ public class RobotContainer {
         toolOp.leftBumper().whileTrue(new CoralIntake());
         toolOp.rightBumper().whileTrue(new CoralOutake());
         toolOp.back().whileTrue(new CoralBack());
+        toolOp.leftTrigger().whileTrue(new RemoveAlgae());
 
         //toolOp.leftTrigger().whileTrue(new InstantCommand(()->climb.Extend()));
         //toolOp.rightTrigger().whileTrue(new InstantCommand(()->climb.Retract()));

@@ -30,6 +30,7 @@ public class RobotMap {
         //(Dont know ports at the monment this is just for the subsystem)
         public static final int IN1_INTAKE_Motor= 1;
         public static final int IN2_INTAKE_Motor = 2;
+        public static final int ALGAE_MOTOR = 3;
         // CAN IDs for Climb
         //(Dont know ports at the monment this is just for the subsystem)
         public static final int Cl_Climb_Motor = 16;
