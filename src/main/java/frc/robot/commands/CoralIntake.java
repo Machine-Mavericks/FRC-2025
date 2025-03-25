@@ -18,7 +18,7 @@ public class CoralIntake extends Command {
     // This method is called once when command is started
     @Override
     public void initialize() {
-        RobotContainer.intake.intakeRun(-1);
+        RobotContainer.intake.intakeRun(1);
     }
 
     // This method is called periodically while command is active
@@ -34,7 +34,7 @@ public class CoralIntake extends Command {
             RobotContainer.intake.intakeRun(0);
             return true;
         }else{
-            RobotContainer.intake.intakeRun(-1);
+            RobotContainer.intake.intakeRun(1);
             return false;
 
          }
