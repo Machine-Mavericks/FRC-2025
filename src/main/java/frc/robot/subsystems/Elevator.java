@@ -32,7 +32,7 @@ public class Elevator extends SubsystemBase {
     public static double L2 = 23.0, L3 = 44.0, L4 = 73.0, L1 = 10.7, L0 = 0.0; // in cm
     static double ticksMoved;
     static double feedForward = 0.45;
-    double TargetPositionCM = 0.0;
+    public static double TargetPositionCM = 0.0;
 
     // Local objects and variables here
     // These are for things that only belong to, and used by, the subsystem
