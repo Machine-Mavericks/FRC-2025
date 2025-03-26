@@ -145,6 +145,8 @@ public class RobotContainer {
         toolOp.rightBumper().whileTrue(new CoralOutake());
         toolOp.back().whileTrue(new CoralBack());
         toolOp.leftTrigger().whileTrue(new RemoveAlgae());
+       
+    
 
         //toolOp.leftTrigger().whileTrue(new InstantCommand(()->climb.Extend()));
         //toolOp.rightTrigger().whileTrue(new InstantCommand(()->climb.Retract()));
