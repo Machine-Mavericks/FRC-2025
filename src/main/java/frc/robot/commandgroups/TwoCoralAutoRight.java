@@ -37,7 +37,7 @@ public class TwoCoralAutoRight extends SequentialCommandGroup {
                         startpose = new Pose2d(7.55, 0.4, new Rotation2d((Math.toRadians(180.0))));
                         break;
                     case 1:
-                        startpose = new Pose2d(7.55, 2.0, new Rotation2d((Math.toRadians(180.0))));
+                        startpose = new Pose2d(7.1, 2.0, new Rotation2d((Math.toRadians(180.0))));
                         break;
                     case 2:
                         startpose = new Pose2d(7.55, 4.02, new Rotation2d((Math.toRadians(180.0))));
@@ -64,7 +64,7 @@ public class TwoCoralAutoRight extends SequentialCommandGroup {
             new MoveToPose(
                 4.0,
                 6.0,
-                new Pose2d(3.7,2.4, new Rotation2d(Math.toRadians(60.0)))
+                new Pose2d(3.7,2.3, new Rotation2d(Math.toRadians(60.0)))// was y 2.4
             ),
     
             // approach reef
@@ -84,15 +84,25 @@ public class TwoCoralAutoRight extends SequentialCommandGroup {
     
             new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
             // deposite 
-            
-            new DepositeAndLower(),
+            new Pause(0.3),
+
+            new InstantCommand(()->RobotContainer.intake.intakeRun(-1.0)),
+    
+            new Pause(0.25),
+    
+            new InstantCommand(()->RobotContainer.intake.intakeRun(0)),
+    
+            new Pause(0.25),
+
+             // lower elevator 
+            new InstantCommand(()->RobotContainer.elevator.Level0()),
 
             new ParallelCommandGroup(new CoralIntake(),
             // move to pickup 
-                new MoveToPose(
+                new MoveToPose(//waiting on point
                     4.0, 
                     6.0,
-                    new Pose2d (1.2,1.2, new Rotation2d(Math.toRadians(56))))
+                    new Pose2d (1.039,0.8622, new Rotation2d(Math.toRadians(54))))
             ),         
     
             // move to veiw point number two
@@ -121,6 +131,8 @@ public class TwoCoralAutoRight extends SequentialCommandGroup {
     
             // deposite 
             new DepositeAndLower()
+
+            //new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(true))
     
             );
         }

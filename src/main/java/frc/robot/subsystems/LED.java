@@ -19,7 +19,7 @@ public class LED extends SubsystemBase {
     AddressableLED m_led;
     AddressableLEDBuffer m_ledBuffer;
 
-    private final int NumLEDs = 75;
+    private final int NumLEDs = 47;
 
     // used for simple light strobe
     private int StrobeIndex = 0;

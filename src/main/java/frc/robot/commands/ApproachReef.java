@@ -147,6 +147,11 @@ public class ApproachReef extends Command {
         if (distanceToReef < 1.5)
             x_speed = (1.5 - 0.3)/1.5 * distanceToReef + 0.3;
         
+
+        // further limit xSpeed based on horozontal error 
+        // to allow robot to better approach target
+        x_speed -= Math.abs(horizError*0.075);
+
         if (x_speed < 0.0)
             x_speed = 0.0;
 

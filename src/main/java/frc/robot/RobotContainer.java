@@ -12,6 +12,7 @@ import frc.robot.commandgroups.ThreeCoralAutoRight;
 import frc.robot.commandgroups.TwoCoralAutoLeft;
 import frc.robot.commandgroups.TwoCoralAutoRight;
 import frc.robot.commands.ApproachReef;
+import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.CoralBack;
 import frc.robot.commands.CoralIntake;
 import frc.robot.commands.CoralOutake;
@@ -138,6 +139,9 @@ public class RobotContainer {
         driverOp.leftBumper().whileTrue(new ApproachReef(true));
         driverOp.rightBumper().whileTrue(new ApproachReef(false));
         driverOp.rightStick().onTrue(new InstantCommand(()->ToggleSnapToReef()));
+
+        driverOp.a().whileTrue(new ClimbCommand(true)); // pulling in 
+        driverOp.b().whileTrue(new ClimbCommand(false)); // pushing out 
         
 
         // operator controls 
@@ -221,8 +225,8 @@ public class RobotContainer {
             chosenCommand = new TwoCoralAutoRight();
             else if (index == 7)
             chosenCommand = new ThreeCoralAutoRight();
-            else if (index == 8)
-            chosenCommand = new ThreeCoralAutoLeft();
+            //else if (index == 8)
+            //chosenCommand = new ThreeCoralAutoLeft();
         
 
         return new SequentialCommandGroup(

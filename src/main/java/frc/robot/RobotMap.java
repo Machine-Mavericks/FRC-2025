@@ -34,8 +34,8 @@ public class RobotMap {
         public static final int ALGAE_TILT_MOTOR = 15;
         // CAN IDs for Climb
         //(Dont know ports at the monment this is just for the subsystem)
-        public static final int Cl_Climb_Motor = 16;
-   
+        public static final int Cl_Climb_Motor = 30;
+        
         // CAN ID for CTR Pigeon Gyro
         public static final int PIGEON = 14;
         // elevator motors
