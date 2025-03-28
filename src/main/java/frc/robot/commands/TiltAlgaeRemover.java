@@ -25,7 +25,7 @@ public class TiltAlgaeRemover extends Command {
     @Override
     public void execute() {
         deltaY = RobotContainer. toolOp.getLeftY();
-       RobotContainer.algaeRemover.Tilt(-1 * deltaY);
+       RobotContainer.algaeRemover.Tilt(-0.5* deltaY);
     }
 
     // This method to return true only when command is to finish. Otherwise return false
