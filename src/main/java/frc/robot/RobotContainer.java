@@ -20,7 +20,10 @@ import frc.robot.commands.ManualDrive;
 import frc.robot.commands.MoveElevator;
 import frc.robot.commands.MoveToPose;
 import frc.robot.commands.Pause;
+import frc.robot.commands.RemoveAlgae;
 import frc.robot.commands.TemplateCommand;
+import frc.robot.commands.TiltAlgaeRemover;
+import frc.robot.subsystems.AlgaeRemover;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.CoralGrabber;
 //import frc.robot.subsystems.DeadWheel;
@@ -67,7 +70,8 @@ public class RobotContainer {
     public static CoralGrabber intake;
     public static LED LED;
     public static Climb climb;
-    public static boolean snapToReef = true; 
+    public static boolean snapToReef = false; // was true 
+    public static AlgaeRemover algaeRemover;
     
     //public static Climb climb;
     // and so on
@@ -98,6 +102,9 @@ public class RobotContainer {
         intake = new CoralGrabber();
         LED = new LED();
         climb = new Climb();
+        algaeRemover = new AlgaeRemover();
+
+
 
 
         
@@ -111,9 +118,9 @@ public class RobotContainer {
     // turns off auto snap to reef 
     public void ToggleSnapToReef(){
         if (snapToReef){
-            snapToReef = false; 
+            snapToReef = true; // was false 
         }else{
-            snapToReef = true; 
+            snapToReef = false; // was true 
         }
     }
 
@@ -136,14 +143,17 @@ public class RobotContainer {
         driverOp.rightBumper().whileTrue(new ApproachReef(false));
         driverOp.rightStick().onTrue(new InstantCommand(()->ToggleSnapToReef()));
 
-        driverOp.a().whileTrue(new ClimbCommand(true)); // pulling in 
-        driverOp.b().whileTrue(new ClimbCommand(false)); // pushing out 
+        driverOp.y().whileTrue(new ClimbCommand(true)); // pulling in 
+        driverOp.a().whileTrue(new ClimbCommand(false)); // pushing out 
         
 
         // operator controls 
         toolOp.leftBumper().whileTrue(new CoralIntake());
         toolOp.rightBumper().whileTrue(new CoralOutake());
         toolOp.back().whileTrue(new CoralBack());
+        toolOp.start().whileTrue(new RemoveAlgae());
+        toolOp.leftStick().whileFalse(new TiltAlgaeRemover());
+        
 
         //toolOp.leftTrigger().whileTrue(new InstantCommand(()->climb.Extend()));
         //toolOp.rightTrigger().whileTrue(new InstantCommand(()->climb.Retract()));
