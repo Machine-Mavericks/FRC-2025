@@ -23,7 +23,8 @@ public class RemoveAlgae extends Command {
     // This method is called periodically while command is active
     @Override
     public void execute() {
-        RobotContainer.algaeRemover.RemoveAlgae(0.25);
+        //double RemoveAlgae = RobotContainer.toolOp.getLeftTriggerAxis();
+        //RobotContainer.algaeRemover.RemoveAlgae(0.25*RemoveAlgae);
     }
 
     // This method to return true only when command is to finish. Otherwise return false
