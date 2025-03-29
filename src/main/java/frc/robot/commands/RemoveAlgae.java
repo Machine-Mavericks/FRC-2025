@@ -29,7 +29,7 @@ public class RemoveAlgae extends Command {
     // This method to return true only when command is to finish. Otherwise return false
     @Override
     public boolean isFinished() {
-
+        RobotContainer.algaeRemover.RemoveAlgae(0);
         return false;
 
     }
