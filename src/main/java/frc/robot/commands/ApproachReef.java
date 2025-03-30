@@ -202,7 +202,7 @@ public class ApproachReef extends Command {
     public boolean isFinished() {
 
         return !TargetDetected || (chooseLeftSide && selectedCamera.getTargetArea() > 48.0) ||
-         (!chooseLeftSide && selectedCamera.getTargetArea() > 7.0);
+         (!chooseLeftSide && selectedCamera.getTargetArea() > 38.0);// was 7.0
 
     }
 
