@@ -34,7 +34,7 @@ public class AlgaeRemover extends SubsystemBase {
     //public static double L2 = 19.0, L3 = 36.5, L4 = 70.0, L1 = 10.7, L0 = 0.0; // l4 in cm high 71.5, l3 47.5 from floor
     public static double TILT_DOWN = 2.0, TILT_UP = 0.0; // TILT_DOWN to be set
     static double ticksMoved;
-    static double feedForward = 0.45;
+    static double feedForward = -0.2;
     double TargetPositionCM = 0.0;
 
     // Local objects and variables here
@@ -56,7 +56,7 @@ public class AlgaeRemover extends SubsystemBase {
         algaeTiltConfig.closedLoop.p(0.90);
         algaeTiltConfig.closedLoop.i(0.0);
         algaeTiltConfig.closedLoop.d(0.0);
-        algaeTiltConfig.closedLoop.outputRange(-0.5, 0.03);
+        algaeTiltConfig.closedLoop.outputRange(-0.5, 0.13);
         algaeTiltConfig.closedLoop.positionWrappingEnabled(false);
         algaeTiltConfig.encoder.positionConversionFactor(1);
         
@@ -107,6 +107,7 @@ public class AlgaeRemover extends SubsystemBase {
        if(algaeTiltMotor.getReverseLimitSwitch().isPressed()){
            algaeTiltMotor.getEncoder().setPosition(0); // this might need to be ZeroEncoder function
            //ZeroEncoder();
+
        }
     }
 
@@ -122,6 +123,10 @@ public class AlgaeRemover extends SubsystemBase {
         algaeTiltMotor.getClosedLoopController().setReference((TILT_UP), ControlType.kPosition,
             ClosedLoopSlot.kSlot0,feedForward);
         algaeMotor.set(0.0);
+    }
+
+    public void AlgaeBloom() {
+        algaeTiltMotor.getEncoder().setPosition(TILT_DOWN);
     }
 
     // place special subsystem methods here

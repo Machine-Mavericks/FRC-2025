@@ -31,6 +31,7 @@ public class CoralIntake extends Command {
     @Override
     public boolean isFinished() {
         if(RobotContainer.intake.getSensorState()){
+            new Pause(0.03);
             RobotContainer.intake.intakeRun(0);
             return true;
         }else{

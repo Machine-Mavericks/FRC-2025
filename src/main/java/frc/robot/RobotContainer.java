@@ -152,23 +152,20 @@ public class RobotContainer {
         toolOp.leftBumper().whileTrue(new CoralIntake());
         toolOp.rightBumper().whileTrue(new CoralOutake());
         toolOp.back().whileTrue(new CoralBack());
-        //toolOp.leftTrigger(0.25).whileTrue(new TiltAlgaeRemover(AlgaePositions.TILT_DOWN));
-        //toolOp.leftTrigger(0.25).whileFalse(new TiltAlgaeRemover(AlgaePositions.TILT_UP));
-   
-
+        toolOp.start().onTrue(new InstantCommand(()-> algaeRemover.AlgaeBloom()));
 
         toolOp.a().onTrue(new MoveElevator(ElevatorPositions.LEVEL_2));
         toolOp.x().onTrue(new MoveElevator(ElevatorPositions.LEVEL_3));
         toolOp.b().onTrue(new MoveElevator(ElevatorPositions.LEVEL_1));
         toolOp.y().onTrue(new MoveElevator(ElevatorPositions.LEVEL_4));
 
-        toolOp.start().onTrue(new InstantCommand(()-> algaeRemover.RemoveAlgae()));
-        toolOp.start().onFalse(new InstantCommand(()-> algaeRemover.ResetTilt()));
-
         toolOp.a().onFalse(new MoveElevator(ElevatorPositions.LEVEL_0));
         toolOp.x().onFalse(new MoveElevator(ElevatorPositions.LEVEL_0));
         toolOp.b().onFalse(new MoveElevator(ElevatorPositions.LEVEL_0));
         toolOp.y().onFalse(new MoveElevator(ElevatorPositions.LEVEL_0));
+
+        toolOp.rightTrigger(0.2).onTrue(new InstantCommand(()-> algaeRemover.RemoveAlgae()));
+        toolOp.rightTrigger(0.2).onFalse(new InstantCommand(()-> algaeRemover.ResetTilt()));
 
         //driverOp.a().onTrue(new MoveElevator(ElevatorPositions.LEVEL_1));
         
@@ -217,23 +214,24 @@ public class RobotContainer {
             chosenCommand = new Pause(20.0); // do nothing command 
         else if (index == 1)
             chosenCommand = new MoveOffLineAnywhere(); // drive off the line 
-            else if (index == 2)
+        else if (index == 2)
             chosenCommand = new OneCoralAutoRight();
-            else if (index == 3)
+        else if (index == 3)
             chosenCommand = new OneCoralAutoCenter();
-            else if (index == 4)
+        else if (index == 4)
             chosenCommand = new OneCoralAutoLeft();
-            else if (index == 5)
+        else if (index == 5)
             chosenCommand = new TwoCoralAutoLeft();
-            else if (index == 6)
+        else if (index == 6)
             chosenCommand = new TwoCoralAutoRight();
-            else if (index == 7)
+        else if (index == 7)
             chosenCommand = new ThreeCoralAutoRight();
             //else if (index == 8)
             //chosenCommand = new ThreeCoralAutoLeft();
         
 
         return new SequentialCommandGroup(
+            new InstantCommand(()-> algaeRemover.AlgaeBloom()),
             new Pause(RobotContainer.mainShufflePage.getAutoDelay()),
             chosenCommand);
   }
