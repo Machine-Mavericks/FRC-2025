@@ -1,14 +1,19 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.LimitSwitchConfig.Type;
-import com.revrobotics.spark.config.LimitSwitchConfig;
-import com.revrobotics.spark.config.SparkBaseConfig;
-import com.revrobotics.spark.config.SparkMaxConfig;
+import java.lang.annotation.Target;
 
+import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.LimitSwitchConfig;
+import com.revrobotics.spark.config.LimitSwitchConfig.Type;
+import com.revrobotics.spark.config.SparkBaseConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -20,29 +25,48 @@ import frc.robot.RobotMap;
 
 /** Subsystem */
 public class AlgaeRemover extends SubsystemBase {
+    static SparkMax algaeMotor = new SparkMax(RobotMap.CANID.ALGAE_MOTOR, MotorType.kBrushless);
+    static SparkMax algaeTiltMotor = new SparkMax(RobotMap.CANID.ALGAE_TILT_MOTOR, MotorType.kBrushless);
+    SparkMaxConfig algaeTiltConfig;
+    static double gearDiameterCM = 3.588 * 2.54;
+    static double gearCircumference = gearDiameterCM * Math.PI;
+    static double gearRatio = 8.43, paddingOffset = 0;
+    //public static double L2 = 19.0, L3 = 36.5, L4 = 70.0, L1 = 10.7, L0 = 0.0; // l4 in cm high 71.5, l3 47.5 from floor
+    public static double TILT_DOWN = 20.0, TILT_UP = 0.0; // TILT_DOWN to be set
+    static double ticksMoved;
+    static double feedForward = 0.45;
+    double TargetPositionCM = 0.0;
 
     // Local objects and variables here
     // These are for things that only belong to, and used by, the subsystem
-    private SparkMax m_AlgaeMotor;
-    private static SparkMax m_AlgaeTiltMotor;
+
     /** Place code here to initialize subsystem */
     public AlgaeRemover() {
-        m_AlgaeMotor = new SparkMax(RobotMap.CANID.ALGAE_MOTOR, MotorType.kBrushless);
-        m_AlgaeTiltMotor = new SparkMax(RobotMap.CANID.ALGAE_TILT_MOTOR, MotorType.kBrushless);
+        // initialize limit switch and motors
+        algaeTiltConfig = new SparkMaxConfig();
+        // Current limit while testing this...possibly remove after.
+        algaeTiltConfig.smartCurrentLimit(5);
+        algaeTiltConfig.limitSwitch.reverseLimitSwitchEnabled(true);
+        algaeTiltConfig.limitSwitch.forwardLimitSwitchEnabled(true);
+        algaeTiltConfig.limitSwitch.forwardLimitSwitchType(Type.kNormallyClosed);
+        algaeTiltConfig.idleMode(IdleMode.kBrake);
+        algaeTiltConfig.inverted(false); // Change this if motor is running backwards
+        algaeTiltConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+        algaeTiltConfig.closedLoop.p(0.15);
+        algaeTiltConfig.closedLoop.i(0.0);
+        algaeTiltConfig.closedLoop.d(0.0);
+        algaeTiltConfig.closedLoop.outputRange(-0.1, 0.4);
+        algaeTiltConfig.closedLoop.positionWrappingEnabled(false);
+        algaeTiltConfig.encoder.positionConversionFactor(1);
         
-        SparkBaseConfig config = new SparkMaxConfig()
-                .smartCurrentLimit(5)
-                .apply(new LimitSwitchConfig()
-                    .reverseLimitSwitchEnabled(true)
-                    .reverseLimitSwitchType(Type.kNormallyOpen)
-                    .forwardLimitSwitchEnabled(false));
-
-        m_AlgaeTiltMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        algaeTiltMotor.configure(algaeTiltConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        ticksMoved = 0;
         initializeShuffleboard();
     }
 
-    private GenericEntry m_AlgaeMotorEntry;
-    private GenericEntry m_AlgaeTiltMotorEntry;
+    private static GenericEntry m_algaeMotorEntry;
+    private static GenericEntry m_algaeTiltMotorEntry;
+    private static GenericEntry m_switchR;
     private static GenericEntry m_current;
 
     private void initializeShuffleboard() {
@@ -51,17 +75,22 @@ public class AlgaeRemover extends SubsystemBase {
         ShuffleboardLayout l1 = Tab.getLayout("Algae", BuiltInLayouts.kList);
         l1.withPosition(0, 0);
         l1.withSize(2, 4);
-        m_AlgaeMotorEntry = l1.add("motor", 0.0).getEntry();
-        m_AlgaeTiltMotorEntry = l1.add("tilt", 0.0).getEntry();
+        m_algaeMotorEntry = l1.add("motor", 0.0).getEntry();
+        m_algaeTiltMotorEntry = l1.add("tilt", 0.0).getEntry();
+        m_switchR = l1.add("switchB", false).getEntry();
         m_current = l1.add("current", 0.0).getEntry();
 
     }
 
     private void updateShuffleboard() {
-        m_AlgaeMotorEntry.setDouble((m_AlgaeMotor.getEncoder().getPosition()));
-        m_AlgaeTiltMotorEntry.setDouble((m_AlgaeTiltMotor.getEncoder().getPosition()));
-        m_current.setDouble(m_AlgaeTiltMotor.getOutputCurrent());
+        m_algaeTiltMotorEntry.setDouble((algaeTiltMotor.getEncoder().getPosition()));
+        m_switchR.setBoolean(algaeTiltMotor.getReverseLimitSwitch().isPressed());
+        m_current.setDouble(algaeTiltMotor.getOutputCurrent());
 
+    }
+    public void ZeroEncoder(){
+        algaeTiltMotor.getEncoder().setPosition(0);
+        algaeTiltMotor.getClosedLoopController().setReference(0,ControlType.kPosition);
     }
 
     /**
@@ -70,27 +99,50 @@ public class AlgaeRemover extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        if(m_AlgaeTiltMotor.getReverseLimitSwitch().isPressed()){
-           m_AlgaeTiltMotor.getEncoder().setPosition(0);
-        }
-        m_AlgaeTiltMotor.getEncoder().getPosition();
         updateShuffleboard();
-
-
+        if(algaeTiltMotor.getReverseLimitSwitch().isPressed()){
+           algaeTiltMotor.getEncoder().setPosition(0);
+        }
     }
 
-    public void RemoveAlgae(double speed) {
-        m_AlgaeMotor.set(speed);
+    public void RemoveAlgae() {
+        TargetPositionCM = TILT_DOWN;
+        algaeMotor.getClosedLoopController().setReference(cmToRotations(TILT_DOWN), ControlType.kPosition,
+            ClosedLoopSlot.kSlot0,feedForward);
     }
 
-    public void Tilt(double direction) {
-        System.out.println(direction);
-        m_AlgaeTiltMotor.set(direction);
+    public void ResetTilt() {
+        TargetPositionCM = TILT_UP;
+        algaeMotor.getClosedLoopController().setReference(cmToRotations(TILT_UP), ControlType.kPosition,
+            ClosedLoopSlot.kSlot0,feedForward);
     }
 
-    
     // place special subsystem methods here
     // this is where rest of program can access functions to return
     // values or control the subsystem
+    private double cmToRotations(double cm) {
+        return cm * (gearRatio / gearCircumference);
+        // 8.43 - 1 gear ratio
+        // 3.588" diameter
 
+    }
+    private double rotationstoCm (double rotations) {
+        return rotations * (gearCircumference / gearRatio);
+        // 8.43 - 1 gear ratio
+        // 3.588" diameter
+
+    }
+
+    // is the algaeTiltMotor at (or near) its target position
+    public boolean isAlgaeTiltAtDestination() {
+
+        // return true if elevator within 2cm of target position
+        if (Math.abs(rotationstoCm(algaeMotor.getEncoder().getPosition()) - 
+                    TargetPositionCM) < 2.0)
+            return true;
+        else
+            return false;
+
+    }
+    
 }

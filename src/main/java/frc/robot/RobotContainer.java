@@ -20,7 +20,6 @@ import frc.robot.commands.ManualDrive;
 import frc.robot.commands.MoveElevator;
 import frc.robot.commands.MoveToPose;
 import frc.robot.commands.Pause;
-import frc.robot.commands.RemoveAlgae;
 import frc.robot.commands.TemplateCommand;
 import frc.robot.commands.TiltAlgaeRemover;
 import frc.robot.subsystems.AlgaeRemover;
@@ -34,6 +33,7 @@ import frc.robot.subsystems.Pigeon;
 import frc.robot.subsystems.SwerveDrive;
 import frc.robot.subsystems.TemplateSubsystem;
 import frc.robot.subsystems.Odometry;
+import frc.robot.utils.AlgaePositions;
 import frc.robot.utils.AutoFunctions;
 import frc.robot.utils.ElevatorPositions;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -151,9 +151,9 @@ public class RobotContainer {
         toolOp.leftBumper().whileTrue(new CoralIntake());
         toolOp.rightBumper().whileTrue(new CoralOutake());
         toolOp.back().whileTrue(new CoralBack());
-        toolOp.leftTrigger(0.25).whileTrue(new RemoveAlgae());
-        //toolOp.leftStick().whileFalse(new TiltAlgaeRemover());
-        
+        //toolOp.leftTrigger(0.25).whileTrue(new RemoveAlgae());
+        toolOp.leftTrigger(0.25).whileTrue(new TiltAlgaeRemover(AlgaePositions.TILT_DOWN));
+        toolOp.leftTrigger(0.25).whileFalse(new TiltAlgaeRemover(AlgaePositions.TILT_UP));
 
         //toolOp.leftTrigger().whileTrue(new InstantCommand(()->climb.Extend()));
         //toolOp.rightTrigger().whileTrue(new InstantCommand(()->climb.Retract()));
