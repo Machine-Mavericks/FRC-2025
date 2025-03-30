@@ -20,7 +20,6 @@ import frc.robot.commands.ManualDrive;
 import frc.robot.commands.MoveElevator;
 import frc.robot.commands.MoveToPose;
 import frc.robot.commands.Pause;
-import frc.robot.commands.RemoveAlgae;
 import frc.robot.commands.TemplateCommand;
 import frc.robot.commands.TiltAlgaeRemover;
 import frc.robot.subsystems.AlgaeRemover;
@@ -44,6 +43,7 @@ import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.utils.AlgaePositions;
 
 
 public class RobotContainer {
@@ -72,6 +72,7 @@ public class RobotContainer {
     public static Climb climb;
     public static boolean snapToReef = false; // was true 
     public static AlgaeRemover algaeRemover;
+    
     
     //public static Climb climb;
     // and so on
@@ -151,18 +152,18 @@ public class RobotContainer {
         toolOp.leftBumper().whileTrue(new CoralIntake());
         toolOp.rightBumper().whileTrue(new CoralOutake());
         toolOp.back().whileTrue(new CoralBack());
-        toolOp.leftTrigger(0.25).whileTrue(new RemoveAlgae());
-        //toolOp.leftStick().whileFalse(new TiltAlgaeRemover());
-        
+        //toolOp.leftTrigger(0.25).whileTrue(new TiltAlgaeRemover(AlgaePositions.TILT_DOWN));
+        //toolOp.leftTrigger(0.25).whileFalse(new TiltAlgaeRemover(AlgaePositions.TILT_UP));
+   
 
-        //toolOp.leftTrigger().whileTrue(new InstantCommand(()->climb.Extend()));
-        //toolOp.rightTrigger().whileTrue(new InstantCommand(()->climb.Retract()));
 
         toolOp.a().onTrue(new MoveElevator(ElevatorPositions.LEVEL_2));
         toolOp.x().onTrue(new MoveElevator(ElevatorPositions.LEVEL_3));
         toolOp.b().onTrue(new MoveElevator(ElevatorPositions.LEVEL_1));
         toolOp.y().onTrue(new MoveElevator(ElevatorPositions.LEVEL_4));
 
+        toolOp.start().onTrue(new InstantCommand(()-> algaeRemover.RemoveAlgae()));
+        toolOp.start().onFalse(new InstantCommand(()-> algaeRemover.ResetTilt()));
 
         toolOp.a().onFalse(new MoveElevator(ElevatorPositions.LEVEL_0));
         toolOp.x().onFalse(new MoveElevator(ElevatorPositions.LEVEL_0));
