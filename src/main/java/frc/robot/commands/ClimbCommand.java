@@ -36,11 +36,7 @@ public class ClimbCommand extends Command {
     // This method to return true only when command is to finish. Otherwise return false
     @Override
     public boolean isFinished() {
-        if(RobotContainer.climb.getSwitchState()){
-            return true;
-        }else{
-            return false;
-        } 
+        return false;
     }
 
     // This method is called once when command is finished.

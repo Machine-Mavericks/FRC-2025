@@ -98,8 +98,8 @@ public class ThreeCoralAutoRight extends SequentialCommandGroup {
 
              // lower elevator 
             new InstantCommand(()->RobotContainer.elevator.Level0()),
-
-    
+            // place coral one
+            
             new ParallelCommandGroup(new CoralIntake(),
             // move to pickup 
                 new MoveToPose(

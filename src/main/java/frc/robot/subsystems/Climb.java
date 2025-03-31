@@ -44,10 +44,10 @@ public class Climb extends SubsystemBase {
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         // limit switch 
-        config.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue.NormallyOpen;
-        config.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue.NormallyOpen;
-        config.HardwareLimitSwitch.ForwardLimitEnable = true;
-        config.HardwareLimitSwitch.ReverseLimitEnable = false; 
+        config.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue.NormallyClosed;
+        config.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue.NormallyClosed;
+        config.HardwareLimitSwitch.ForwardLimitEnable = false;
+        config.HardwareLimitSwitch.ReverseLimitEnable = true; 
 
 
         m_ClimbMotor.getConfigurator().apply(config);
@@ -67,25 +67,11 @@ public class Climb extends SubsystemBase {
 
     public void SetSpeed(double speed){
         m_ClimbMotor.set(speed);
-    }
-
-    public boolean getSwitchState(){
-        if (m_ClimbMotor.getReverseLimit().getValue().value == 1){
-            return true; 
-        }
-        else{
-            return false; 
-        }
-    }
-
-
-    
+    }    
 
     private static GenericEntry m_switchF;
     private static GenericEntry m_switchR;
     
-
-
     private void initializeShuffleboard() {
         // Create page in shuffleboard
         ShuffleboardTab Tab = Shuffleboard.getTab("climb");

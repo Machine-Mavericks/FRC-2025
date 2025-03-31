@@ -132,8 +132,10 @@ public class ApproachReef extends Command {
         // double horizontal error to target
         double horizError = selectedCamera.getHorizontalTargetOffsetAngle();
 
+        double slow_distance = 1.5; 
+        double max_approch_speed = 2.35; // was 1.5
         // determine forward speed (m/s)
-        x_speed = 1.5;
+        x_speed = max_approch_speed;
 
         // determine distance from center of reef
         Translation2d CurrentPosition = RobotContainer.odometry.getPose2d().getTranslation();
@@ -144,8 +146,8 @@ public class ApproachReef extends Command {
         
         // determine new speed target - over 1.5m away, use full speed
         // slope = 1.5m/s(initial) - 0.3m/s (end speed) / 1.5m decel distance, offset = 0.3m/s
-        if (distanceToReef < 1.5)
-            x_speed = (1.5 - 0.3)/1.5 * distanceToReef + 0.3;
+        if (distanceToReef < slow_distance)
+            x_speed = (max_approch_speed - 0.3)/slow_distance* distanceToReef + 0.3;
         
 
         // further limit xSpeed based on horozontal error 

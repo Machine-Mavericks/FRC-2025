@@ -78,16 +78,16 @@ public class ThreeCoralAutoLeft extends SequentialCommandGroup {
                 RobotContainer.camr.SetPriorityTagID(6);
             }),
 
-                // approach reef 
+        // approach reef 
         new ApproachReef(true),
-            // raise to level 4 height
 
         new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
-
+        // raise to level 4 height
         new InstantCommand(()->RobotContainer.elevator.Level4()),
 
+        // place one 
         new DepositeAndLower(),
-        // move to pickup 
+
          new ParallelCommandGroup(new CoralIntake(),
         // move to pickup 
         new MoveToPose(
@@ -120,9 +120,10 @@ public class ThreeCoralAutoLeft extends SequentialCommandGroup {
         // rais elevator to level 4 
         new InstantCommand(()->RobotContainer.elevator.Level4()),
 
+        // place two 
         new DepositeAndLower(),
-         // move to pickup 
-         new ParallelCommandGroup(new CoralIntake(),
+         
+        new ParallelCommandGroup(new CoralIntake(),
         // move to pickup 
         new MoveToPose(
             4.0, 
@@ -154,22 +155,8 @@ public class ThreeCoralAutoLeft extends SequentialCommandGroup {
         // rais elevator to level 4 
         new InstantCommand(()->RobotContainer.elevator.Level4()),
 
+        // place three 
         new DepositeAndLower()
-
-        // drive back to humen station 
-
-        //new MoveToPose(
-        //     0.5, 
-        //     1.5,
-        //     new Pose2d(1.06,7.3, new Rotation2d(Math.toRadians(-56)))
-        // ),
-
-        // intake peice for tele
-        // new InstantCommand(()->RobotContainer.intake.intakeRun(0.7)),
-
-        // new Pause(1),
-
-        // new InstantCommand(()->RobotContainer.intake.intakeRun(0)),
 
         );
     }

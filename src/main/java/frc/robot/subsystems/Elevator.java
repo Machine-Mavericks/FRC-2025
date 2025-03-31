@@ -29,7 +29,7 @@ public class Elevator extends SubsystemBase {
     static double gearDiameterCM = 3.588 * 2.54;
     static double gearCircumference = gearDiameterCM * Math.PI;
     static double gearRatio = 8.43, paddingOffset = 0;
-    public static double L2 = 21.0, L3 = 42.5, L4 = 70.0, L1 = 10.7, L0 = 0.0; // l4 in cm high 71.5, l3 47.5 from floor
+    public static double L2 = 22.5, L3 = 40.0, L4 = 70.0, L1 = 10.7, L0 = 0.0; // l4 in cm high 71.5, l3 47.5 from floor
     static double ticksMoved;
     static double feedForward = 0.45;
     double TargetPositionCM = 0.0;
