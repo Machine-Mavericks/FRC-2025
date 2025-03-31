@@ -44,10 +44,10 @@ public class Climb extends SubsystemBase {
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         // limit switch 
-        config.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue.NormallyClosed;
-        config.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue.NormallyClosed;
+        config.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue.NormallyOpen;
+        config.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue.NormallyOpen;
         config.HardwareLimitSwitch.ForwardLimitEnable = true;
-        config.HardwareLimitSwitch.ReverseLimitEnable = true; 
+        config.HardwareLimitSwitch.ReverseLimitEnable = false; 
 
 
         m_ClimbMotor.getConfigurator().apply(config);
@@ -78,6 +78,8 @@ public class Climb extends SubsystemBase {
         }
     }
 
+
+    
 
     private static GenericEntry m_switchF;
     private static GenericEntry m_switchR;

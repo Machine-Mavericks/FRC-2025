@@ -21,28 +21,26 @@ public class ClimbCommand extends Command {
     @Override
     public void initialize() {
        if (m_Climb == true){
-        RobotContainer.climb.SetSpeed(-0.15);
+        RobotContainer.climb.SetSpeed(-0.7);
        }else{ 
-        RobotContainer.climb.SetSpeed(0.15);
+        RobotContainer.climb.SetSpeed(0.7);
        }
     }
 
     // This method is called periodically while command is active
     @Override
     public void execute() {
-
+   
     }
 
     // This method to return true only when command is to finish. Otherwise return false
     @Override
     public boolean isFinished() {
-
         if(RobotContainer.climb.getSwitchState()){
             return true;
         }else{
             return false;
-        }
-
+        } 
     }
 
     // This method is called once when command is finished.
