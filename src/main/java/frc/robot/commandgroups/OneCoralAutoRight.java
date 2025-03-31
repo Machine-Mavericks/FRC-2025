@@ -59,6 +59,7 @@ public class OneCoralAutoRight extends SequentialCommandGroup {
         } ),
 
         new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
+        new InstantCommand(()-> RobotContainer.algaeRemover.AlgaeBloom()),
         
         new MoveToPose( //change pos then up speed 
             2.0, 

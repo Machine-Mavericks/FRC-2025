@@ -59,6 +59,7 @@ public class TwoCoralAutoLeft extends SequentialCommandGroup {
         } ),
 
         new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
+        new InstantCommand(()-> RobotContainer.algaeRemover.AlgaeBloom()),
         
         new MoveToPose(
             4.0,

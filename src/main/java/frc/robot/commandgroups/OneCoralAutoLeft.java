@@ -58,6 +58,7 @@ public class OneCoralAutoLeft extends SequentialCommandGroup {
         } ),
 
         new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
+        new InstantCommand(()-> RobotContainer.algaeRemover.AlgaeBloom()),
         // move to in front of reef target  (tag22 for blue, tag 9 for red)
         new MoveToPose( //change pos then up speed 
             2.0, 

@@ -59,6 +59,7 @@ public class ThreeCoralAutoRight extends SequentialCommandGroup {
             } ),
     
             new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
+            new InstantCommand(()-> RobotContainer.algaeRemover.AlgaeBloom()),
             // move to in front of reef target  (tag22 for blue, tag 9 for red)
             // move to veiw pose 
             //new InstantCommand(()->RobotContainer.snapToReef = false),
@@ -99,6 +100,12 @@ public class ThreeCoralAutoRight extends SequentialCommandGroup {
              // lower elevator 
             new InstantCommand(()->RobotContainer.elevator.Level0()),
             // place coral one
+
+            new MoveToPose(
+                4.0, 
+                6.0,
+                new Pose2d(4.5,2.0, new Rotation2d(Math.toRadians(60)))
+            ),
             
             new ParallelCommandGroup(new CoralIntake(),
             // move to pickup 

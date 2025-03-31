@@ -64,7 +64,7 @@ public class OneCoralAutoCenter extends SequentialCommandGroup {
         // move to in front of reef target  (tag21 for blue, tag 10 for red)
         //new InstantCommand(()->RobotContainer.snapToReef = false),
         new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
-
+        new InstantCommand(()-> RobotContainer.algaeRemover.AlgaeBloom()),
         // moving to veiw point 
         new MoveToPose( // check point then speed up 
             2.0,
