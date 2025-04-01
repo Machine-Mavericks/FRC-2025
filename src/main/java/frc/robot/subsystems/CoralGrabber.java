@@ -49,11 +49,17 @@ public class CoralGrabber extends SubsystemBase {
     public void intakeRun(double speed){
         m_IntakeMotor1.set(0-speed);
         m_IntakeMotor2.set(speed);
-
-        
-       
     }
    
+    public void intakeRunTop(double speed) {
+        m_IntakeMotor1.set(0-speed);
+    }
+
+    public void intakeRunBottom(double speed) {
+        m_IntakeMotor2.set(speed);
+    }
+
+
     public boolean getSensorState(){
         return !photoSensor.get();
     }

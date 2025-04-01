@@ -1,6 +1,7 @@
 package frc.robot;
 
 import frc.robot.commandgroups.TwoStationDefense;
+import frc.robot.commandgroups.L1CoralOutake;
 import frc.robot.commandgroups.MoveOffLineAnywhere;
 import frc.robot.commandgroups.OneCoralAutoCenter;
 import frc.robot.commandgroups.OneCoralAutoLeft;
@@ -16,6 +17,7 @@ import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.CoralBack;
 import frc.robot.commands.CoralIntake;
 import frc.robot.commands.CoralOutake;
+import frc.robot.commands.L1CoralOutakePart1;
 import frc.robot.commands.ManualDrive;
 import frc.robot.commands.MoveElevator;
 import frc.robot.commands.MoveToPose;
@@ -166,6 +168,10 @@ public class RobotContainer {
 
         toolOp.rightTrigger(0.2).onTrue(new InstantCommand(()-> algaeRemover.RemoveAlgae()));
         toolOp.rightTrigger(0.2).onFalse(new InstantCommand(()-> algaeRemover.ResetTilt()));
+
+        toolOp.leftTrigger(0.2).onTrue(new L1CoralOutake());
+
+
 
         //driverOp.a().onTrue(new MoveElevator(ElevatorPositions.LEVEL_1));
         
