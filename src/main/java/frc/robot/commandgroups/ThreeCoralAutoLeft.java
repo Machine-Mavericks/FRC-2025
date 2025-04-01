@@ -22,6 +22,7 @@ import frc.robot.utils.AutoFunctions;
 // ParallelDeadlineGroup
 public class ThreeCoralAutoLeft extends SequentialCommandGroup {
 
+    double feild_width = 8.0518;
     // constructor
     public ThreeCoralAutoLeft() {
 
@@ -51,115 +52,127 @@ public class ThreeCoralAutoLeft extends SequentialCommandGroup {
                     startpose = new Pose2d(7.55, 4.02, new Rotation2d((Math.toRadians(180.0))));
             };
 
-            // convert for red vs blue
-            startpose = AutoFunctions.redVsBlue(startpose);
-            
-            // set odometry
-            RobotContainer.odometry.setPose(startpose);
-        } ),
+           // convert for red vs blue
+           startpose = AutoFunctions.redVsBlue(startpose);
+                
+           // set odometry
+           RobotContainer.odometry.setPose(startpose);
+          
+       } ),
 
-        new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
-        // move to in front of reef target  (tag22 for blue, tag 9 for red)
-        // move to veiw pose 
-        //new InstantCommand(()->RobotContainer.snapToReef = false),
-        
-        new MoveToPose(
-            4.0,
-            6.0,
-            new Pose2d(5.0,5.0, new Rotation2d(Math.toRadians(-120.0)))
-        ),
+       new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
+       new InstantCommand(()-> RobotContainer.algaeRemover.AlgaeBloom()),
 
-        new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(true)),
+       new InstantCommand(()-> {
+           if  (DriverStation.getAlliance().get()==Alliance.Blue)
+               RobotContainer.camleft.SetPriorityTagID(19);
+           else 
+               RobotContainer.camleft.SetPriorityTagID(6);
+       }),
+
+       new MoveToPose(
+           4.0,
+           6.0,
+           new Pose2d(3.7,feild_width-2.3, new Rotation2d(Math.toRadians(-60.0)))// was y 2.4
+       ),
+
+       // approach reef
+       new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(true)),
+
        
-        new InstantCommand(()-> {
-            if  (DriverStation.getAlliance().get()==Alliance.Blue)
-                RobotContainer.camr.SetPriorityTagID(19);
-            else 
-                RobotContainer.camr.SetPriorityTagID(6);
-            }),
+       // raise to level 4 height
+       new InstantCommand(()->RobotContainer.elevator.Level4()),
 
-        // approach reef 
-        new ApproachReef(true),
+       new ApproachReef(true),
 
-        new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
-        // raise to level 4 height
-        new InstantCommand(()->RobotContainer.elevator.Level4()),
+       new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
 
-        // place one 
-        new DepositeAndLower(),
+       new DepositeAndLower(),
 
-         new ParallelCommandGroup(new CoralIntake(),
-        // move to pickup 
-        new MoveToPose(
-            4.0, 
-                6.0,
-            new Pose2d (1.06,7.3, new Rotation2d(Math.toRadians(-56))))
-        ),
+       new ParallelCommandGroup(new CoralIntake(),
+       // move to pickup 
+           new MoveToPose(//waiting on point
+               4.0, 
+               8.0,
+               new Pose2d (1.039,feild_width-0.8622, new Rotation2d(Math.toRadians(-54.0))))
+       ),         
 
-        // move to veiw point number two
-        new MoveToPose(
-            4.0,
-            6.0,
-            new Pose2d(3.5,6.0, new Rotation2d(Math.toRadians(-60)))
-        ),
+       new InstantCommand(()-> {
+           if  (DriverStation.getAlliance().get()==Alliance.Blue)
+               RobotContainer.camr.SetPriorityTagID(19);
+           else 
+               RobotContainer.camr.SetPriorityTagID(6);
+           }),
 
-        new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(true)),
-        
-        new InstantCommand(()-> {
-            if  (DriverStation.getAlliance().get()==Alliance.Blue)
-                RobotContainer.camr.SetPriorityTagID(19);
-            else 
-                RobotContainer.camr.SetPriorityTagID(6);
-            }),
+       // move to veiw point number two
+       new MoveToPose(
+           4.0, 
+           8.0,
+           new Pose2d(3.4,feild_width-2.9, new Rotation2d(Math.toRadians(-60)))
+       ),
 
-        // apprach reef 
-        new ApproachReef(false), 
+       new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(true)),
+       
+       // rais elevator to level 4 
+       new InstantCommand(()->RobotContainer.elevator.Level4()),
 
-        new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
+       // apprach reef 
+       new ApproachReef(false), 
 
-        // rais elevator to level 4 
-        new InstantCommand(()->RobotContainer.elevator.Level4()),
+       new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
 
-        // place two 
-        new DepositeAndLower(),
-         
-        new ParallelCommandGroup(new CoralIntake(),
-        // move to pickup 
-        new MoveToPose(
-            4.0, 
-                6.0,
-            new Pose2d (1.06,7.3, new Rotation2d(Math.toRadians(-56))))
-        ),
+       // deposite 
+       new DepositeAndLower(),  
 
-        // move to veiw point number three
-        new MoveToPose(
-            4.0,
-            6.0,
-            new Pose2d(3.5,6.0, new Rotation2d(Math.toRadians(-60)))
-        ),
+       new ParallelCommandGroup(new CoralIntake(),
+       // move to pickup 
+           new MoveToPose(//waiting on point
+               4.0, 
+               8.0,
+               new Pose2d (1.039,feild_width-0.8622, new Rotation2d(Math.toRadians(-54))))
+       ),  
+       
+       new InstantCommand(()-> {
+           if  (DriverStation.getAlliance().get()==Alliance.Blue)
+               RobotContainer.camleft.SetPriorityTagID(18);
+           else 
+               RobotContainer.camleft.SetPriorityTagID(7);
+       }),
 
-        // apprach reef 
-        new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(true)),
+       new MoveToPose(
+           4.0, 
+           8.0,
+           new Pose2d(2.9,feild_width-4.35, new Rotation2d(Math.toRadians(0.0)))
+       ),
 
-        new InstantCommand(()-> {
-            if  (DriverStation.getAlliance().get()==Alliance.Blue)
-                RobotContainer.camr.SetPriorityTagID(19);
-            else 
-                RobotContainer.camr.SetPriorityTagID(6);
-            }),
+       new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(true)),
+       
 
-        new ApproachReef(true), 
+       // rais elevator to level 4 
+       new InstantCommand(()->RobotContainer.elevator.Level4()),
 
-        new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
+       // apprach reef 
+       new ApproachReef(true), 
 
-        // rais elevator to level 4 
-        new InstantCommand(()->RobotContainer.elevator.Level4()),
+       new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
 
-        // place three 
-        new DepositeAndLower()
+       //new Pause(0.2),
+       
+       new InstantCommand(()->RobotContainer.intake.intakeRun(-1.0)),
 
-        );
-    }
+       new Pause(0.2),
+
+       new InstantCommand(()->RobotContainer.intake.intakeRun(0)),
+
+       new Pause(0.2),
+
+        // lower elevator 
+       new InstantCommand(()->RobotContainer.elevator.Level0()),
+       
+       new Pause(2.0)
+
+       );
+   }
 
 }
 

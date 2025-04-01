@@ -61,20 +61,20 @@ public class TwoCoralAutoLeft extends SequentialCommandGroup {
         new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
         new InstantCommand(()-> RobotContainer.algaeRemover.AlgaeBloom()),
         
-        new MoveToPose(
-            4.0,
-            6.0,
-            new Pose2d(3.5,6.0, new Rotation2d(Math.toRadians(-60.0)))
-        ),
-
-        new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(true)),
-
-            new InstantCommand(()-> {
+        new InstantCommand(()-> {
             if  (DriverStation.getAlliance().get()==Alliance.Blue)
                 RobotContainer.camr.SetPriorityTagID(19);
             else 
                 RobotContainer.camr.SetPriorityTagID(6);
-            }),
+        }),
+
+        new MoveToPose(
+            4.0,
+            8.0,
+            new Pose2d(3.5,6.0, new Rotation2d(Math.toRadians(-60.0)))
+        ),
+
+        new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(true)),
 
         // raise to level 4 height
         new InstantCommand(()->RobotContainer.elevator.Level4()),
@@ -89,26 +89,26 @@ public class TwoCoralAutoLeft extends SequentialCommandGroup {
         // move to pickup 
         new MoveToPose(
             4.0, 
-            6.0,
+            8.0,
             new Pose2d (1.039,7.1897, new Rotation2d(Math.toRadians(-54))))
         ),
 
-        // move to veiw point number two
-        new MoveToPose(
-            4.0, 
-                6.0,
-            new Pose2d(3.5,6.0, new Rotation2d(Math.toRadians(-60)))
-        ),
-
-        new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(true)),
-        
         new InstantCommand(()-> {
             if  (DriverStation.getAlliance().get()==Alliance.Blue)
                 RobotContainer.camleft.SetPriorityTagID(19);
             else 
                 RobotContainer.camleft.SetPriorityTagID(6);
-            }),
+        }),
 
+        // move to veiw point number two
+        new MoveToPose(
+            4.0, 
+                8.0,
+            new Pose2d(3.5,6.0, new Rotation2d(Math.toRadians(-60)))
+        ),
+
+        new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(true)),
+        
         // apprach reef 
         new ApproachReef(true), 
 

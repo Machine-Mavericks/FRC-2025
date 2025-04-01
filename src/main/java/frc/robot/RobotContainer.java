@@ -226,8 +226,8 @@ public class RobotContainer {
             chosenCommand = new TwoCoralAutoRight();
         else if (index == 7)
             chosenCommand = new ThreeCoralAutoRight();
-            //else if (index == 8)
-            //chosenCommand = new ThreeCoralAutoLeft();
+        else if (index == 8)
+            chosenCommand = new ThreeCoralAutoLeft();
         
 
         return new SequentialCommandGroup(
