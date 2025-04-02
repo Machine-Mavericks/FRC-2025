@@ -60,7 +60,7 @@ public class TwoCoralAutoRight extends SequentialCommandGroup {
             } ),
     
             new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
-            new InstantCommand(()-> RobotContainer.algaeRemover.AlgaeBloom()),
+            new InstantCommand(()-> RobotContainer.algaeRemover.ResetTilt()),
 
             new InstantCommand(()-> {
                 if  (DriverStation.getAlliance().get()==Alliance.Blue)
@@ -74,18 +74,17 @@ public class TwoCoralAutoRight extends SequentialCommandGroup {
                 8.0,
                 new Pose2d(3.7,2.3, new Rotation2d(Math.toRadians(60.0)))// was y 2.4
             ),
-    
+            // raise to level 4 height
+            new InstantCommand(()->RobotContainer.elevator.Level4()),
+            
             // approach reef
             new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(true)),
             
-            // raise to level 4 height
-            new InstantCommand(()->RobotContainer.elevator.Level4()),
-
             new ApproachReef(false),
-    
+
             new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
             // deposite 
-            new Pause(0.25),
+            new Pause(0.5),
 
             new InstantCommand(()->RobotContainer.intake.intakeRun(-1.0)),
     
@@ -120,18 +119,32 @@ public class TwoCoralAutoRight extends SequentialCommandGroup {
                 new Pose2d(3.4,2.9, new Rotation2d(Math.toRadians(60)))
             ),
     
-            new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(true)),
-            
             // rais elevator to level 4 
             new InstantCommand(()->RobotContainer.elevator.Level4()),
+
+            new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(true)),
             
             // apprach reef 
             new ApproachReef(true), 
-    
+
             new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
     
             // deposite 
-            new DepositeAndLower()
+            new Pause(0.7),
+
+            new InstantCommand(()->RobotContainer.intake.intakeRun(-1.0)),
+    
+            new Pause(0.25),
+    
+            new InstantCommand(()->RobotContainer.intake.intakeRun(0)),
+    
+            new Pause(0.25),
+
+             // lower elevator 
+            new InstantCommand(()->RobotContainer.elevator.Level0()),
+
+            new Pause(1.2)
+
     
             );
         }

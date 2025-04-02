@@ -34,7 +34,7 @@ public class AlgaeRemover extends SubsystemBase {
     //public static double L2 = 19.0, L3 = 36.5, L4 = 70.0, L1 = 10.7, L0 = 0.0; // l4 in cm high 71.5, l3 47.5 from floor
     public static double TILT_DOWN = 2.0, TILT_UP = 0.0; // TILT_DOWN to be set
     static double ticksMoved;
-    static double feedForward = -0.2;
+    static double feedForward = -0.4;
     double TargetPositionCM = 0.0;
 
     // Local objects and variables here
@@ -45,7 +45,8 @@ public class AlgaeRemover extends SubsystemBase {
         // initialize limit switch and motors
         algaeTiltConfig = new SparkMaxConfig();
         // Current limit while testing this...possibly remove after.
-        algaeTiltConfig.smartCurrentLimit(30);
+        algaeTiltConfig.smartCurrentLimit(40);
+        //algaeTiltConfig.smartCurrentLimit(20, 40);
         algaeTiltConfig.limitSwitch.reverseLimitSwitchEnabled(true);
         algaeTiltConfig.limitSwitch.reverseLimitSwitchType(Type.kNormallyOpen);
         //algaeTiltConfig.limitSwitch.forwardLimitSwitchEnabled(true);
@@ -53,7 +54,7 @@ public class AlgaeRemover extends SubsystemBase {
         algaeTiltConfig.idleMode(IdleMode.kBrake);
         algaeTiltConfig.inverted(false); // Change this if motor is running backwards
         algaeTiltConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
-        algaeTiltConfig.closedLoop.p(0.90);
+        algaeTiltConfig.closedLoop.p(1.80);
         algaeTiltConfig.closedLoop.i(0.0);
         algaeTiltConfig.closedLoop.d(0.0);
         algaeTiltConfig.closedLoop.outputRange(-0.5, 0.13);
@@ -115,7 +116,7 @@ public class AlgaeRemover extends SubsystemBase {
         TargetPositionCM = TILT_DOWN;
         algaeTiltMotor.getClosedLoopController().setReference((TILT_DOWN), ControlType.kPosition,
             ClosedLoopSlot.kSlot0,feedForward);
-        algaeMotor.set(0.5);
+        algaeMotor.set(0.7);
     }
 
     public void ResetTilt() {
@@ -123,6 +124,7 @@ public class AlgaeRemover extends SubsystemBase {
         algaeTiltMotor.getClosedLoopController().setReference((TILT_UP), ControlType.kPosition,
             ClosedLoopSlot.kSlot0,feedForward);
         algaeMotor.set(0.0);
+        algaeTiltMotor.getEncoder().setPosition(TILT_DOWN);
     }
 
     public void AlgaeBloom() {

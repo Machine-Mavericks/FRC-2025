@@ -168,6 +168,7 @@ public class RobotContainer {
 
         toolOp.rightTrigger(0.2).onTrue(new InstantCommand(()-> algaeRemover.RemoveAlgae()));
         toolOp.rightTrigger(0.2).onFalse(new InstantCommand(()-> algaeRemover.ResetTilt()));
+        
 
         toolOp.leftTrigger(0.2).onTrue(new L1CoralOutake());
 
@@ -232,8 +233,8 @@ public class RobotContainer {
             chosenCommand = new TwoCoralAutoRight();
         else if (index == 7)
             chosenCommand = new ThreeCoralAutoRight();
-        else if (index == 8)
-            chosenCommand = new ThreeCoralAutoLeft();
+        //else if (index == 8)
+            //chosenCommand = new ThreeCoralAutoLeft();
         
 
         return new SequentialCommandGroup(

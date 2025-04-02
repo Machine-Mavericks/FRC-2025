@@ -66,6 +66,7 @@ public class TiltAlgaeRemover extends Command {
     @Override
     public void end(boolean interrupted) {
         RobotContainer.algaeRemover.ResetTilt();
+        //RobotContainer.algaeRemover.AlgaeBloom();
     }
 
     

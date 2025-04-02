@@ -138,7 +138,7 @@ public class MainShuffleBoardTab extends SubsystemBase {
         m_autonomousPath.addOption("Two Coral Left", 5);
         m_autonomousPath.addOption("Two Coral Right", 6);
         m_autonomousPath.addOption("Three Coral Right", 7);
-        m_autonomousPath.addOption("Three Coral Left", 8);
+        //m_autonomousPath.addOption("Three Coral Left", 8);
         m_autonomousPath.setDefaultOption("Do Nothing", 0);
 
         // add selection box of paths
