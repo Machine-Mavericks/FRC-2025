@@ -60,7 +60,7 @@ public class TwoCoralAutoRight extends SequentialCommandGroup {
             } ),
     
             new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
-            new InstantCommand(()-> RobotContainer.algaeRemover.ResetTilt()),
+           // new InstantCommand(()-> RobotContainer.algaeRemover.ResetTilt()),
 
             new InstantCommand(()-> {
                 if  (DriverStation.getAlliance().get()==Alliance.Blue)
@@ -102,7 +102,7 @@ public class TwoCoralAutoRight extends SequentialCommandGroup {
                 new MoveToPose(//waiting on point
                     4.0, 
                     8.0,
-                    new Pose2d (1.039,0.8622, new Rotation2d(Math.toRadians(54))))
+                    new Pose2d (0.869,0.7386, new Rotation2d(Math.toRadians(54))))//1.039,0.8622
             ),         
            
             new InstantCommand(()-> {

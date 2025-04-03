@@ -61,7 +61,7 @@ public class ThreeCoralAutoLeft extends SequentialCommandGroup {
        } ),
 
        new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(false)),
-       new InstantCommand(()-> RobotContainer.algaeRemover.AlgaeBloom()),
+       //new InstantCommand(()-> RobotContainer.algaeRemover.AlgaeBloom()),
 
        new InstantCommand(()-> {
            if  (DriverStation.getAlliance().get()==Alliance.Blue)

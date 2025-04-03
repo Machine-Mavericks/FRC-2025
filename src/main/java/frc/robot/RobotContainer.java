@@ -23,8 +23,8 @@ import frc.robot.commands.MoveElevator;
 import frc.robot.commands.MoveToPose;
 import frc.robot.commands.Pause;
 import frc.robot.commands.TemplateCommand;
-import frc.robot.commands.TiltAlgaeRemover;
-import frc.robot.subsystems.AlgaeRemover;
+//import frc.robot.commands.TiltAlgaeRemover;
+//import frc.robot.subsystems.AlgaeRemover;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.CoralGrabber;
 //import frc.robot.subsystems.DeadWheel;
@@ -45,7 +45,7 @@ import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.utils.AlgaePositions;
+//import frc.robot.utils.AlgaePositions;
 
 
 public class RobotContainer {
@@ -73,7 +73,7 @@ public class RobotContainer {
     public static LED LED;
     public static Climb climb;
     public static boolean snapToReef = false; // was true 
-    public static AlgaeRemover algaeRemover;
+    //public static AlgaeRemover algaeRemover;
     
     
     //public static Climb climb;
@@ -105,7 +105,7 @@ public class RobotContainer {
         intake = new CoralGrabber();
         LED = new LED();
         climb = new Climb();
-        algaeRemover = new AlgaeRemover();
+        //algaeRemover = new AlgaeRemover();
 
 
 
@@ -154,7 +154,7 @@ public class RobotContainer {
         toolOp.leftBumper().whileTrue(new CoralIntake());
         toolOp.rightBumper().whileTrue(new CoralOutake());
         toolOp.back().whileTrue(new CoralBack());
-        toolOp.start().onTrue(new InstantCommand(()-> algaeRemover.AlgaeBloom()));
+        //toolOp.start().onTrue(new InstantCommand(()-> algaeRemover.AlgaeBloom()));
 
         toolOp.a().onTrue(new MoveElevator(ElevatorPositions.LEVEL_2));
         toolOp.x().onTrue(new MoveElevator(ElevatorPositions.LEVEL_3));
@@ -166,8 +166,8 @@ public class RobotContainer {
         toolOp.b().onFalse(new MoveElevator(ElevatorPositions.LEVEL_0));
         toolOp.y().onFalse(new MoveElevator(ElevatorPositions.LEVEL_0));
 
-        toolOp.rightTrigger(0.2).onTrue(new InstantCommand(()-> algaeRemover.RemoveAlgae()));
-        toolOp.rightTrigger(0.2).onFalse(new InstantCommand(()-> algaeRemover.ResetTilt()));
+        //toolOp.rightTrigger(0.2).onTrue(new InstantCommand(()-> algaeRemover.RemoveAlgae()));
+        //toolOp.rightTrigger(0.2).onFalse(new InstantCommand(()-> algaeRemover.ResetTilt()));
         
 
         toolOp.leftTrigger(0.2).onTrue(new L1CoralOutake());
@@ -238,7 +238,7 @@ public class RobotContainer {
         
 
         return new SequentialCommandGroup(
-            new InstantCommand(()-> algaeRemover.AlgaeBloom()),
+            //new InstantCommand(()-> algaeRemover.AlgaeBloom()),
             new Pause(RobotContainer.mainShufflePage.getAutoDelay()),
             chosenCommand);
   }

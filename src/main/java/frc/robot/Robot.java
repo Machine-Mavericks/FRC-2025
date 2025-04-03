@@ -8,9 +8,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.ManualDrive;
-import frc.robot.commands.TiltAlgaeRemover;
+//import frc.robot.commands.TiltAlgaeRemover;
 
-import frc.robot.utils.AlgaePositions;
+//import frc.robot.utils.AlgaePositions;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -24,7 +24,7 @@ public class Robot extends TimedRobot {
 
 
   private boolean isElevatorInitialized = false;
-  private boolean isAlgaeTiltInitialized = false;
+  //private boolean isAlgaeTiltInitialized = false;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -58,7 +58,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {}
 
-  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
+  ///** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
@@ -92,12 +92,12 @@ public class Robot extends TimedRobot {
 
     RobotContainer.elevator.Level0();
 
-    if (!isAlgaeTiltInitialized){
-      RobotContainer.algaeRemover.ZeroEncoder(); 
-      isAlgaeTiltInitialized = true;
-    }
+    // if (!isAlgaeTiltInitialized){
+    //   RobotContainer.algaeRemover.ZeroEncoder(); 
+    //   isAlgaeTiltInitialized = true;
+    // }
 
-    RobotContainer.algaeRemover.ResetTilt();
+    // RobotContainer.algaeRemover.ResetTilt();
   
 
     // set default swerve drive command to manual drive mode
