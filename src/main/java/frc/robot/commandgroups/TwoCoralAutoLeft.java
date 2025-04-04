@@ -102,7 +102,7 @@ public class TwoCoralAutoLeft extends SequentialCommandGroup {
         new MoveToPose(
             4.0, 
             8.0,
-            new Pose2d (0.869,0.7386, new Rotation2d(Math.toRadians(-54))))// was 1.039,7.18970
+            new Pose2d (0.869,7.293, new Rotation2d(Math.toRadians(-54))))// was 1.039,7.18970
         ),
 
         new InstantCommand(()-> {
