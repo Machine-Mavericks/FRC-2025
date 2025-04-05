@@ -30,7 +30,7 @@ public class Elevator extends SubsystemBase {
     static double gearCircumference = gearDiameterCM * Math.PI;
     static double gearRatio = 8.43, paddingOffset = 0;
     // L2 was 21.5, L4 was 70.5
-    public static double L2 = 19.0, L3 = 39.0, L4 = 71.0, L1 = 15.7, L0 = 0.0; // l4 in cm high 72.0, l3 47.5 from floor
+    public static double L2 = 22.0, L3 = 42.5, L4 = 69.5, L1 = 15.7, L0 = 0.0; // l4 in cm high 72.0, l3 47.5 from floor
     static double ticksMoved;
     static double feedForward = 0.45;
     double TargetPositionCM = 0.0;
@@ -49,7 +49,7 @@ public class Elevator extends SubsystemBase {
         elevatorConfig.idleMode(IdleMode.kBrake);// change to break later
         elevatorConfig.inverted(true);
         elevatorConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
-        elevatorConfig.closedLoop.p(0.13);// was 0.15 for max output of 0.4 
+        elevatorConfig.closedLoop.p(0.135);// was 0.15 for max output of 0.4 
         elevatorConfig.closedLoop.i(0.0);
         elevatorConfig.closedLoop.d(0.0);
         elevatorConfig.closedLoop.outputRange(-0.18, 0.5);

@@ -70,7 +70,7 @@ public class TwoCoralAutoLeft extends SequentialCommandGroup {
 
         new MoveToPose(
             4.0,
-            8.0,
+            6.0,
             new Pose2d(3.5,6.0, new Rotation2d(Math.toRadians(-60.0)))
         ),
 
@@ -101,8 +101,8 @@ public class TwoCoralAutoLeft extends SequentialCommandGroup {
         // move to pickup 
         new MoveToPose(
             4.0, 
-            8.0,
-            new Pose2d (0.869,7.293, new Rotation2d(Math.toRadians(-54))))// was 1.039,7.18970
+            6.0,
+            new Pose2d (0.959,7.2466, new Rotation2d(Math.toRadians(-54))))// was 1.039,7.18970
         ),
 
         new InstantCommand(()-> {
@@ -115,11 +115,13 @@ public class TwoCoralAutoLeft extends SequentialCommandGroup {
         // move to veiw point number two
         new MoveToPose(
             4.0, 
-                8.0,
+            6.0,
             new Pose2d(3.5,6.0, new Rotation2d(Math.toRadians(-60)))
         ),
         // rais elevator to level 4 
         new InstantCommand(()->RobotContainer.elevator.Level4()),
+
+        new Pause(0.3),
 
         new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(true)),
         

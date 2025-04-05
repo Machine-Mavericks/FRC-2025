@@ -122,6 +122,8 @@ public class TwoCoralAutoRight extends SequentialCommandGroup {
             // rais elevator to level 4 
             new InstantCommand(()->RobotContainer.elevator.Level4()),
 
+            new Pause(0.3),
+
             new InstantCommand(()-> RobotContainer.odometry.EnableApriltagProcessing(true)),
             
             // apprach reef 
