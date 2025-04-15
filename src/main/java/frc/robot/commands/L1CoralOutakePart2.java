@@ -25,7 +25,7 @@ public class L1CoralOutakePart2 extends Command {
         delay.reset();
         delay.start();
 
-        RobotContainer.intake.intakeRunBottom(-0.6); 
+        RobotContainer.intake.intakeRunBottom(-0.3); 
         RobotContainer.intake.intakeRunTop(0.0);
 
     }

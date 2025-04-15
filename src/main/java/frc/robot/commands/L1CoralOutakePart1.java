@@ -25,7 +25,7 @@ public class L1CoralOutakePart1 extends Command {
         delay.reset();
         delay.start();
 
-        RobotContainer.intake.intakeRun(-0.6); 
+        RobotContainer.intake.intakeRun(-0.5); 
     }
 
     // This method is called periodically while command is active
